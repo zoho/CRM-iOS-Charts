@@ -18,7 +18,6 @@
 		F566BFF7D751B9F7B8F462F50A83000E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
 		FE31AAC9216E85000070EBA3 /* ZCRMKPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE31AABF216E847F0070EBA3 /* ZCRMKPI.swift */; };
 		FE31AACA216E85100070EBA3 /* ZCRMKPICell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE31AAC0216E847F0070EBA3 /* ZCRMKPICell.swift */; };
-		FE31AACB216E85160070EBA3 /* ZCRMLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE31AAC3216E84800070EBA3 /* ZCRMLogger.swift */; };
 		FE31AACC216E851E0070EBA3 /* ZCRMUIUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE31AAC1216E847F0070EBA3 /* ZCRMUIUtil.swift */; };
 		FE31AACD216E85220070EBA3 /* ZCRMWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE31AAC2216E84800070EBA3 /* ZCRMWrapper.swift */; };
 /* End PBXBuildFile section */
@@ -72,7 +71,6 @@
 		FE31AAC0216E847F0070EBA3 /* ZCRMKPICell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMKPICell.swift; path = ZohoCRMCharts/Classes/ZCRMKPICell.swift; sourceTree = "<group>"; };
 		FE31AAC1216E847F0070EBA3 /* ZCRMUIUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMUIUtil.swift; path = ZohoCRMCharts/Classes/ZCRMUIUtil.swift; sourceTree = "<group>"; };
 		FE31AAC2216E84800070EBA3 /* ZCRMWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMWrapper.swift; path = ZohoCRMCharts/Classes/ZCRMWrapper.swift; sourceTree = "<group>"; };
-		FE31AAC3216E84800070EBA3 /* ZCRMLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMLogger.swift; path = ZohoCRMCharts/Classes/ZCRMLogger.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,7 +178,6 @@
 			children = (
 				FE31AABF216E847F0070EBA3 /* ZCRMKPI.swift */,
 				FE31AAC0216E847F0070EBA3 /* ZCRMKPICell.swift */,
-				FE31AAC3216E84800070EBA3 /* ZCRMLogger.swift */,
 				FE31AAC1216E847F0070EBA3 /* ZCRMUIUtil.swift */,
 				FE31AAC2216E84800070EBA3 /* ZCRMWrapper.swift */,
 				FA88FDDAFCBAFCCF5C5811791B0ABD70 /* Pod */,
@@ -364,7 +361,6 @@
 				FE31AAC9216E85000070EBA3 /* ZCRMKPI.swift in Sources */,
 				AD0B10C4E68D5BBCE14D87BA67500BEF /* ZohoCRMCharts-dummy.m in Sources */,
 				FE31AACA216E85100070EBA3 /* ZCRMKPICell.swift in Sources */,
-				FE31AACB216E85160070EBA3 /* ZCRMLogger.swift in Sources */,
 				FE31AACD216E85220070EBA3 /* ZCRMWrapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
