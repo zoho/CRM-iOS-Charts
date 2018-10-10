@@ -1,0 +1,6 @@
+framework module ZohoCRMCharts {
+  umbrella header "ZohoCRMCharts-umbrella.h"
+
+  export *
+  module * { export * }
+}

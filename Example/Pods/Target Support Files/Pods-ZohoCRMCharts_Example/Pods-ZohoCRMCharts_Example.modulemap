@@ -1,0 +1,6 @@
+framework module Pods_ZohoCRMCharts_Example {
+  umbrella header "Pods-ZohoCRMCharts_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}
