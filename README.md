@@ -17,12 +17,12 @@ ZohoCRMCharts is available through [CocoaPods](https://cocoapods.org). To instal
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'ZohoCRMCharts'
+pod 'ZohoCRMCharts', :git => 'https://github.com/zoho/CRM-iOS-Charts.git'
 ```
 
 ## Author
 
-sarathkumarcr007, sarath.rp@zohocorp.com
+sarath-rp, sarath.rp@zohocorp.com
 
 ## License
 
