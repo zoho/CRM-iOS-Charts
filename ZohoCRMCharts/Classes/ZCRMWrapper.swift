@@ -26,9 +26,9 @@ Data object for KPI components of all types.
 public class ZCRMKPIRow {
 	
 	internal var value: String!
-	public var difference: String!
-	public var rate: String!
-	public var objective: ZCRMKPIObjective!
+	internal var difference: String!
+	internal var rate: String!
+	internal var objective: ZCRMKPIObjective!
 	
 	private init() {}
 	
