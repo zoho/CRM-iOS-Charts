@@ -1,0 +1,22 @@
+{
+  "name": "ZohoCRMCharts",
+  "version": "0.1.0",
+  "summary": "A short description of ZohoCRMCharts.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/sarathkumarcr007/ZohoCRMCharts",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "sarathkumarcr007": "sarath.rp@zohocorp.com"
+  },
+  "source": {
+    "git": "https://github.com/sarathkumarcr007/ZohoCRMCharts.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "ZohoCRMCharts/Classes/**/*"
+}
