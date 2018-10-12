@@ -28,7 +28,7 @@ public class ZCRMKPIRow {
 	internal var value: String!
 	public var difference: String!
 	public var rate: String!
-	public var status: ZCRMKPIStatus!
+	public var objective: ZCRMKPIObjective!
 	
 	private init() {}
 	
@@ -49,11 +49,11 @@ public class ZCRMKPIRow {
 	- difference: value differed from the compared one.
 	- status: it is a increment/decrement/neutral.
 	*/
-	public init(value: String, difference: String, status: ZCRMKPIStatus) {
+	public init(value: String, difference: String, objective: ZCRMKPIObjective) {
 		
 		self.value = value
 		self.difference = difference
-		self.status = status
+		self.objective = objective
 	}
 	
 	/**
@@ -64,12 +64,12 @@ public class ZCRMKPIRow {
 	- rate: rate of increment/decrement.
 	- status: it is a increment/decrement/neutral.
 	*/
-	public init(value: String, difference: String, rate: String, status: ZCRMKPIStatus){
+	public init(value: String, difference: String, rate: String, objective: ZCRMKPIObjective){
 		
 		self.value = value;
 		self.difference = difference
 		self.rate = rate
-		self.status = status
+		self.objective = objective
 	}
 	
 	/**
@@ -87,9 +87,9 @@ public class ZCRMKPIRow {
 }
 
 /**
-To point out the status of a ZCRMKPIRow.
+	To point out the objective of a ZCRMKPIRow.
 */
-public enum ZCRMKPIStatus {
+public enum ZCRMKPIObjective {
 	
 	case increased
 	case decreased
