@@ -9,15 +9,15 @@
 import Foundation
 import UIKit
 
-internal class ZCRMKPICell : UITableViewCell {
+internal class ZCRMKPICell : UITableViewCell, KPIUtil {
 	
-	public var valueLabel: UILabel = UILabel()
-	public var differenceLabel: UILabel = UILabel()
-	public var rateLabel: UILabel = UILabel()
-	public var rateBar: UIView = UIView()
-	private var rightContainer: UIView = UIView()
+	public var rowLable: UILabel = UILabel() // for both scorecard and rankings
+	public var valueLabel: UILabel = UILabel() // for both scorecard and rankings
+	public var rateLabel: UILabel = UILabel() // for scorecard
+	public var rateBar: UIView = UIView() // for both rankings
+	private var rightContainer: UIView = UIView() // for both scorecard and rankings
 	
-	private var type: ZCRMKPIComponent!
+	internal var type: ZCRMKPIComponent!
 	private var data : ZCRMKPIRow!
 	private var highRate: CGFloat!
 	private var options: KPIRenderOptions!
@@ -52,51 +52,54 @@ internal class ZCRMKPICell : UITableViewCell {
 	private func renderView() {
 		
 		//adding subviews
+		self.rowLable.translatesAutoresizingMaskIntoConstraints = false
 		self.valueLabel.translatesAutoresizingMaskIntoConstraints = false
-		self.differenceLabel.translatesAutoresizingMaskIntoConstraints = false
 		self.rateLabel.translatesAutoresizingMaskIntoConstraints = false
 		self.rateBar.translatesAutoresizingMaskIntoConstraints = false
 		self.rightContainer.translatesAutoresizingMaskIntoConstraints = false
-		self.rightContainer.addSubview(self.differenceLabel)
-		self.contentView.addSubview(self.valueLabel)
+		self.rowLable.adjustsFontSizeToFitWidth = true
+		self.valueLabel.adjustsFontSizeToFitWidth = true
+		self.rateLabel.adjustsFontSizeToFitWidth = true
+		self.rightContainer.addSubview(self.valueLabel)
+		self.contentView.addSubview(self.rowLable)
 		self.contentView.addSubview(self.rightContainer)
 		
 		//constraints
 		var constraints : [NSLayoutConstraint] = []
-		if self.type == .scorecard {
+		if self.isScorecard {
 			self.rightContainer.addSubview(self.rateLabel)
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[difference(==\(self.getWidthOf(percent: 25)))]-[rate(==\(self.getWidthOf(percent: 20)))]", options: [], metrics: nil, views: ["difference" : self.differenceLabel, "rate": self.rateLabel])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-[value(>=rate@250)]-0-[rate(==\(self.getWidthOf(percent: 17)))]-0-|", options: [], metrics: nil, views: ["value" : self.valueLabel, "rate": self.rateLabel])
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[rate]-4-|", options: [], metrics: nil, views: ["rate": self.rateLabel])
 		} else {
 			self.rightContainer.addSubview(self.rateBar)
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[difference(==\(self.getWidthOf(percent: 17)))]-[rate(==\(self.getRateBarLenght()))]", options: [], metrics: nil, views: ["difference" : self.differenceLabel, "rate": self.rateBar])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[value(==\(self.getWidthOf(percent: 17)))]-[rate(==\(self.getRateBarLenght()))]", options: [], metrics: nil, views: ["value" : self.valueLabel, "rate": self.rateBar])
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-12-[rate]-12-|", options: [], metrics: nil, views: ["rate": self.rateBar])
 		}
-		// common
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[difference]-0-|", options: [], metrics: nil, views: ["difference": self.differenceLabel])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-[value(==\(self.getWidthOf(percent: 58)))]-0-[container(==value)]", options: [], metrics: nil, views: ["value": self.valueLabel, "container": self.rightContainer])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[value(==container)]-0-|", options: [], metrics: nil, views: ["value": self.valueLabel, "container": self.rightContainer])
+		// common constraints
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[value]-0-|", options: [], metrics: nil, views: ["value": self.valueLabel])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[label(==container)]-0-[container(==label)]-|", options: [], metrics: nil, views: ["label": self.rowLable, "container": self.rightContainer])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[label(==container)]-0-|", options: [], metrics: nil, views: ["label": self.rowLable, "container": self.rightContainer])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[container]-0-|", options: [], metrics: nil, views: ["container": self.rightContainer])
 		NSLayoutConstraint.activate(constraints)
 	}
 	
 	/**
-	Set the data to the cell common for scorecard and rankings KPI.
+		Set the data to the cell common for scorecard and rankings KPI.
 	*/
 	private func renderData() {
 		
-		self.valueLabel.attributedText = NSMutableAttributedString(string: self.data.value, attributes: [.font : self.options.valueFont, .foregroundColor : self.options.valueFontColor, .baselineOffset: 0])
-		self.differenceLabel.attributedText = NSMutableAttributedString(string: self.data.difference , attributes: [.font : self.options.differenceFont, .foregroundColor : self.options.differenceFontColor, .baselineOffset: 0])
+		self.rowLable.attributedText = NSMutableAttributedString(string: self.data.label, attributes: [.font : self.options.labelFont, .foregroundColor : self.options.labelFontColor, .baselineOffset: 0])
+		self.valueLabel.attributedText = NSMutableAttributedString(string: self.data.value , attributes: [.font : self.options.valueFont, .foregroundColor : self.options.valueFontColor, .baselineOffset: 0])
 		
-		if self.type == .scorecard {
+		if self.isScorecard {
 			self.setRateText()
-		} else if self.type == .rankings {
+		} else if self.isRankings {
 			self.setRateBar()
 		}
 	}
 	
 	/**
-	Sets the text for rate only for scorecard KPI.
+		Sets the text for rate only for scorecard KPI.
 	*/
 	private func setRateText() {
 		
@@ -113,6 +116,9 @@ internal class ZCRMKPICell : UITableViewCell {
 		
 	}
 	
+	/**
+		Sets the rate bar for rankings KPI.
+	*/
 	private func setRateBar() {
 		
 		self.rateBar.layoutIfNeeded()
@@ -121,11 +127,16 @@ internal class ZCRMKPICell : UITableViewCell {
 		self.rateBar.backgroundColor = self.options.rateBarColor
 	}
 	
+	/**
+		Returns the ratebar length for the current instance.
+		- returns:
+				The rate bar length.
+	*/
 	private func getRateBarLenght() -> CGFloat {
 		
 		let availaleSpace = self.getWidthOf(percent: 35)
 		let onePercentOfSpace = availaleSpace / 100
-		let percentOfDiff = (self.data.difference.toCGFloat() * 100) / self.highRate
+		let percentOfDiff = (self.data.value.toCGFloat() * 100) / self.highRate
 		return (onePercentOfSpace * percentOfDiff)
 	}
 }

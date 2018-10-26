@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class ZCRMKPI :UIView {
+public class ZCRMKPI: UIView, KPIUtil {
 
 	public var titleFont: UIFont! {
 		didSet {
@@ -24,26 +24,6 @@ public class ZCRMKPI :UIView {
 			if titleFontColor != nil {
 				self.renderOptions.titleFontColor = titleFontColor
 				self.updateTitleText()
-			}
-		}
-	}
-	
-
-	
-	public var comparedToFont: UIFont! {
-		didSet {
-			if comparedToFont != nil {
-				self.renderOptions.comparedToFont = comparedToFont
-				self.updateComparedToViewText(text: nil)
-			}
-		}
-	}
-	
-	public var comparedToFontColor: UIColor! {
-		didSet {
-			if comparedToFontColor != nil {
-				self.renderOptions.comparedToFontColor = comparedToFontColor
-				self.updateComparedToViewText(text: nil)
 			}
 		}
 	}
@@ -66,19 +46,19 @@ public class ZCRMKPI :UIView {
 		}
 	}
 	
-	public var differenceFont: UIFont! {
+	public var labelFont: UIFont! {
 		didSet {
-			if differenceFont != nil {
-				self.renderOptions.differenceFont = differenceFont
+			if labelFont != nil {
+				self.renderOptions.labelFont = labelFont
 				self.updateChanges()
 			}
 		}
 	}
 	
-	public var differenceFontColor: UIColor! {
+	public var labelFontColor: UIColor! {
 		didSet {
-			if differenceFontColor != nil {
-				self.renderOptions.differenceFontColor = differenceFontColor
+			if labelFontColor != nil {
+				self.renderOptions.labelFontColor = labelFontColor
 				self.updateChanges()
 			}
 		}
@@ -97,6 +77,24 @@ public class ZCRMKPI :UIView {
 			if rateFontColor != nil {
 				self.renderOptions.rateFontColor = rateFontColor
 				self.updateChanges()
+			}
+		}
+	}
+	
+	public var comparedToFont: UIFont! {
+		didSet {
+			if comparedToFont != nil && (self.isStandard || self.isGrowthIndex) {
+				self.renderOptions.comparedToFont = comparedToFont
+				self.updateComparedToViewText(text: nil)
+			}
+		}
+	}
+	
+	public var comparedToFontColor: UIColor! {
+		didSet {
+			if comparedToFontColor != nil && (self.isStandard || self.isGrowthIndex) {
+				self.renderOptions.comparedToFontColor = comparedToFontColor
+				self.updateComparedToViewText(text: nil)
 			}
 		}
 	}
@@ -135,72 +133,103 @@ public class ZCRMKPI :UIView {
 		}
 	}
 	
-	public var data: [ZCRMKPIRow] = [] {
+	public var footNote: String!  {
 		didSet {
-			self.renderKPIData()
-		}
-	}
-	
-	public var comparedTo: String!  {
-		didSet {
-			if comparedTo != nil && self.type != .rankings && self.type != .basic {
-				self.updateComparedToViewText(text: comparedTo)
+			if footNote != nil && self.isScorecard {
+				self.updateFootNoteText(text: footNote)
 			}
 		}
 	}
 	
-	private var title: String!
-	private var type: ZCRMKPIComponent!
-	private var titleView: UILabel =  UILabel()
-	private let comparedToView = UILabel()
-	private let valueView = UILabel()
-	private var tableView = UITableView()
-	private var renderOptions = KPIRenderOptions()
-	
-	public init(frame: CGRect, data: [ZCRMKPIRow], type: ZCRMKPIComponent, title :String) {
-		super.init(frame: frame)
-		self.data = data
-		self.type = type
-		self.title = title
-		self.tableView.dataSource = self
-		self.tableView.delegate = self
-		self.render()
+	public var footNoteFont: UIFont! {
+		didSet {
+			if footNoteFont != nil && self.isScorecard {
+				self.renderOptions.footNoteFont = footNoteFont
+				self.updateFootNoteText(text: nil)
+			}
+		}
 	}
 	
+	public var footNoteColor: UIColor! {
+		didSet {
+			if footNoteColor != nil && self.isScorecard {
+				self.renderOptions.footNoteColor = footNoteColor
+				self.updateFootNoteText(text: nil)
+			}
+		}
+	}
+	
+	public override var intrinsicContentSize: CGSize {
+		return CGSize(width: getScreenWidthOf(percent: 92), height: self.getCalculatedHeight())
+	}
+	
+	internal var type: ZCRMKPIComponent!
+	private var data: [ZCRMKPIRow] = []
+	private var title: String!
+	private var renderOptions = KPIRenderOptions()
+	
+	private var titleView: UILabel =  UILabel() //title view for all components
+	private let footNoteView = UILabel() // for kpi of type scorecard
+	private let valueView = UILabel() // for simple kpi (standard, growth index and basic)
+	private var tableView = UITableView() // for scorecard and rankings
+	private var comparedToView = UILabel() // for standard and growth index
+	private var cellHeight: CGFloat = 42
+
 	public init(frame: CGRect, type: ZCRMKPIComponent, title: String) {
 		super.init(frame: frame)
 		self.type = type
 		self.title = title
-		self.tableView.dataSource = self
-		self.tableView.delegate = self
 		self.render()
+	}
+	
+	public init(type: ZCRMKPIComponent, title: String) {
+		super.init(frame: .zero)
+		self.translatesAutoresizingMaskIntoConstraints = false
+		self.type = type
+		self.title = title
+		self.render()
+		self.tableView.backgroundColor = .red
 	}
 	
 	required public init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
+	public func setData(data: ZCRMKPIRow) throws {
+		self.data = [data]
+		if self.isValidData() {
+			self.addConstraints()
+			self.renderKPIData()
+		} else {
+			throw ZCRMChartsError(message: "Invalid data found for kpi of type \(self.type) at \(self)")
+		}
+	}
+	
+	public func setData(data: [ZCRMKPIRow]) throws {
+		self.data = data
+		if self.isValidData() {
+			self.addConstraints()
+			self.renderKPIData()
+		} else {
+			throw ZCRMChartsError(message: "Invalid data found for kpi of type \(self.type) at \(self)")
+		}
+	}
+}
+
+/**
+	It contains the private methods.
+*/
+internal extension ZCRMKPI {
 	
 	/**
-		Renders the corresponding KPI component with the data. If data is not available it won't do any changes.
+		Renders the view, related to its type.
 	*/
 	private func render() {
 		
 		self.clipsToBounds = true
 		self.layoutIfNeeded()
 		self.backgroundColor = UIColor(red: 182/255.0, green: 186/255.0, blue: 193/255.0, alpha: 1)
-		if self.type == .rankings || self.type == .scorecard {
-			self.tableView.dataSource = self
-			self.tableView.delegate = self
-		}
-		
-		self.setUpTitleView()
-		self.updateTitleText()
 		self.renderKPIView()
-		if (self.data.count > 0) {
-			self.renderKPIData()
-		}
-		
 	}
 	
 	/**
@@ -208,7 +237,11 @@ public class ZCRMKPI :UIView {
 	*/
 	private func renderKPIView() {
 		
-		if self.type == .rankings || self.type == .scorecard {
+		self.setUpTitleView()
+		self.updateTitleText()
+		if self.isRankings || self.isScorecard {
+			self.tableView.dataSource = self
+			self.tableView.delegate = self
 			self.setKpiView()
 		} else {
 			self.setSimpleKpiView()
@@ -216,16 +249,24 @@ public class ZCRMKPI :UIView {
 	}
 	
 	/**
-		Renders the KPI data if changed occured in data.
+		Sets the KPI data to the views.
 	*/
 	private func renderKPIData() {
 		
-		if self.type == .rankings || self.type == .scorecard {
-			self.addKpiConstraints()
+		if self.isRankings || self.isScorecard {
 			self.setKpiData()
 		} else {
-			self.addSimpleKpiConstraints()
 			self.setSimpleKpiData()
+		}
+	}
+	
+	private func addConstraints() {
+		
+		self.invalidateIntrinsicContentSize()
+		if self.isRankings || self.isScorecard {
+			self.addKpiConstraints()
+		} else {
+			self.addSimpleKpiConstraints()
 		}
 	}
 	
@@ -235,8 +276,12 @@ public class ZCRMKPI :UIView {
 	private func setUpTitleView() {
 		
 		self.titleView.translatesAutoresizingMaskIntoConstraints = false
+		self.titleView.adjustsFontSizeToFitWidth = true
 		self.addSubview(self.titleView)
-		NSLayoutConstraint.activate(NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[title]-|", options: [], metrics: nil, views: ["title": self.titleView]))
+		var constraints: [NSLayoutConstraint] = []
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[title]", options: [], metrics: nil, views: ["title": self.titleView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-15-[title]", options: [], metrics: nil, views: ["title": self.titleView])
+		NSLayoutConstraint.activate(constraints)
 		
 	}
 	
@@ -244,23 +289,10 @@ public class ZCRMKPI :UIView {
 		Updates the title view with the given options.
 	*/
 	private func updateTitleText() {
-
+		
 		self.titleView.attributedText = NSAttributedString(string: self.title, attributes: [.font : self.renderOptions.titleFont, .foregroundColor: self.renderOptions.titleFontColor ])
 	}
 	
-	/**
-		Sets the compared to text for standard, growth index and scorecard KPI.
-	*/
-	private func updateComparedToViewText(text: String?) {
-		
-		var textToFit = ""
-		if let givenText = text {
-			textToFit = givenText
-		} else if let attrStr = self.comparedToView.attributedText {
-			textToFit = attrStr.string
-		}
-		self.comparedToView.attributedText = NSAttributedString(string: textToFit, attributes: [ .font: self.renderOptions.comparedToFont, .foregroundColor: self.renderOptions.comparedToFontColor])
-	}
 	
 	/**
 		Sets the view for standard, growth index and basic KPI.
@@ -283,11 +315,12 @@ public class ZCRMKPI :UIView {
 	private func addSimpleKpiConstraints() {
 		
 		var constraints: [NSLayoutConstraint] = []
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-12-[title]-[value]-10-|", options: [], metrics: nil, views: ["title": self.titleView, "value": valueView])
-		if (self.type != .basic){
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[value]", options: [], metrics: nil, views: ["title": self.titleView, "value": valueView])
+		if !self.isBasic {
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-16-[value(==comparedTo)]-[comparedTo]-15-|", options: [.alignAllBottom], metrics: nil, views: ["value": valueView, "comparedTo": self.comparedToView])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[comparedTo]-|", options: [], metrics: nil, views: ["comparedTo": self.comparedToView])
 		} else {
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-16-[value]", options: [], metrics: nil, views: ["value": valueView])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[value]", options: [], metrics: nil, views: ["value": valueView])
 		}
 		NSLayoutConstraint.activate(constraints)
 	}
@@ -297,23 +330,37 @@ public class ZCRMKPI :UIView {
 	*/
 	private func setSimpleKpiData() {
 		
-		var data: ZCRMKPIRow!
-		if self.data.count != 0 {
-			data = self.data[0]
-		} else {
-			data = ZCRMKPIRow(value: "", difference: "", objective: .neutral)
+		let data: ZCRMKPIRow =  self.data[0]
+		
+		if !self.isBasic {
+			self.updateComparedToViewText(text: data.comparedToLabel + ": " + data.comparedToValue)
 		}
-		if self.type == .standard {
+		if self.isStandard {
 			self.valueView.attributedText = ZCRMKPIUIUtil.shared.getValueTextForStandardKPI(data: data, options: self.renderOptions )
-		} else if self.type == .growthIndex {
+		} else if self.isGrowthIndex {
 			self.valueView.attributedText = ZCRMKPIUIUtil.shared.getValueTextForGrowthIndexKPI(data: data, options: self.renderOptions)
-		} else if self.type == .basic {
+		} else if self.isBasic {
 			self.valueView.attributedText = ZCRMKPIUIUtil.shared.getValueTextForBasicKPI(data: data, options: self.renderOptions )
 		}
 	}
 	
+	
 	/**
-		Sets the view for scorecard KPI.comparedToFont
+		Sets the compared to text for standard, growth index and scorecard KPI.
+	*/
+	private func updateComparedToViewText(text: String?) {
+		
+		var textToFit = ""
+		if text.notNil {
+			textToFit = text!
+		} else if let attrStr = self.comparedToView.attributedText {
+			textToFit = attrStr.string
+		}
+		self.comparedToView.attributedText = NSAttributedString(string: textToFit, attributes: [ .font: self.renderOptions.comparedToFont, .foregroundColor: self.renderOptions.comparedToFontColor])
+	}
+	
+	/**
+	Sets the view for scorecard KPI.comparedToFont
 	*/
 	private func setKpiView() {
 		
@@ -325,34 +372,29 @@ public class ZCRMKPI :UIView {
 		self.tableView.backgroundColor = self.backgroundColor
 		self.addSubview(self.tableView)
 		
-		if self.type == .scorecard {
-			self.comparedToView.translatesAutoresizingMaskIntoConstraints = false
-			self.comparedToView.backgroundColor = self.backgroundColor
-			self.comparedToView.textAlignment = .left
-			self.addSubview(self.comparedToView)
+		if self.isScorecard {
+			self.footNoteView.translatesAutoresizingMaskIntoConstraints = false
+			self.footNoteView.backgroundColor = self.backgroundColor
+			self.footNoteView.textAlignment = .left
+			self.addSubview(self.footNoteView)
 		}
-		
 	}
 	
 	/**
-		Adds the constraints for the scorecard KPI.
+	Adds the constraints for the scorecard KPI.
 	*/
 	private func addKpiConstraints() {
 		
-		let cellHeight: CGFloat = 40
 		self.tableView.layoutIfNeeded()
-		self.tableView.rowHeight = cellHeight
-		var tVHeight: CGFloat = self.getHeightOf(percent: 70)
-		if tVHeight  > (CGFloat(self.data.count) * cellHeight )  + self.getHeightOf(percent: 2){
-			tVHeight = (CGFloat(self.data.count) * cellHeight ) + self.getHeightOf(percent: 2)
-		}
-		
+		self.tableView.rowHeight = self.cellHeight
+		let tVHeight: CGFloat = CGFloat(self.data.count) * self.cellHeight
 		var constraints: [NSLayoutConstraint] = []
-		if self.type == .scorecard {
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[title(==\(self.getHeightOf(percent: 20)))]-0-[table(==\(tVHeight))]-0-[comparedTo(==\(self.getHeightOf(percent: 10)))]", options: [], metrics: nil, views: ["title" : self.titleView, "table": self.tableView, "comparedTo": self.comparedToView])
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[comparedTo]-0-|", options: [], metrics: nil, views: ["comparedTo": self.comparedToView])
+		if self.isScorecard {
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[table(==\(tVHeight))]", options: [], metrics: nil, views: ["title" : self.titleView, "table": self.tableView])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-20-[footNote]-0-|", options: [], metrics: nil, views: ["footNote": self.footNoteView])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[footNote]-10-|", options: [], metrics: nil, views: [ "footNote": self.footNoteView])
 		} else {
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[title(==\(self.getHeightOf(percent: 20)))]-0-[table(==\(tVHeight))]", options: [], metrics: nil, views: ["title" : self.titleView, "table": self.tableView])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[table(==\(tVHeight))]", options: [], metrics: nil, views: ["title" : self.titleView, "table": self.tableView])
 		}
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[table]-0-|", options: [], metrics: nil, views: ["table": self.tableView])
 		NSLayoutConstraint.activate(constraints)
@@ -362,22 +404,95 @@ public class ZCRMKPI :UIView {
 		Sets the data for scorecard KPI.
 	*/
 	private func setKpiData() {
+		
 		self.tableView.reloadData()
 	}
 	
 	/**
+		Updates the changes made for any of child UI elements.
 	*/
 	private func updateChanges() {
 		
-		if self.type != .scorecard && self.type != .rankings {
+		if !self.isScorecard && !self.isRankings {
 			self.renderKPIData()
 		}
 	}
 	
+	
+	private func getCalculatedHeight() -> CGFloat {
+		
+		var height: CGFloat = 0
+		if !self.isRankings && !self.isScorecard {
+			height += 76
+		} else {
+			height += CGFloat(self.data.count) * self.cellHeight + 55
+			if self.isScorecard {
+				height += 25
+			}
+		}
+		return height
+	}
+	
+	private func updateFootNoteText(text: String?) {
+		
+		var textToFit = ""
+		if text.notNil {
+			textToFit = text!
+		} else if let attrTxt = self.footNoteView.attributedText {
+			textToFit = attrTxt.string
+		}
+		self.footNoteView.attributedText = NSAttributedString(string: textToFit, attributes: [ .font: self.renderOptions.footNoteFont, .foregroundColor: self.renderOptions.footNoteColor ])
+	}
+	
 }
 
-extension ZCRMKPI : UITableViewDataSource, UITableViewDelegate {
+/**
+	Methods validating the input data based on its type.
+*/
+extension ZCRMKPI {
+	
+	private func isValidData() -> Bool {
+	
+		if self.isScorecard || self.isRankings {
+			return self.checkDataForKpi()
+		}
+		return self.checkDataForSimpleKpi()
+	}
+	
+	private func checkDataForSimpleKpi() -> Bool {
+		
+		var isValidData = true
+		let data = self.data[0]
+		if self.isStandard || self.isGrowthIndex {
+			if data.rate == nil || data.comparedToLabel == nil || data.comparedToValue == nil || data.objective == nil {
+				isValidData = false
+			}
+		}
+		return isValidData
+	}
+	
+	private func checkDataForKpi() -> Bool {
+		
+		var isValidData = true
+		for kpiRow in self.data {
+			if kpiRow.label == nil {
+				isValidData = false
+				break
+			}
+			if self.isScorecard && (kpiRow.objective == nil || kpiRow.rate == nil) {
+				isValidData = false
+				break
+			}
+		}
+		return isValidData
+	}
+}
 
+/**
+	UITableView protocols for KPI of type scorecard and rankings.
+*/
+extension ZCRMKPI : UITableViewDataSource, UITableViewDelegate {
+	
 	public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		
 		return self.data.count
@@ -386,8 +501,8 @@ extension ZCRMKPI : UITableViewDataSource, UITableViewDelegate {
 	public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
 		var cell: ZCRMKPICell!
-		if self.type == .rankings {
-			cell = ZCRMKPICell(data:  self.data[indexPath.row], type: self.type, highRate: self.data[0].difference.toCGFloat(), options : self.renderOptions)
+		if self.isRankings {
+			cell = ZCRMKPICell(data:  self.data[indexPath.row], type: self.type, highRate: self.data[0].value.toCGFloat(), options : self.renderOptions)
 		} else {
 			cell = ZCRMKPICell(data: self.data[indexPath.row], type: self.type, options: self.renderOptions)
 		}

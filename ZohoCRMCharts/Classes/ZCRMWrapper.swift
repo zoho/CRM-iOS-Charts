@@ -9,7 +9,7 @@
 import Foundation
 
 /**
-Types of KPI components available in Zoho CRM Charts.
+	Types of KPI components available in Zoho CRM Charts.
 */
 public enum ZCRMKPIComponent : String {
 	
@@ -21,21 +21,23 @@ public enum ZCRMKPIComponent : String {
 }
 
 /**
-Data object for KPI components of all types.
+	Data object for KPI components of all types.
 */
 public class ZCRMKPIRow {
 	
 	internal var value: String!
-	internal var difference: String!
+	internal var label: String!
 	internal var rate: String!
 	internal var objective: ZCRMKPIObjective!
+	public var comparedToLabel: String!
+	public var comparedToValue: String!
 	
 	private init() {}
 	
 	/**
 	For KPI of type Basic.
 	- parameters:
-	- value: The value of the basic kpi component.
+		- value: The value of the basic kpi component.
 	*/
 	public init(value: String){
 		
@@ -45,29 +47,29 @@ public class ZCRMKPIRow {
 	/**
 	For KPI of type Standard/Growth Index.
 	- parameters:
-	- value: value of the standard/growth index kpi component.
-	- difference: value differed from the compared one.
-	- status: it is a increment/decrement/neutral.
+		- value: value of the standard/growth index kpi component.
+		- rate: rate differed from the compared one.
+		- objective: objective of the kpi.
 	*/
-	public init(value: String, difference: String, objective: ZCRMKPIObjective) {
+	public init(value: String, rate: String, objective: ZCRMKPIObjective) {
 		
 		self.value = value
-		self.difference = difference
+		self.rate = rate
 		self.objective = objective
 	}
 	
 	/**
 	For KPI of type Scorecard.
 	- parameters:
-	- value: name of the kpi row.
-	- difference: value of the row data.
-	- rate: rate of increment/decrement.
-	- status: it is a increment/decrement/neutral.
+		- label: label for the kpi row data.
+		- value: value for the kpi row.
+		- rate: rate of increment/decrement.
+		- status: it is a increment/decrement/neutral.
 	*/
-	public init(value: String, difference: String, rate: String, objective: ZCRMKPIObjective){
+	public init(label: String, value: String, rate: String, objective: ZCRMKPIObjective){
 		
+		self.label = label
 		self.value = value;
-		self.difference = difference
 		self.rate = rate
 		self.objective = objective
 	}
@@ -75,13 +77,13 @@ public class ZCRMKPIRow {
 	/**
 	For KPI of type Rankings.
 	- parameters:
-	- value: name of the kpi row.
-	- difference: value of the row data.
+		- label: label for the kpi row data.
+		- value: value for the kpi row.
 	*/
-	public init(value: String, difference: String) {
+	public init(label: String, value: String) {
 		
+		self.label = label
 		self.value = value;
-		self.difference = difference
 	}
 	
 }
@@ -95,3 +97,19 @@ public enum ZCRMKPIObjective {
 	case decreased
 	case neutral
 }
+
+
+public struct ZCRMChartsError : Error {
+	
+	let message: String
+	
+	init(message: String) {
+		self.message = message
+	}
+	
+	public var localizedDescription: String {
+		return self.message
+	}
+}
+
+

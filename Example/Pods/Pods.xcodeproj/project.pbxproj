@@ -17,6 +17,7 @@
 		FE110CBD21709A27000D0815 /* ZCRMKPICell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE110CB521709A1B000D0815 /* ZCRMKPICell.swift */; };
 		FE110CBE21709A2B000D0815 /* ZCRMUIUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE110CB621709A1B000D0815 /* ZCRMUIUtil.swift */; };
 		FE110CBF21709A34000D0815 /* ZCRMWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE110CB721709A1B000D0815 /* ZCRMWrapper.swift */; };
+		FE5D86CB2180B37300204484 /* ZCRMCommonUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE5D86C92180B36A00204484 /* ZCRMCommonUtil.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		FE110CB521709A1B000D0815 /* ZCRMKPICell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMKPICell.swift; path = ZohoCRMCharts/Classes/ZCRMKPICell.swift; sourceTree = "<group>"; };
 		FE110CB621709A1B000D0815 /* ZCRMUIUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMUIUtil.swift; path = ZohoCRMCharts/Classes/ZCRMUIUtil.swift; sourceTree = "<group>"; };
 		FE110CB721709A1B000D0815 /* ZCRMWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMWrapper.swift; path = ZohoCRMCharts/Classes/ZCRMWrapper.swift; sourceTree = "<group>"; };
+		FE5D86C92180B36A00204484 /* ZCRMCommonUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMCommonUtil.swift; path = ZohoCRMCharts/Classes/ZCRMCommonUtil.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +146,7 @@
 		BE88AF31A9DDA5B8178696E3D3FFDE32 /* ZohoCRMCharts */ = {
 			isa = PBXGroup;
 			children = (
+				FE5D86C92180B36A00204484 /* ZCRMCommonUtil.swift */,
 				FE110CB421709A1B000D0815 /* ZCRMKPI.swift */,
 				FE110CB521709A1B000D0815 /* ZCRMKPICell.swift */,
 				FE110CB621709A1B000D0815 /* ZCRMUIUtil.swift */,
@@ -284,6 +287,7 @@
 			files = (
 				FE110CBC21709A23000D0815 /* ZCRMKPI.swift in Sources */,
 				89F9E39AB424031E0F178CCB162B6A69 /* ZohoCRMCharts-dummy.m in Sources */,
+				FE5D86CB2180B37300204484 /* ZCRMCommonUtil.swift in Sources */,
 				FE110CBD21709A27000D0815 /* ZCRMKPICell.swift in Sources */,
 				FE110CBE21709A2B000D0815 /* ZCRMUIUtil.swift in Sources */,
 				FE110CBF21709A34000D0815 /* ZCRMWrapper.swift in Sources */,
