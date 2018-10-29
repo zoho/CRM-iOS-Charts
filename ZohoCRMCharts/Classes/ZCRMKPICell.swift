@@ -88,8 +88,8 @@ internal class ZCRMKPICell : UITableViewCell, KPIUtil {
 	*/
 	private func renderData() {
 		
-		self.rowLable.attributedText = NSMutableAttributedString(string: self.data.label, attributes: [.font : self.options.labelFont, .foregroundColor : self.options.labelFontColor, .baselineOffset: 0])
-		self.valueLabel.attributedText = NSMutableAttributedString(string: self.data.value , attributes: [.font : self.options.valueFont, .foregroundColor : self.options.valueFontColor, .baselineOffset: 0])
+		self.rowLable.attributedText = NSMutableAttributedString(string: self.data.label, attributes: [ NSFontAttributeName : self.options.labelFont, NSForegroundColorAttributeName : self.options.labelFontColor, NSBaselineOffsetAttributeName: 0])
+		self.valueLabel.attributedText = NSMutableAttributedString(string: self.data.value , attributes: [ NSFontAttributeName : self.options.valueFont, NSForegroundColorAttributeName: self.options.valueFontColor, NSBaselineOffsetAttributeName: 0])
 		
 		if self.isScorecard {
 			self.setRateText()
@@ -103,7 +103,7 @@ internal class ZCRMKPICell : UITableViewCell, KPIUtil {
 	*/
 	private func setRateText() {
 		
-		self.rateLabel.attributedText = NSMutableAttributedString(string: self.data.rate, attributes: [.font : options.rateFont, .foregroundColor : self.options.rateFontColor, .baselineOffset: 0])
+		self.rateLabel.attributedText = NSMutableAttributedString(string: self.data.rate, attributes: [ NSFontAttributeName: options.rateFont, NSForegroundColorAttributeName: self.options.rateFontColor, NSBaselineOffsetAttributeName: 0])
 		self.rateLabel.textAlignment = .center
 		self.rateLabel.layer.cornerRadius = 5
 		self.rateLabel.clipsToBounds = true

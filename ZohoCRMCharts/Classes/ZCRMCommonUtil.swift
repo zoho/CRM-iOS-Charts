@@ -71,7 +71,7 @@ internal extension UIView {
 
 internal extension String {
 	
-	internal func toCGFloat() -> CGFloat {
+	func toCGFloat() -> CGFloat {
 		return CGFloat(truncating: NumberFormatter().number(from: self)!)
 	}
 }

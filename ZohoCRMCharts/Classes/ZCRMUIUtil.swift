@@ -47,15 +47,15 @@ internal class ZCRMUIUtil {
 	private init(){}
 	
 	func getDecText(ofSize: CGFloat, baselineOffset: NSNumber, color: UIColor) -> NSAttributedString {
-		return NSAttributedString(string: " ▼ ", attributes: [ .font : UIFont.systemFont(ofSize: ofSize), .foregroundColor : color , .baselineOffset: baselineOffset])
+		return NSAttributedString(string: " ▼ ", attributes: [ NSFontAttributeName : UIFont.systemFont(ofSize: ofSize), NSForegroundColorAttributeName: color , NSBaselineOffsetAttributeName: baselineOffset])
 	}
 
 	func getIncText(ofSize: CGFloat, baselineOffset: NSNumber, color: UIColor) -> NSAttributedString {
-		return NSAttributedString(string: " ▲ ", attributes: [ .font : UIFont.systemFont(ofSize: ofSize), .foregroundColor : color, .baselineOffset: baselineOffset])
+		return NSAttributedString(string: " ▲ ", attributes: [ NSFontAttributeName : UIFont.systemFont(ofSize: ofSize), NSForegroundColorAttributeName: color, NSBaselineOffsetAttributeName: baselineOffset])
 	}
 	
 	func getNeutralText(ofSize: CGFloat, baselineOffset: NSNumber, color: UIColor) -> NSAttributedString {
-		return NSAttributedString(string: " = ", attributes: [.font : UIFont.systemFont(ofSize: ofSize), .foregroundColor : color, .baselineOffset: baselineOffset])
+		return NSAttributedString(string: " = ", attributes: [ NSFontAttributeName: UIFont.systemFont(ofSize: ofSize), NSForegroundColorAttributeName: color, NSBaselineOffsetAttributeName: baselineOffset])
 	}
 	
 }
@@ -69,7 +69,7 @@ internal class ZCRMKPIUIUtil {
 	func getValueTextForStandardKPI(data: ZCRMKPIRow, options: KPIRenderOptions) -> NSMutableAttributedString {
 		
 		let fontSize = options.valueFont.pointSize
-		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.value, attributes: [.font : options.valueFont, .foregroundColor : options.valueFontColor])
+		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.value, attributes: [NSFontAttributeName: options.valueFont, NSForegroundColorAttributeName: options.valueFontColor])
 		if (data.objective == .increased) {
 			outputString.append(ZCRMUIUtil.shared.getIncText(ofSize: (fontSize/2) + 3, baselineOffset: 2.5, color: options.incrementColor))
 		} else if (data.objective == .decreased) {
@@ -77,7 +77,7 @@ internal class ZCRMKPIUIUtil {
 		} else {
 			outputString.append(ZCRMUIUtil.shared.getNeutralText(ofSize: (fontSize/2) + 4, baselineOffset: 2.5, color: options.neutralColor))
 		}
-		outputString.append(NSAttributedString(string: data.rate, attributes: [.font : UIFont.systemFont(ofSize: (fontSize/2) + 1), .foregroundColor : options.rateFontColor, .baselineOffset: 2.5]))
+		outputString.append(NSAttributedString(string: data.rate, attributes: [ NSFontAttributeName: UIFont.systemFont(ofSize: (fontSize/2) + 1), NSForegroundColorAttributeName: options.rateFontColor, NSBaselineOffsetAttributeName: 2.5]))
 		return outputString
 	}
 	
@@ -90,13 +90,13 @@ internal class ZCRMKPIUIUtil {
 		} else if data.objective == .decreased {
 			valueColor = options.decrementColor
 		}
-		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.value, attributes: [.font : options.valueFont, .foregroundColor : valueColor])
-		outputString.append(NSAttributedString(string: " " + data.value, attributes: [.font : UIFont.systemFont(ofSize: (fontSize/2) + 1), .foregroundColor : options.valueFontColor, .baselineOffset: 2.5]))
+		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.value, attributes: [ NSFontAttributeName: options.valueFont, NSForegroundColorAttributeName: valueColor])
+		outputString.append(NSAttributedString(string: " " + data.value, attributes: [ NSFontAttributeName: UIFont.systemFont(ofSize: (fontSize/2) + 1), NSForegroundColorAttributeName: options.valueFontColor, NSBaselineOffsetAttributeName: 2.5]))
 		return outputString
 	}
 	
 	func getValueTextForBasicKPI(data: ZCRMKPIRow, options: KPIRenderOptions) -> NSMutableAttributedString {
-		return NSMutableAttributedString(string: data.value, attributes: [.font : options.valueFont, .foregroundColor : options.valueFontColor])
+		return NSMutableAttributedString(string: data.value, attributes: [ NSFontAttributeName: options.valueFont, NSForegroundColorAttributeName: options.valueFontColor])
 	}
 	
 }
