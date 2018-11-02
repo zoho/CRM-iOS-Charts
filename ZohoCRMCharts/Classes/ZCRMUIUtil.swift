@@ -6,9 +6,6 @@
 //  Copyright © 2018 Zoho CRM. All rights reserved.
 //
 
-import Foundation
-import UIKit
-
 internal struct Colors {
 	
 	static let incrementColor: UIColor =  UIColor(red: 14/255.0, green: 213/255.0, blue: 28/255.0, alpha: 1)
@@ -28,6 +25,7 @@ internal struct KPIRenderOptions {
 	var comparedToFontColor: UIColor = Colors.fontColor
 	var labelFont: UIFont =  UIFont.systemFont(ofSize: 19.5)
 	var labelFontColor: UIColor = Colors.fontColor
+	var simpleKpiValueFont: UIFont = UIFont.systemFont(ofSize: 24)
 	var valueFont: UIFont = UIFont.systemFont(ofSize: 19.5)
 	var valueFontColor: UIColor = Colors.fontColor
 	var rateFont: UIFont = UIFont.systemFont(ofSize: 19.5)
@@ -40,63 +38,55 @@ internal struct KPIRenderOptions {
 	var footNoteColor: UIColor = Colors.fontColor
 }
 
-internal class ZCRMUIUtil {
+internal struct ZCRMUIUtil {
 	
-	public static let shared = ZCRMUIUtil()
-	
-	private init(){}
-	
-	func getDecText(ofSize: CGFloat, baselineOffset: NSNumber, color: UIColor) -> NSAttributedString {
+	static func getDecText(ofSize: CGFloat, baselineOffset: NSNumber, color: UIColor) -> NSAttributedString {
 		return NSAttributedString(string: " ▼ ", attributes: [ NSFontAttributeName : UIFont.systemFont(ofSize: ofSize), NSForegroundColorAttributeName: color , NSBaselineOffsetAttributeName: baselineOffset])
 	}
 
-	func getIncText(ofSize: CGFloat, baselineOffset: NSNumber, color: UIColor) -> NSAttributedString {
+	static func getIncText(ofSize: CGFloat, baselineOffset: NSNumber, color: UIColor) -> NSAttributedString {
 		return NSAttributedString(string: " ▲ ", attributes: [ NSFontAttributeName : UIFont.systemFont(ofSize: ofSize), NSForegroundColorAttributeName: color, NSBaselineOffsetAttributeName: baselineOffset])
 	}
 	
-	func getNeutralText(ofSize: CGFloat, baselineOffset: NSNumber, color: UIColor) -> NSAttributedString {
+	static func getNeutralText(ofSize: CGFloat, baselineOffset: NSNumber, color: UIColor) -> NSAttributedString {
 		return NSAttributedString(string: " = ", attributes: [ NSFontAttributeName: UIFont.systemFont(ofSize: ofSize), NSForegroundColorAttributeName: color, NSBaselineOffsetAttributeName: baselineOffset])
 	}
 	
 }
 
-internal class ZCRMKPIUIUtil {
+internal struct ZCRMKPIUIUtil {
 	
-	public static let shared: ZCRMKPIUIUtil = ZCRMKPIUIUtil()
-	
-	private init() {}
-	
-	func getValueTextForStandardKPI(data: ZCRMKPIRow, options: KPIRenderOptions) -> NSMutableAttributedString {
+	static func getValueTextForStandardKPI(data: ZCRMKPIRow, options: KPIRenderOptions) -> NSMutableAttributedString {
 		
-		let fontSize = options.valueFont.pointSize
-		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.value, attributes: [NSFontAttributeName: options.valueFont, NSForegroundColorAttributeName: options.valueFontColor])
+		let fontSize = options.simpleKpiValueFont.pointSize
+		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.value, attributes: [NSFontAttributeName: options.simpleKpiValueFont, NSForegroundColorAttributeName: options.valueFontColor])
 		if (data.objective == .increased) {
-			outputString.append(ZCRMUIUtil.shared.getIncText(ofSize: (fontSize/2) + 3, baselineOffset: 2.5, color: options.incrementColor))
+			outputString.append(ZCRMUIUtil.getIncText(ofSize: (fontSize/2) + 3, baselineOffset: 2.5, color: options.incrementColor))
 		} else if (data.objective == .decreased) {
-			outputString.append(ZCRMUIUtil.shared.getDecText(ofSize: (fontSize/2) + 3, baselineOffset: 2, color: options.decrementColor))
+			outputString.append(ZCRMUIUtil.getDecText(ofSize: (fontSize/2) + 3, baselineOffset: 2, color: options.decrementColor))
 		} else {
-			outputString.append(ZCRMUIUtil.shared.getNeutralText(ofSize: (fontSize/2) + 4, baselineOffset: 2.5, color: options.neutralColor))
+			outputString.append(ZCRMUIUtil.getNeutralText(ofSize: (fontSize/2) + 4, baselineOffset: 2.5, color: options.neutralColor))
 		}
 		outputString.append(NSAttributedString(string: data.rate, attributes: [ NSFontAttributeName: UIFont.systemFont(ofSize: (fontSize/2) + 1), NSForegroundColorAttributeName: options.rateFontColor, NSBaselineOffsetAttributeName: 2.5]))
 		return outputString
 	}
 	
-	func getValueTextForGrowthIndexKPI(data: ZCRMKPIRow , options: KPIRenderOptions) -> NSMutableAttributedString {
+	static func getValueTextForGrowthIndexKPI(data: ZCRMKPIRow , options: KPIRenderOptions) -> NSMutableAttributedString {
 		
-		let fontSize = options.rateFont.pointSize
+		let fontSize = options.simpleKpiValueFont.pointSize
 		var valueColor = options.neutralColor
 		if data.objective == .increased {
 			valueColor = options.incrementColor
 		} else if data.objective == .decreased {
 			valueColor = options.decrementColor
 		}
-		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.value, attributes: [ NSFontAttributeName: options.valueFont, NSForegroundColorAttributeName: valueColor])
+		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.value, attributes: [ NSFontAttributeName: options.simpleKpiValueFont, NSForegroundColorAttributeName: valueColor])
 		outputString.append(NSAttributedString(string: " " + data.value, attributes: [ NSFontAttributeName: UIFont.systemFont(ofSize: (fontSize/2) + 1), NSForegroundColorAttributeName: options.valueFontColor, NSBaselineOffsetAttributeName: 2.5]))
 		return outputString
 	}
 	
-	func getValueTextForBasicKPI(data: ZCRMKPIRow, options: KPIRenderOptions) -> NSMutableAttributedString {
-		return NSMutableAttributedString(string: data.value, attributes: [ NSFontAttributeName: options.valueFont, NSForegroundColorAttributeName: options.valueFontColor])
+	static func getValueTextForBasicKPI(data: ZCRMKPIRow, options: KPIRenderOptions) -> NSMutableAttributedString {
+		return NSMutableAttributedString(string: data.value, attributes: [ NSFontAttributeName: options.simpleKpiValueFont, NSForegroundColorAttributeName: options.valueFontColor])
 	}
 	
 }

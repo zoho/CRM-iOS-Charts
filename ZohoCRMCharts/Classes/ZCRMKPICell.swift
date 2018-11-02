@@ -6,10 +6,7 @@
 //  Copyright © 2018 Zoho CRM. All rights reserved.
 //
 
-import Foundation
-import UIKit
-
-internal class ZCRMKPICell : UITableViewCell, KPIUtil {
+internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	
 	public var rowLable: UILabel = UILabel() // for both scorecard and rankings
 	public var valueLabel: UILabel = UILabel() // for both scorecard and rankings
@@ -17,25 +14,25 @@ internal class ZCRMKPICell : UITableViewCell, KPIUtil {
 	public var rateBar: UIView = UIView() // for both rankings
 	private var rightContainer: UIView = UIView() // for both scorecard and rankings
 	
-	internal var type: ZCRMKPIComponent!
-	private var data : ZCRMKPIRow!
+	internal var type: ZCRMKPIComponent
+	private var data : ZCRMKPIRow
+	private var options: KPIRenderOptions
 	private var highRate: CGFloat!
-	private var options: KPIRenderOptions!
 	
 	init(data: ZCRMKPIRow, type: ZCRMKPIComponent, options: KPIRenderOptions) {
-		super.init(style: .default, reuseIdentifier: "zcrmScorecardCell")
 		self.data = data
 		self.type = type
 		self.options = options
+		super.init(style: .default, reuseIdentifier: "zcrmScorecardCell")
 		self.render()
 	}
 	
 	init(data: ZCRMKPIRow, type: ZCRMKPIComponent, highRate: CGFloat, options: KPIRenderOptions) {
-		super.init(style: .default, reuseIdentifier: "zcrmScorecardCell")
 		self.data = data
 		self.type = type
 		self.highRate = highRate
 		self.options = options
+		super.init(style: .default, reuseIdentifier: "zcrmScorecardCell")
 		self.render()
 	}
 	
@@ -57,9 +54,6 @@ internal class ZCRMKPICell : UITableViewCell, KPIUtil {
 		self.rateLabel.translatesAutoresizingMaskIntoConstraints = false
 		self.rateBar.translatesAutoresizingMaskIntoConstraints = false
 		self.rightContainer.translatesAutoresizingMaskIntoConstraints = false
-		self.rowLable.adjustsFontSizeToFitWidth = true
-		self.valueLabel.adjustsFontSizeToFitWidth = true
-		self.rateLabel.adjustsFontSizeToFitWidth = true
 		self.rightContainer.addSubview(self.valueLabel)
 		self.contentView.addSubview(self.rowLable)
 		self.contentView.addSubview(self.rightContainer)

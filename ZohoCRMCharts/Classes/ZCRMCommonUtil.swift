@@ -5,9 +5,9 @@
 //  Created by Sarath Kumar Rajendran on 24/10/18.
 //
 
-protocol KPIUtil {
+internal protocol KPIUtil {
 	
-	var type: ZCRMKPIComponent! { get set}
+	var type: ZCRMKPIComponent { get set}
 	var isScorecard: Bool { get }
 	var isRankings: Bool { get }
 	var isBasic: Bool { get }
@@ -15,9 +15,9 @@ protocol KPIUtil {
 	var isGrowthIndex: Bool { get }
 }
 
-extension KPIUtil {
+internal extension KPIUtil {
 	
-	internal var isScorecard: Bool {
+	var isScorecard: Bool {
 		
 		if self.type == .scorecard {
 			return true
@@ -25,7 +25,7 @@ extension KPIUtil {
 		return false
 	}
 	
-	internal var isRankings: Bool {
+	var isRankings: Bool {
 		
 		if self.type == .rankings {
 			return true
@@ -33,7 +33,7 @@ extension KPIUtil {
 		return false
 	}
 	
-	internal var isBasic: Bool {
+	var isBasic: Bool {
 		
 		if self.type == .basic {
 			return true
@@ -41,7 +41,7 @@ extension KPIUtil {
 		return false
 	}
 	
-	internal var isStandard: Bool {
+	var isStandard: Bool {
 		
 		if self.type == .standard {
 			return true
@@ -49,7 +49,7 @@ extension KPIUtil {
 		return false
 	}
 	
-	internal var isGrowthIndex: Bool {
+	var isGrowthIndex: Bool {
 		
 		if self.type == .growthIndex {
 			return true
