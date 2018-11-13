@@ -43,6 +43,9 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	private func render() {
 		self.translatesAutoresizingMaskIntoConstraints = false
 		self.renderView()
+	}
+	
+	override func layoutSubviews() {
 		self.renderData()
 	}
 	
@@ -66,7 +69,7 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[rate]-4-|", options: [], metrics: nil, views: ["rate": self.rateLabel])
 		} else {
 			self.rightContainer.addSubview(self.rateBar)
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[value(==\(self.getWidthOf(percent: 17)))]-[rate(==\(self.getRateBarLenght()))]", options: [], metrics: nil, views: ["value" : self.valueLabel, "rate": self.rateBar])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[value(==\(self.getWidthOf(percent: 16.5)))]-[rate(==\(self.getRateBarLenght()))]", options: [], metrics: nil, views: ["value" : self.valueLabel, "rate": self.rateBar])
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-12-[rate]-12-|", options: [], metrics: nil, views: ["rate": self.rateBar])
 		}
 		// common constraints
@@ -97,7 +100,7 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	*/
 	private func setRateText() {
 		
-		self.rateLabel.attributedText = NSMutableAttributedString(string: self.data.rate, attributes: [ NSFontAttributeName: options.rateFont, NSForegroundColorAttributeName: self.options.rateFontColor, NSBaselineOffsetAttributeName: 0])
+		self.rateLabel.attributedText = NSMutableAttributedString(string: self.data.rate, attributes: [ NSFontAttributeName:  self.options.rateFont, NSForegroundColorAttributeName: self.options.rateFontColor, NSBaselineOffsetAttributeName: 0])
 		self.rateLabel.textAlignment = .center
 		self.rateLabel.layer.cornerRadius = 5
 		self.rateLabel.clipsToBounds = true

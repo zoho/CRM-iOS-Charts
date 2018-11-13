@@ -91,9 +91,9 @@ public final class ZCRMKPI: UIView, KPIUtil {
 		didSet {
 			if rateFont != nil {
 				if self.isScorecard || self.isRankings {
-					self.renderOptions.valueFont = valueFont
-				} else {
 					self.renderOptions.rateFont = rateFont
+				} else {
+					self.renderOptions.simpleKpiValueFont = rateFont
 				}
 				self.updateChanges()
 			}
@@ -219,28 +219,35 @@ public final class ZCRMKPI: UIView, KPIUtil {
 		}
 	}
 	
+	public var hideTitle: Bool! {
+		didSet {
+			if hideTitle != nil {
+				self.titleView.isHidden = hideTitle
+			}
+		}
+	}
+	
 	public override var intrinsicContentSize: CGSize {
 		return CGSize(width: getScreenWidthOf(percent: 92), height: self.getCalculatedHeight())
 	}
 	
 	internal var type: ZCRMKPIComponent
-	internal var title: String
-	internal var data: [ZCRMKPIRow] = []
-	internal var renderOptions = KPIRenderOptions()
+	fileprivate let title: String
+	fileprivate var data: [ZCRMKPIRow] = []
+	fileprivate var renderOptions: KPIRenderOptions = KPIRenderOptions()
 	
-	internal var titleView: UILabel =  UILabel() //title view for all components
-	internal let footNoteView = UILabel() // for kpi of type scorecard
-	internal let valueView = UILabel() // for simple kpi (standard, growth index and basic)
-	internal var tableView = UITableView() // for scorecard and rankings
-	internal var comparedToView = UILabel() // for standard and growth index
-	internal var cellHeight: CGFloat = 42 // default cell height for a kpi row in rankings and scorecard
+	fileprivate let titleView: UILabel =  UILabel() //title view for all components
+	fileprivate let footNoteView = UILabel() // for kpi of type scorecard
+	fileprivate let valueView = UILabel() // for simple kpi (standard, growth index and basic)
+	fileprivate let tableView = UITableView() // for scorecard and rankings
+	fileprivate let comparedToView = UILabel() // for standard and growth index
+	fileprivate let cellHeight: CGFloat = 42 // default cell height for a kpi row in rankings and scorecard
 
 	public init(frame: CGRect, type: ZCRMKPIComponent, title: String) {
 		self.type = type
 		self.title = title
 		super.init(frame: frame)
 		self.render()
-		
 	}
 	
 	public init(type: ZCRMKPIComponent, title: String) {
@@ -250,7 +257,6 @@ public final class ZCRMKPI: UIView, KPIUtil {
 		self.translatesAutoresizingMaskIntoConstraints = false
 		self.render()
 	}
-	
 	required public init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
@@ -294,8 +300,6 @@ fileprivate extension ZCRMKPI {
 	*/
 	 func render() {
 		
-		self.clipsToBounds = true
-		self.layoutIfNeeded()
 		self.backgroundColor = UIColor(red: 182/255.0, green: 182/255.0, blue: 182/255.0, alpha: 1)
 		self.renderKPIView()
 	}
@@ -305,7 +309,7 @@ fileprivate extension ZCRMKPI {
 	*/
 	func updateChanges() {
 		
-		if !self.isScorecard && !self.isRankings {
+		if !self.isScorecard && !self.isRankings && self.data.count > 0{
 			self.renderKPIData()
 		}
 	}
@@ -430,7 +434,7 @@ fileprivate extension ZCRMKPI {
 	private func addSimpleKpiConstraints() {
 		
 		var constraints: [NSLayoutConstraint] = []
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[value]", options: [], metrics: nil, views: ["title": self.titleView, "value": valueView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title(<=25)]-[value(>=title)]", options: [], metrics: nil, views: ["title": self.titleView, "value": valueView])
 		if !self.isBasic {
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[value(==comparedTo)]-[comparedTo]-15-|", options: [.alignAllBottom], metrics: nil, views: ["value": valueView, "comparedTo": self.comparedToView])
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[comparedTo]-|", options: [], metrics: nil, views: ["comparedTo": self.comparedToView])
