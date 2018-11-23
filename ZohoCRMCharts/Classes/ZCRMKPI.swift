@@ -479,6 +479,7 @@ fileprivate extension ZCRMKPI {
 		self.tableView.dataSource = self
 		self.tableView.separatorStyle = .none
 		self.tableView.translatesAutoresizingMaskIntoConstraints = false
+		self.tableView.backgroundColor = self.backgroundColor
 		self.addSubview(self.tableView)
 		if self.isScorecard {
 			self.footNoteView.translatesAutoresizingMaskIntoConstraints = false
