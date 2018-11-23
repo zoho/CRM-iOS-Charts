@@ -17,6 +17,7 @@
 		FE110CBD21709A27000D0815 /* ZCRMKPICell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE110CB521709A1B000D0815 /* ZCRMKPICell.swift */; };
 		FE110CBE21709A2B000D0815 /* ZCRMUIUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE110CB621709A1B000D0815 /* ZCRMUIUtil.swift */; };
 		FE110CBF21709A34000D0815 /* ZCRMWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE110CB721709A1B000D0815 /* ZCRMWrapper.swift */; };
+		FE24E1C921A525650043CBBB /* ZCRMComparatorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE24E1C721A5255B0043CBBB /* ZCRMComparatorCell.swift */; };
 		FE5D86CB2180B37300204484 /* ZCRMCommonUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE5D86C92180B36A00204484 /* ZCRMCommonUtil.swift */; };
 		FE834D332189D38A00039101 /* ZCRMComparator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE834D312189D38000039101 /* ZCRMComparator.swift */; };
 /* End PBXBuildFile section */
@@ -59,6 +60,7 @@
 		FE110CB521709A1B000D0815 /* ZCRMKPICell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMKPICell.swift; path = ZohoCRMCharts/Classes/ZCRMKPICell.swift; sourceTree = "<group>"; };
 		FE110CB621709A1B000D0815 /* ZCRMUIUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMUIUtil.swift; path = ZohoCRMCharts/Classes/ZCRMUIUtil.swift; sourceTree = "<group>"; };
 		FE110CB721709A1B000D0815 /* ZCRMWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMWrapper.swift; path = ZohoCRMCharts/Classes/ZCRMWrapper.swift; sourceTree = "<group>"; };
+		FE24E1C721A5255B0043CBBB /* ZCRMComparatorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMComparatorCell.swift; path = ZohoCRMCharts/Classes/ZCRMComparatorCell.swift; sourceTree = "<group>"; };
 		FE5D86C92180B36A00204484 /* ZCRMCommonUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMCommonUtil.swift; path = ZohoCRMCharts/Classes/ZCRMCommonUtil.swift; sourceTree = "<group>"; };
 		FE834D312189D38000039101 /* ZCRMComparator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZCRMComparator.swift; path = ZohoCRMCharts/Classes/ZCRMComparator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -148,6 +150,7 @@
 		BE88AF31A9DDA5B8178696E3D3FFDE32 /* ZohoCRMCharts */ = {
 			isa = PBXGroup;
 			children = (
+				FE24E1C721A5255B0043CBBB /* ZCRMComparatorCell.swift */,
 				FE5D86C92180B36A00204484 /* ZCRMCommonUtil.swift */,
 				FE110CB421709A1B000D0815 /* ZCRMKPI.swift */,
 				FE110CB521709A1B000D0815 /* ZCRMKPICell.swift */,
@@ -261,7 +264,7 @@
 				TargetAttributes = {
 					5F8CA4670D276E6A08CA3462FF6CC8EA = {
 						DevelopmentTeam = TZ824L8Y37;
-						LastSwiftMigration = 0940;
+						LastSwiftMigration = 1010;
 					};
 				};
 			};
@@ -295,6 +298,7 @@
 				FE110CBE21709A2B000D0815 /* ZCRMUIUtil.swift in Sources */,
 				FE834D332189D38A00039101 /* ZCRMComparator.swift in Sources */,
 				FE110CBF21709A34000D0815 /* ZCRMWrapper.swift in Sources */,
+				FE24E1C921A525650043CBBB /* ZCRMComparatorCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,7 +339,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/ZohoCRMCharts/ZohoCRMCharts-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/ZohoCRMCharts/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/ZohoCRMCharts/ZohoCRMCharts.modulemap";
 				PRODUCT_NAME = ZohoCRMCharts;
@@ -368,7 +372,7 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Target Support Files/Pods-ZohoCRMCharts_Tests/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-ZohoCRMCharts_Tests/Pods-ZohoCRMCharts_Tests.modulemap";
@@ -405,7 +409,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/ZohoCRMCharts/ZohoCRMCharts-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/ZohoCRMCharts/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/ZohoCRMCharts/ZohoCRMCharts.modulemap";
 				PRODUCT_NAME = ZohoCRMCharts;
@@ -559,7 +563,7 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Target Support Files/Pods-ZohoCRMCharts_Tests/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-ZohoCRMCharts_Tests/Pods-ZohoCRMCharts_Tests.modulemap";

@@ -6,14 +6,15 @@
 //  Copyright © 2018 Zoho CRM. All rights reserved.
 //
 
+import UIKit
+
 internal struct Colors {
 	
-	static let incrementColor: UIColor =  UIColor(red: 14/255.0, green: 213/255.0, blue: 28/255.0, alpha: 1)
-	static let decrementColor: UIColor = UIColor(red: 204/255.0, green: 10/255.0, blue: 39/255.0, alpha: 1)
+	static let positiveColor: UIColor =  UIColor(red: 14/255.0, green: 213/255.0, blue: 28/255.0, alpha: 1)
+	static let negativeColor: UIColor = UIColor(red: 204/255.0, green: 10/255.0, blue: 39/255.0, alpha: 1)
 	static let rateBarColor: UIColor = UIColor(red: 27/255.0, green: 168/255.0, blue: 249/255.0, alpha: 1)
 	static let fontColor: UIColor = UIColor.black
 	static let neutralColor: UIColor =  UIColor(red: 247/255.0, green: 231/255.0, blue: 54/255.0, alpha: 1)
-	static let titleFont: UIFont = UIFont.systemFont(ofSize: 17.5)
 	static let rateColor: UIColor = .white
 }
 
@@ -30,12 +31,29 @@ internal struct KPIRenderOptions {
 	var valueFontColor: UIColor = Colors.fontColor
 	var rateFont: UIFont = UIFont.systemFont(ofSize: 19.5)
 	var rateFontColor: UIColor = Colors.fontColor
-	var incrementColor: UIColor = Colors.incrementColor
-	var decrementColor: UIColor = Colors.decrementColor
+	var positiveColor: UIColor = Colors.positiveColor
+	var negativeColor: UIColor = Colors.negativeColor
 	var neutralColor: UIColor = Colors.neutralColor
 	var rateBarColor: UIColor = Colors.rateBarColor
 	var footNoteFont: UIFont = UIFont.systemFont(ofSize: 12)
 	var footNoteColor: UIColor = Colors.fontColor
+}
+
+internal struct ComparatorRenderOptions {
+	
+	var titleFont: UIFont = UIFont.systemFont(ofSize: 20)
+	var titleFontColor: UIColor = Colors.fontColor
+	var chunkDataFont: UIFont = UIFont.systemFont(ofSize: 13)
+	var chunkDataFontColor: UIColor = Colors.fontColor
+	var chunkFont: UIFont = UIFont.systemFont(ofSize: 13)
+	var chunkFontColor: UIColor = Colors.fontColor
+	var groupFont: UIFont = UIFont.systemFont(ofSize: 13)
+	var groupFontColor: UIColor = Colors.fontColor
+	var elegantDiffColor: UIColor = UIColor(red: 207 / 255, green: 223 / 255, blue: 249 / 255, alpha: 1)
+	var classicHeaderRowColor: UIColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+	var positiveColor: UIColor = Colors.positiveColor
+	var negativeColor: UIColor = Colors.negativeColor
+	var neutralColor: UIColor = Colors.neutralColor
 }
 
 internal struct ZCRMUIUtil {
@@ -60,10 +78,10 @@ internal struct ZCRMKPIUIUtil {
 		
 		let fontSize = options.simpleKpiValueFont.pointSize
 		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.value, attributes: [NSFontAttributeName: options.simpleKpiValueFont, NSForegroundColorAttributeName: options.valueFontColor])
-		if (data.objective == .increased) {
-			outputString.append(ZCRMUIUtil.getIncText(ofSize: (fontSize/2) + 3, baselineOffset: 2.5, color: options.incrementColor))
-		} else if (data.objective == .decreased) {
-			outputString.append(ZCRMUIUtil.getDecText(ofSize: (fontSize/2) + 3, baselineOffset: 2, color: options.decrementColor))
+		if (data.objective == .positive) {
+			outputString.append(ZCRMUIUtil.getIncText(ofSize: (fontSize/2) + 3, baselineOffset: 2.5, color: options.positiveColor))
+		} else if (data.objective == .negative) {
+			outputString.append(ZCRMUIUtil.getDecText(ofSize: (fontSize/2) + 3, baselineOffset: 2, color: options.negativeColor))
 		} else {
 			outputString.append(ZCRMUIUtil.getNeutralText(ofSize: (fontSize/2) + 4, baselineOffset: 2.5, color: options.neutralColor))
 		}
@@ -75,12 +93,12 @@ internal struct ZCRMKPIUIUtil {
 		
 		let fontSize = options.simpleKpiValueFont.pointSize
 		var valueColor = options.neutralColor
-		if data.objective == .increased {
-			valueColor = options.incrementColor
-		} else if data.objective == .decreased {
-			valueColor = options.decrementColor
+		if data.objective == .positive {
+			valueColor = options.positiveColor
+		} else if data.objective == .negative {
+			valueColor = options.negativeColor
 		}
-		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.value, attributes: [ NSFontAttributeName: options.simpleKpiValueFont, NSForegroundColorAttributeName: valueColor])
+		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.rate, attributes: [ NSFontAttributeName: options.simpleKpiValueFont, NSForegroundColorAttributeName: valueColor])
 		outputString.append(NSAttributedString(string: " " + data.value, attributes: [ NSFontAttributeName: UIFont.systemFont(ofSize: (fontSize/2) + 1), NSForegroundColorAttributeName: options.valueFontColor, NSBaselineOffsetAttributeName: 2.5]))
 		return outputString
 	}
@@ -91,4 +109,28 @@ internal struct ZCRMKPIUIUtil {
 	
 }
 
+internal struct ZCRMComparatorUIUtil {
+	
+	static func getTextForChunkData(_ chunkData: ZCRMChunkData, options: ComparatorRenderOptions, objective: ZCRMCharts.Outcome, isHeader: Bool) -> NSMutableAttributedString{
+		
+		let font = isHeader ? options.groupFont : options.chunkDataFont
+		let color = isHeader ? options.groupFontColor : options.chunkDataFontColor
+		let outputString = NSMutableAttributedString(string: chunkData.label, attributes: [NSFontAttributeName: font, NSForegroundColorAttributeName: color])
+		if chunkData.rate != nil {
+			var rateColor: UIColor!
+			if objective == .positive {
+				rateColor = options.positiveColor
+				outputString.append(ZCRMUIUtil.getIncText(ofSize: options.chunkDataFont.pointSize, baselineOffset: 0, color: rateColor))
+			} else if objective == .negative {
+				rateColor = options.negativeColor
+				outputString.append(ZCRMUIUtil.getDecText(ofSize: options.chunkDataFont.pointSize, baselineOffset: 0, color: rateColor))
+			} else {
+				rateColor = options.neutralColor
+				outputString.append(ZCRMUIUtil.getNeutralText(ofSize: options.chunkDataFont.pointSize, baselineOffset: 0, color: rateColor))
+			}
+			outputString.append(NSAttributedString(string: chunkData.rate, attributes: [ NSFontAttributeName: options.chunkDataFont, NSForegroundColorAttributeName : rateColor] ))
+		}
+		return outputString
+	}
+}
 

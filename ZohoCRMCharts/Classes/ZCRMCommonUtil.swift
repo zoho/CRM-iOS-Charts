@@ -5,14 +5,27 @@
 //  Created by Sarath Kumar Rajendran on 24/10/18.
 //
 
+import UIKit
+
+/**
+Error.
+*/
+public struct ZCRMChartsError : Error {
+	
+	let message: String
+	
+	init(message: String) {
+		self.message = "ZCRMCharts - \(message)"
+	}
+	
+	public var localizedDescription: String {
+		return self.message
+	}
+}
+
 internal protocol KPIUtil {
 	
-	var type: ZCRMKPIComponent { get set}
-	var isScorecard: Bool { get }
-	var isRankings: Bool { get }
-	var isBasic: Bool { get }
-	var isStandard: Bool { get }
-	var isGrowthIndex: Bool { get }
+	var type: ZCRMCharts.ZCRMKPIComponent { get set}
 }
 
 internal extension KPIUtil {
@@ -67,6 +80,41 @@ internal extension UIView {
 	func getWidthOf(percent: CGFloat) -> CGFloat {
 		return (self.frame.width / 100) * percent
 	}
+	
+	func invalidateConstraints() {
+		
+		var constraints: [NSLayoutConstraint] = self.constraints
+		for subView in self.subviews {
+			constraints += subView.constraints
+		}
+		if !constraints.isEmpty {
+			NSLayoutConstraint.deactivate(constraints)
+		}
+	}
+	
+	func addBottomBorder(color: UIColor, width: CGFloat) {
+		
+		let borderLayer = CALayer()
+		borderLayer.backgroundColor = color.cgColor
+		borderLayer.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width, height: width)
+		self.layer.addSublayer(borderLayer)
+	}
+	
+	func addLeftShadow(shadowRadius: CGFloat = 2.0) {
+		
+		self.layer.masksToBounds = false
+		self.layer.shadowRadius = shadowRadius
+		self.layer.shadowOpacity = 1.0
+		
+		let path = UIBezierPath()
+		path.move(to: CGPoint(x: 0, y: 0))
+		path.addLine(to: CGPoint(x: shadowRadius, y: 0))
+		path.addLine(to: CGPoint(x: shadowRadius, y: self.frame.height))
+		path.addLine(to: CGPoint(x: 0, y: self.frame.height))
+		path.close()
+		self.layer.shadowPath = path.cgPath
+	}
+	
 }
 
 internal extension String {
@@ -86,6 +134,20 @@ internal extension Optional where Wrapped == String {
 	}
 }
 
+internal extension Int {
+	
+	func toCGFloat() -> CGFloat {
+		return CGFloat(self)
+	}
+}
+
+internal extension CGFloat {
+	
+	func toInt() -> Int {
+		return Int(self)
+	}
+}
+
 internal func getScreenHeightOf(percent: CGFloat) -> CGFloat {
 	
 	return (UIScreen.main.bounds.height / 100) * percent
@@ -95,7 +157,3 @@ internal func getScreenWidthOf(percent: CGFloat) -> CGFloat {
 	
 	return (UIScreen.main.bounds.width / 100) * percent
 }
-
-
-
-

@@ -6,6 +6,8 @@
 //  Copyright © 2018 Zoho CRM. All rights reserved.
 //
 
+import UIKit
+
 public final class ZCRMKPI: UIView, KPIUtil {
 	
 	/**
@@ -139,10 +141,10 @@ public final class ZCRMKPI: UIView, KPIUtil {
 	/**
 		Color to indicate incremental status. This property is nil by default.
 	*/
-	public var incrementColor: UIColor! {
+	public var positiveColor: UIColor! {
 		didSet {
-			if incrementColor != nil {
-				self.renderOptions.incrementColor = incrementColor
+			if positiveColor != nil {
+				self.renderOptions.positiveColor = positiveColor
 				self.updateChanges()
 			}
 		}
@@ -151,10 +153,10 @@ public final class ZCRMKPI: UIView, KPIUtil {
 	/**
 		Color to indicate decremental status. This property is nil by default.
 	*/
-	public var decrementColor: UIColor! {
+	public var negativeColor: UIColor! {
 		didSet {
-			if decrementColor != nil {
-				self.renderOptions.decrementColor = decrementColor
+			if negativeColor != nil {
+				self.renderOptions.negativeColor = negativeColor
 				self.updateChanges()
 			}
 		}
@@ -231,7 +233,7 @@ public final class ZCRMKPI: UIView, KPIUtil {
 		return CGSize(width: getScreenWidthOf(percent: 92), height: self.getCalculatedHeight())
 	}
 	
-	internal var type: ZCRMKPIComponent
+	internal var type: ZCRMCharts.ZCRMKPIComponent
 	fileprivate let title: String
 	fileprivate var data: [ZCRMKPIRow] = []
 	fileprivate var renderOptions: KPIRenderOptions = KPIRenderOptions()
@@ -243,14 +245,14 @@ public final class ZCRMKPI: UIView, KPIUtil {
 	fileprivate let comparedToView = UILabel() // for standard and growth index
 	fileprivate let cellHeight: CGFloat = 42 // default cell height for a kpi row in rankings and scorecard
 
-	public init(frame: CGRect, type: ZCRMKPIComponent, title: String) {
+	public init(frame: CGRect, type: ZCRMCharts.ZCRMKPIComponent, title: String) {
 		self.type = type
 		self.title = title
 		super.init(frame: frame)
 		self.render()
 	}
 	
-	public init(type: ZCRMKPIComponent, title: String) {
+	public init(type: ZCRMCharts.ZCRMKPIComponent, title: String) {
 		self.type = type
 		self.title = title
 		super.init(frame: .zero)
@@ -288,6 +290,14 @@ public final class ZCRMKPI: UIView, KPIUtil {
 			throw ZCRMChartsError(message: "Invalid data found for kpi of type \(self.type) at \(self)")
 		}
 	}
+	
+	public override func layoutSubviews() {
+		
+		if self.isScorecard || self.isRankings {
+			self.tableView.reloadData() // to re-render invisble cells
+		}
+	}
+
 }
 
 /**
@@ -353,7 +363,7 @@ fileprivate extension ZCRMKPI {
 		if !self.isRankings && !self.isScorecard {
 			height += 85
 		} else {
-			height += CGFloat(self.data.count) * self.cellHeight + 55
+			height += self.data.count.toCGFloat() * self.cellHeight + 55
 			if self.isScorecard {
 				height += 25
 			}
@@ -434,12 +444,11 @@ fileprivate extension ZCRMKPI {
 	private func addSimpleKpiConstraints() {
 		
 		var constraints: [NSLayoutConstraint] = []
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title(<=25)]-[value(>=title)]", options: [], metrics: nil, views: ["title": self.titleView, "value": valueView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title(<=25)]-[value(>=title)]", options: [], metrics: nil, views: ["title": self.titleView, "value": self.valueView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[value]", options: [], metrics: nil, views: ["value": self.valueView])
 		if !self.isBasic {
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[value(==comparedTo)]-[comparedTo]-15-|", options: [.alignAllBottom], metrics: nil, views: ["value": valueView, "comparedTo": self.comparedToView])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:[comparedTo]-15-|", options: [.alignAllBottom], metrics: nil, views: ["value": self.valueView, "comparedTo": self.comparedToView])
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[comparedTo]-|", options: [], metrics: nil, views: ["comparedTo": self.comparedToView])
-		} else {
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[value]", options: [], metrics: nil, views: ["value": valueView])
 		}
 		NSLayoutConstraint.activate(constraints)
 	}
@@ -468,16 +477,11 @@ fileprivate extension ZCRMKPI {
 	private func setKpiView() {
 		
 		self.tableView.dataSource = self
-		self.tableView.isScrollEnabled = false
-		self.tableView.allowsSelection = false
 		self.tableView.separatorStyle = .none
 		self.tableView.translatesAutoresizingMaskIntoConstraints = false
-		self.tableView.backgroundColor = self.backgroundColor
 		self.addSubview(self.tableView)
-		
 		if self.isScorecard {
 			self.footNoteView.translatesAutoresizingMaskIntoConstraints = false
-			self.footNoteView.backgroundColor = self.backgroundColor
 			self.footNoteView.textAlignment = .left
 			self.addSubview(self.footNoteView)
 		}
@@ -490,14 +494,12 @@ fileprivate extension ZCRMKPI {
 		
 		self.tableView.layoutIfNeeded()
 		self.tableView.rowHeight = self.cellHeight
-		let tVHeight: CGFloat = CGFloat(self.data.count) * self.cellHeight
 		var constraints: [NSLayoutConstraint] = []
 		if self.isScorecard {
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[table(==\(tVHeight))]", options: [], metrics: nil, views: ["title" : self.titleView, "table": self.tableView])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title(<=25)]-[table]-[footNote(<=25)]-10-|", options: [], metrics: nil, views: ["title" : self.titleView, "table": self.tableView, "footNote": self.footNoteView])
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-20-[footNote]-0-|", options: [], metrics: nil, views: ["footNote": self.footNoteView])
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[footNote]-10-|", options: [], metrics: nil, views: [ "footNote": self.footNoteView])
 		} else {
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[table(==\(tVHeight))]", options: [], metrics: nil, views: ["title" : self.titleView, "table": self.tableView])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title(<=25)]-[table]-|", options: [], metrics: nil, views: ["title" : self.titleView, "table": self.tableView])
 		}
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[table]-0-|", options: [], metrics: nil, views: ["table": self.tableView])
 		NSLayoutConstraint.activate(constraints)

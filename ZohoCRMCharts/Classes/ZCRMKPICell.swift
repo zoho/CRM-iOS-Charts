@@ -6,6 +6,8 @@
 //  Copyright © 2018 Zoho CRM. All rights reserved.
 //
 
+import UIKit
+
 internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	
 	public var rowLable: UILabel = UILabel() // for both scorecard and rankings
@@ -14,12 +16,12 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	public var rateBar: UIView = UIView() // for both rankings
 	private var rightContainer: UIView = UIView() // for both scorecard and rankings
 	
-	internal var type: ZCRMKPIComponent
+	internal var type: ZCRMCharts.ZCRMKPIComponent
 	private var data : ZCRMKPIRow
 	private var options: KPIRenderOptions
 	private var highRate: CGFloat!
 	
-	init(data: ZCRMKPIRow, type: ZCRMKPIComponent, options: KPIRenderOptions) {
+	init(data: ZCRMKPIRow, type: ZCRMCharts.ZCRMKPIComponent, options: KPIRenderOptions) {
 		self.data = data
 		self.type = type
 		self.options = options
@@ -27,7 +29,7 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 		self.render()
 	}
 	
-	init(data: ZCRMKPIRow, type: ZCRMKPIComponent, highRate: CGFloat, options: KPIRenderOptions) {
+	init(data: ZCRMKPIRow, type: ZCRMCharts.ZCRMKPIComponent, highRate: CGFloat, options: KPIRenderOptions) {
 		self.data = data
 		self.type = type
 		self.highRate = highRate
@@ -46,6 +48,9 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	}
 	
 	override func layoutSubviews() {
+
+		self.invalidateConstraints()
+		self.addConstraints()
 		self.renderData()
 	}
 	
@@ -60,6 +65,9 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 		self.rightContainer.addSubview(self.valueLabel)
 		self.contentView.addSubview(self.rowLable)
 		self.contentView.addSubview(self.rightContainer)
+	}
+	
+	private func addConstraints() {
 		
 		//constraints
 		var constraints : [NSLayoutConstraint] = []
@@ -105,12 +113,11 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 		self.rateLabel.layer.cornerRadius = 5
 		self.rateLabel.clipsToBounds = true
 		self.rateLabel.backgroundColor = self.options.neutralColor
-		if self.data.objective == .increased {
-			self.rateLabel.backgroundColor = self.options.incrementColor
-		} else if self.data.objective == .decreased {
-			self.rateLabel.backgroundColor = self.options.decrementColor
+		if self.data.objective == .positive {
+			self.rateLabel.backgroundColor = self.options.positiveColor
+		} else if self.data.objective == .negative {
+			self.rateLabel.backgroundColor = self.options.negativeColor
 		}
-		
 	}
 	
 	/**
@@ -131,7 +138,7 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	*/
 	private func getRateBarLenght() -> CGFloat {
 		
-		let availaleSpace = self.getWidthOf(percent: 35)
+		let availaleSpace = self.getWidthOf(percent: 30)
 		let onePercentOfSpace = availaleSpace / 100
 		let percentOfDiff = (self.data.value.toCGFloat() * 100) / self.highRate
 		return (onePercentOfSpace * percentOfDiff)

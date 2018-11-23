@@ -6,36 +6,33 @@
 //  Copyright © 2018 Zoho CRM. All rights reserved.
 //
 
-/**
-	Types of KPI components available in Zoho CRM Charts.
-*/
-public enum ZCRMKPIComponent: String {
-	
-	case standard
-	case growthIndex
-	case basic
-	case scorecard
-	case rankings
-}
+import UIKit
 
-/**
-	Types of Comparator components available in Zoho CRM Charts.
-*/
-public enum ZCRMComparatorComponent: String {
-	
-	case elegant
-	case sport
-	case classic
-}
 
-/**
-	To point out the objective of a data.
-*/
-public enum ZCRMObjective {
+public struct ZCRMCharts {
 	
-	case increased
-	case decreased
-	case neutral
+	public enum ZCRMKPIComponent: String {
+		
+		case standard
+		case growthIndex
+		case basic
+		case scorecard
+		case rankings
+	}
+	
+	public enum ZCRMComparatorComponent: String {
+		
+		case elegant
+		case sport
+		case classic
+	}
+
+	public enum Outcome {
+		
+		case positive
+		case negative
+		case neutral
+	}
 }
 
 /**
@@ -46,7 +43,7 @@ public struct ZCRMKPIRow {
 	internal var value: String!
 	internal var label: String!
 	internal var rate: String!
-	internal var objective: ZCRMObjective!
+	internal var objective: ZCRMCharts.Outcome!
 	public var comparedToLabel: String!
 	public var comparedToValue: String!
 	
@@ -66,7 +63,7 @@ public struct ZCRMKPIRow {
 		- rate: rate differed from the compared one.
 		- objective: objective of the kpi.
 	*/
-	public init(value: String, rate: String, objective: ZCRMObjective) {
+	public init(value: String, rate: String, objective: ZCRMCharts.Outcome) {
 		self.value = value
 		self.rate = rate
 		self.objective = objective
@@ -77,10 +74,10 @@ public struct ZCRMKPIRow {
 	- parameters:
 		- label: label for the kpi row data.
 		- value: value for the kpi row.
-		- rate: rate of increment/decrement.
+		- rate: rate of growth outcome.
 		- status: it is a increment/decrement/neutral.
 	*/
-	public init(label: String, value: String, rate: String, objective: ZCRMObjective){
+	public init(label: String, value: String, rate: String, objective: ZCRMCharts.Outcome){
 		self.label = label
 		self.value = value;
 		self.rate = rate
@@ -102,8 +99,8 @@ public struct ZCRMKPIRow {
 
 public struct ZCRMChunkData {
 	
-	internal var label: String
-	internal var value: Int
+	internal let label: String
+	internal let value: Int
 	internal var rate: String!
 	
 	public init(label: String, value: Int) {
@@ -120,8 +117,8 @@ public struct ZCRMChunkData {
 
 public struct ZCRMComparatorGroup {
 	
-	internal var label: String
-	internal var value: String
+	internal let label: String
+	internal let value: String
 	internal var image: UIImage!
 	
 	public init(label: String, value: String) {
@@ -139,8 +136,8 @@ public struct ZCRMComparatorGroup {
 
 public final class ZCRMComparatorGroupings {
 	
-	internal var groups: [ZCRMComparatorGroup]
-	internal var isAvatarNeeded: Bool
+	internal let groups: [ZCRMComparatorGroup]
+	internal let isAvatarNeeded: Bool
 	internal var label: String!
 	
 	public init(groups: [ZCRMComparatorGroup], isAvatarNeeded: Bool) {
@@ -158,32 +155,22 @@ public final class ZCRMComparatorGroupings {
 
 public final class ZCRMComparatorChunk {
 	
-	internal var label: String
-	internal var objective: ZCRMObjective!
+	public var bgColor: UIColor = .green
+	internal let label: String
+	internal var objective: ZCRMCharts.Outcome!
 	
 	public init(label: String) {
 		self.label = label
 	}
 	
+	public init(label: String, objective: ZCRMCharts.Outcome) {
+		self.label = label
+		self.objective = objective
+	}
 }
 
 public protocol ZCRMComparatorDataSource: class {
 	
-	func comparator(_ chunk: ZCRMComparatorChunk, _ group: ZCRMComparatorGroup, dataForRowAt: Int) -> ZCRMChunkData
+	func comparator(_ chunk: ZCRMComparatorChunk, _ group: ZCRMComparatorGroup, groupIndex: Int, chunkIndex: Int) -> ZCRMChunkData
 }
 
-/**
-	Error.
-*/
-public struct ZCRMChartsError : Error {
-	
-	let message: String
-	
-	init(message: String) {
-		self.message = "ZCRMCharts - \(message)"
-	}
-	
-	public var localizedDescription: String {
-		return self.message
-	}
-}
