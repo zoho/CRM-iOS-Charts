@@ -233,7 +233,14 @@ public final class ZCRMKPI: UIView, KPIUtil {
 		return CGSize(width: getScreenWidthOf(percent: 92), height: self.getCalculatedHeight())
 	}
 	
-	internal var type: ZCRMCharts.ZCRMKPIComponent
+	public override var backgroundColor: UIColor? {
+		didSet {
+			super.backgroundColor = backgroundColor
+			self.tableView.backgroundColor = backgroundColor
+		}
+	}
+	
+	internal var type: ZCRMCharts.ZCRMKPIType
 	fileprivate let title: String
 	fileprivate var data: [ZCRMKPIRow] = []
 	fileprivate var renderOptions: KPIRenderOptions = KPIRenderOptions()
@@ -245,14 +252,14 @@ public final class ZCRMKPI: UIView, KPIUtil {
 	fileprivate let comparedToView = UILabel() // for standard and growth index
 	fileprivate let cellHeight: CGFloat = 42 // default cell height for a kpi row in rankings and scorecard
 
-	public init(frame: CGRect, type: ZCRMCharts.ZCRMKPIComponent, title: String) {
+	public init(frame: CGRect, type: ZCRMCharts.ZCRMKPIType, title: String) {
 		self.type = type
 		self.title = title
 		super.init(frame: frame)
 		self.render()
 	}
 	
-	public init(type: ZCRMCharts.ZCRMKPIComponent, title: String) {
+	public init(type: ZCRMCharts.ZCRMKPIType, title: String) {
 		self.type = type
 		self.title = title
 		super.init(frame: .zero)
@@ -479,7 +486,6 @@ fileprivate extension ZCRMKPI {
 		self.tableView.dataSource = self
 		self.tableView.separatorStyle = .none
 		self.tableView.translatesAutoresizingMaskIntoConstraints = false
-		self.tableView.backgroundColor = self.backgroundColor
 		self.addSubview(self.tableView)
 		if self.isScorecard {
 			self.footNoteView.translatesAutoresizingMaskIntoConstraints = false
@@ -563,7 +569,6 @@ fileprivate extension ZCRMKPI {
 extension ZCRMKPI : UITableViewDataSource, UITableViewDelegate {
 	
 	public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		
 		return self.data.count
 	}
 	

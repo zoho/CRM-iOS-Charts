@@ -1,15 +1,16 @@
 //
 //  ZCRMComparatorCell.swift
-//  Pods-ZohoCRMChartsTest
+//  ZohoCRMCharts
 //
 //  Created by Sarath Kumar Rajendran on 12/11/18.
+//  Copyright © 2018 Zoho CRM. All rights reserved.
 //
 
 import UIKit
 
-internal class ZCRMComparatorCell: UICollectionViewCell {
+internal final class ZCRMComparatorCell: UICollectionViewCell {
 	
-	internal var type: ZCRMCharts.ZCRMComparatorComponent!
+	internal var type: ZCRMCharts.ZCRMComparatorType!
 	internal var options: ComparatorRenderOptions = ComparatorRenderOptions()
 	internal var objective: ZCRMCharts.Outcome = .neutral
 	internal var isHeader: Bool = false
@@ -97,14 +98,14 @@ internal class ZCRMComparatorCell: UICollectionViewCell {
 	
 }
 
-internal class ZCRMComparatorHeader: UIView {
+internal final class ZCRMComparatorHeader: UIView {
 	
 	private let imageView: UIImageView = UIImageView()
 	private let label: UILabel = UILabel()
 	internal var alignVertical: Bool!
 	internal var options: ComparatorRenderOptions = ComparatorRenderOptions()
 	private var isAvatarNeeded: Bool
-	private var type: ZCRMCharts.ZCRMComparatorComponent
+	private var type: ZCRMCharts.ZCRMComparatorType
 	
 	internal var group: ZCRMComparatorGroup! {
 		didSet {
@@ -112,7 +113,7 @@ internal class ZCRMComparatorHeader: UIView {
 		}
 	}
 	
-	init(type: ZCRMCharts.ZCRMComparatorComponent, _ isAvatarNeeded: Bool) {
+	init(type: ZCRMCharts.ZCRMComparatorType, _ isAvatarNeeded: Bool) {
 		self.type = type
 		self.isAvatarNeeded = isAvatarNeeded
 		super.init(frame: .zero)
@@ -216,7 +217,7 @@ internal class ZCRMComparatorHeader: UIView {
 	}
 }
 
-internal class ZCRMComparatorChunkView: UIView {
+internal final class ZCRMComparatorChunkView: UIView {
 	
 	var options: ComparatorRenderOptions = ComparatorRenderOptions()
 	var addBottomBorder: Bool = false

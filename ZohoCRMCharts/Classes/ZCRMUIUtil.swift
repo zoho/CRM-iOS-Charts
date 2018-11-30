@@ -56,6 +56,12 @@ internal struct ComparatorRenderOptions {
 	var neutralColor: UIColor = Colors.neutralColor
 }
 
+internal struct FunnelRenderOptions {
+	
+	var titleFont: UIFont = UIFont.systemFont(ofSize: 20)
+	var titleFontColor: UIColor = Colors.fontColor
+}
+
 internal struct ZCRMUIUtil {
 	
 	static func getDecText(ofSize: CGFloat, baselineOffset: NSNumber, color: UIColor) -> NSAttributedString {

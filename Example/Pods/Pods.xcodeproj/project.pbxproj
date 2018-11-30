@@ -17,6 +17,8 @@
 		FE110CBD21709A27000D0815 /* ZCRMKPICell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE110CB521709A1B000D0815 /* ZCRMKPICell.swift */; };
 		FE110CBE21709A2B000D0815 /* ZCRMUIUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE110CB621709A1B000D0815 /* ZCRMUIUtil.swift */; };
 		FE110CBF21709A34000D0815 /* ZCRMWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE110CB721709A1B000D0815 /* ZCRMWrapper.swift */; };
+		FE11253C21AD79F90016E75F /* ZCRMFunnel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE11253A21AD79F80016E75F /* ZCRMFunnel.swift */; };
+		FE11253D21AD79F90016E75F /* ZCRMFunnelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE11253B21AD79F90016E75F /* ZCRMFunnelCell.swift */; };
 		FE24E1C921A525650043CBBB /* ZCRMComparatorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE24E1C721A5255B0043CBBB /* ZCRMComparatorCell.swift */; };
 		FE5D86CB2180B37300204484 /* ZCRMCommonUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE5D86C92180B36A00204484 /* ZCRMCommonUtil.swift */; };
 		FE834D332189D38A00039101 /* ZCRMComparator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE834D312189D38000039101 /* ZCRMComparator.swift */; };
@@ -60,6 +62,8 @@
 		FE110CB521709A1B000D0815 /* ZCRMKPICell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMKPICell.swift; path = ZohoCRMCharts/Classes/ZCRMKPICell.swift; sourceTree = "<group>"; };
 		FE110CB621709A1B000D0815 /* ZCRMUIUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMUIUtil.swift; path = ZohoCRMCharts/Classes/ZCRMUIUtil.swift; sourceTree = "<group>"; };
 		FE110CB721709A1B000D0815 /* ZCRMWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMWrapper.swift; path = ZohoCRMCharts/Classes/ZCRMWrapper.swift; sourceTree = "<group>"; };
+		FE11253A21AD79F80016E75F /* ZCRMFunnel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMFunnel.swift; path = ZohoCRMCharts/Classes/ZCRMFunnel.swift; sourceTree = "<group>"; };
+		FE11253B21AD79F90016E75F /* ZCRMFunnelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMFunnelCell.swift; path = ZohoCRMCharts/Classes/ZCRMFunnelCell.swift; sourceTree = "<group>"; };
 		FE24E1C721A5255B0043CBBB /* ZCRMComparatorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMComparatorCell.swift; path = ZohoCRMCharts/Classes/ZCRMComparatorCell.swift; sourceTree = "<group>"; };
 		FE5D86C92180B36A00204484 /* ZCRMCommonUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMCommonUtil.swift; path = ZohoCRMCharts/Classes/ZCRMCommonUtil.swift; sourceTree = "<group>"; };
 		FE834D312189D38000039101 /* ZCRMComparator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZCRMComparator.swift; path = ZohoCRMCharts/Classes/ZCRMComparator.swift; sourceTree = "<group>"; };
@@ -150,6 +154,8 @@
 		BE88AF31A9DDA5B8178696E3D3FFDE32 /* ZohoCRMCharts */ = {
 			isa = PBXGroup;
 			children = (
+				FE11253A21AD79F80016E75F /* ZCRMFunnel.swift */,
+				FE11253B21AD79F90016E75F /* ZCRMFunnelCell.swift */,
 				FE24E1C721A5255B0043CBBB /* ZCRMComparatorCell.swift */,
 				FE5D86C92180B36A00204484 /* ZCRMCommonUtil.swift */,
 				FE110CB421709A1B000D0815 /* ZCRMKPI.swift */,
@@ -294,11 +300,13 @@
 				FE110CBC21709A23000D0815 /* ZCRMKPI.swift in Sources */,
 				89F9E39AB424031E0F178CCB162B6A69 /* ZohoCRMCharts-dummy.m in Sources */,
 				FE5D86CB2180B37300204484 /* ZCRMCommonUtil.swift in Sources */,
+				FE11253D21AD79F90016E75F /* ZCRMFunnelCell.swift in Sources */,
 				FE110CBD21709A27000D0815 /* ZCRMKPICell.swift in Sources */,
 				FE110CBE21709A2B000D0815 /* ZCRMUIUtil.swift in Sources */,
 				FE834D332189D38A00039101 /* ZCRMComparator.swift in Sources */,
 				FE110CBF21709A34000D0815 /* ZCRMWrapper.swift in Sources */,
 				FE24E1C921A525650043CBBB /* ZCRMComparatorCell.swift in Sources */,
+				FE11253C21AD79F90016E75F /* ZCRMFunnel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

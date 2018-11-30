@@ -11,7 +11,7 @@ import UIKit
 
 public struct ZCRMCharts {
 	
-	public enum ZCRMKPIComponent: String {
+	public enum ZCRMKPIType: String {
 		
 		case standard
 		case growthIndex
@@ -20,10 +20,19 @@ public struct ZCRMCharts {
 		case rankings
 	}
 	
-	public enum ZCRMComparatorComponent: String {
+	public enum ZCRMComparatorType: String {
 		
 		case elegant
 		case sport
+		case classic
+	}
+	
+	public enum ZCRMFunnelType: String {
+		
+		case standard
+		case path
+		case segment
+		case compact
 		case classic
 	}
 
@@ -134,7 +143,7 @@ public struct ZCRMComparatorGroup {
 	
 }
 
-public final class ZCRMComparatorGroupings {
+public struct ZCRMComparatorGroupings {
 	
 	internal let groups: [ZCRMComparatorGroup]
 	internal let isAvatarNeeded: Bool
@@ -153,10 +162,10 @@ public final class ZCRMComparatorGroupings {
 	
 }
 
-public final class ZCRMComparatorChunk {
+public struct ZCRMComparatorChunk {
 	
-	public var bgColor: UIColor = .green
 	internal let label: String
+	internal var color: UIColor = .green
 	internal var objective: ZCRMCharts.Outcome!
 	
 	public init(label: String) {
@@ -167,10 +176,63 @@ public final class ZCRMComparatorChunk {
 		self.label = label
 		self.objective = objective
 	}
+	
+	public init(label: String, color: UIColor) {
+		self.label = label
+		self.color = color
+	}
 }
 
 public protocol ZCRMComparatorDataSource: class {
 	
 	func comparator(_ chunk: ZCRMComparatorChunk, _ group: ZCRMComparatorGroup, groupIndex: Int, chunkIndex: Int) -> ZCRMChunkData
 }
+
+
+
+public struct ZCRMFunnelStage{
+
+	public let label: String
+	public private(set) var color: UIColor!
+
+	public init(label: String) {
+		self.label = label
+	}
+
+	public init(label: String, color: UIColor) {
+		self.label = label
+		self.color = color
+	}
+	
+}
+
+public struct ZCRMFunnelSegment{
+
+	public let label: String
+
+	public init(label: String) {
+		self.label = label
+	}
+}
+
+public struct ZCRMFunnelData{
+
+	internal let label: String
+	internal let value: Int
+
+	public init(label: String, value: Int) {
+		self.label = label
+		self.value = value
+	}
+}
+
+public protocol ZCRMFunnelDataSource: class {
+
+	func rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage, fromStageIndex: Int, toStageIndex: Int, segment: ZCRMFunnelSegment?) -> ZCRMFunnelData
+
+	func funnel(_ stage: ZCRMFunnelStage, segment: ZCRMFunnelSegment?) -> ZCRMFunnelData
+
+	func conversionRateFor(_ funnel: ZCRMFunnel, _ segment: ZCRMFunnelSegment?) -> ZCRMFunnelData
+}
+
 

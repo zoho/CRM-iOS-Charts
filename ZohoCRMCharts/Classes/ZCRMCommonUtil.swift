@@ -3,6 +3,7 @@
 //  ZohoCRMCharts
 //
 //  Created by Sarath Kumar Rajendran on 24/10/18.
+//  Copyright © 2018 Zoho CRM. All rights reserved.
 //
 
 import UIKit
@@ -25,7 +26,7 @@ public struct ZCRMChartsError : Error {
 
 internal protocol KPIUtil {
 	
-	var type: ZCRMCharts.ZCRMKPIComponent { get set}
+	var type: ZCRMCharts.ZCRMKPIType { get set}
 }
 
 internal extension KPIUtil {
@@ -76,7 +77,7 @@ internal extension UIView {
 	func getHeightOf(percent: CGFloat) -> CGFloat {
 		return (self.frame.height / 100) * percent
 	}
-	
+
 	func getWidthOf(percent: CGFloat) -> CGFloat {
 		return (self.frame.width / 100) * percent
 	}
@@ -114,7 +115,6 @@ internal extension UIView {
 		path.close()
 		self.layer.shadowPath = path.cgPath
 	}
-	
 }
 
 internal extension String {
@@ -127,10 +127,7 @@ internal extension String {
 internal extension Optional where Wrapped == String {
 	
 	var notNil: Bool {
-		if self != nil {
-			return true
-		}
-		return false
+		return self != nil
 	}
 }
 
@@ -145,6 +142,10 @@ internal extension CGFloat {
 	
 	func toInt() -> Int {
 		return Int(self)
+	}
+	
+	func toRadians() -> CGFloat {
+		return self * CGFloat(Double.pi) / 180.0
 	}
 }
 

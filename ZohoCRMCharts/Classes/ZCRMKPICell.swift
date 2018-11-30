@@ -10,18 +10,18 @@ import UIKit
 
 internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	
-	public var rowLable: UILabel = UILabel() // for both scorecard and rankings
+	public var rowLabel: UILabel = UILabel() // for both scorecard and rankings
 	public var valueLabel: UILabel = UILabel() // for both scorecard and rankings
 	public var rateLabel: UILabel = UILabel() // for scorecard
 	public var rateBar: UIView = UIView() // for both rankings
 	private var rightContainer: UIView = UIView() // for both scorecard and rankings
 	
-	internal var type: ZCRMCharts.ZCRMKPIComponent
+	internal var type: ZCRMCharts.ZCRMKPIType
 	private var data : ZCRMKPIRow
 	private var options: KPIRenderOptions
 	private var highRate: CGFloat!
 	
-	init(data: ZCRMKPIRow, type: ZCRMCharts.ZCRMKPIComponent, options: KPIRenderOptions) {
+	init(data: ZCRMKPIRow, type: ZCRMCharts.ZCRMKPIType, options: KPIRenderOptions) {
 		self.data = data
 		self.type = type
 		self.options = options
@@ -29,7 +29,7 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 		self.render()
 	}
 	
-	init(data: ZCRMKPIRow, type: ZCRMCharts.ZCRMKPIComponent, highRate: CGFloat, options: KPIRenderOptions) {
+	init(data: ZCRMKPIRow, type: ZCRMCharts.ZCRMKPIType, highRate: CGFloat, options: KPIRenderOptions) {
 		self.data = data
 		self.type = type
 		self.highRate = highRate
@@ -57,13 +57,13 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	private func renderView() {
 		
 		//adding subviews
-		self.rowLable.translatesAutoresizingMaskIntoConstraints = false
+		self.rowLabel.translatesAutoresizingMaskIntoConstraints = false
 		self.valueLabel.translatesAutoresizingMaskIntoConstraints = false
 		self.rateLabel.translatesAutoresizingMaskIntoConstraints = false
 		self.rateBar.translatesAutoresizingMaskIntoConstraints = false
 		self.rightContainer.translatesAutoresizingMaskIntoConstraints = false
 		self.rightContainer.addSubview(self.valueLabel)
-		self.contentView.addSubview(self.rowLable)
+		self.contentView.addSubview(self.rowLabel)
 		self.contentView.addSubview(self.rightContainer)
 	}
 	
@@ -82,8 +82,8 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 		}
 		// common constraints
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[value]-0-|", options: [], metrics: nil, views: ["value": self.valueLabel])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[label(==container)]-0-[container(==label)]-|", options: [], metrics: nil, views: ["label": self.rowLable, "container": self.rightContainer])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[label(==container)]-0-|", options: [], metrics: nil, views: ["label": self.rowLable, "container": self.rightContainer])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[label(==container)]-0-[container(==label)]-|", options: [], metrics: nil, views: ["label": self.rowLabel, "container": self.rightContainer])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[label(==container)]-0-|", options: [], metrics: nil, views: ["label": self.rowLabel, "container": self.rightContainer])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[container]-0-|", options: [], metrics: nil, views: ["container": self.rightContainer])
 		NSLayoutConstraint.activate(constraints)
 	}
@@ -93,7 +93,7 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	*/
 	private func renderData() {
 		
-		self.rowLable.attributedText = NSMutableAttributedString(string: self.data.label, attributes: [ NSFontAttributeName : self.options.labelFont, NSForegroundColorAttributeName : self.options.labelFontColor, NSBaselineOffsetAttributeName: 0])
+		self.rowLabel.attributedText = NSMutableAttributedString(string: self.data.label, attributes: [ NSFontAttributeName : self.options.labelFont, NSForegroundColorAttributeName : self.options.labelFontColor, NSBaselineOffsetAttributeName: 0])
 		self.valueLabel.attributedText = NSMutableAttributedString(string: self.data.value , attributes: [ NSFontAttributeName : self.options.valueFont, NSForegroundColorAttributeName: self.options.valueFontColor, NSBaselineOffsetAttributeName: 0])
 		
 		if self.isScorecard {
