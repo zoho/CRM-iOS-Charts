@@ -60,6 +60,18 @@ internal struct FunnelRenderOptions {
 	
 	var titleFont: UIFont = UIFont.systemFont(ofSize: 20)
 	var titleFontColor: UIColor = Colors.fontColor
+	var rateFont: UIFont = UIFont.systemFont(ofSize: 15)
+	var rateFontColor: UIColor = Colors.fontColor
+	var valueFont: UIFont = UIFont.systemFont(ofSize: 15)
+	var valueFontColor: UIColor = Colors.fontColor
+	var stageFont: UIFont = UIFont.systemFont(ofSize: 15)
+	var stageFontColor: UIColor = Colors.fontColor
+	var segmentFont: UIFont = UIFont.systemFont(ofSize: 15)
+	var segmentFontColor: UIColor = Colors.fontColor
+	var conversionRateFont: UIFont = UIFont.systemFont(ofSize: 15)
+	var conversionRateFontColor: UIColor = Colors.fontColor
+	var barColor: UIColor = UIColor.blue
+	
 }
 
 internal struct ZCRMUIUtil {

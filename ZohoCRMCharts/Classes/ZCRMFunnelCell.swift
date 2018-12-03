@@ -17,6 +17,7 @@ internal final class ZCRMPathFunnelCell: UIView {
 			}
 		}
 	}
+	internal var options: FunnelRenderOptions = FunnelRenderOptions()
 	private let isStart: Bool
 	private let bgColor: UIColor
 	private let cellLabel: UILabel = UILabel()
@@ -38,17 +39,16 @@ internal final class ZCRMPathFunnelCell: UIView {
 	}
 	
 	private func render() {
-		
-		let font = UIFont.systemFont(ofSize: 13)
+
 		self.cellLabel.translatesAutoresizingMaskIntoConstraints = false
 		self.cellLabel.textAlignment = .center
-		self.cellLabel.font = font
 		self.addSubview(cellLabel)
 		
 		self.valueLabel.translatesAutoresizingMaskIntoConstraints = false
 		self.valueLabel.textAlignment = .center
-		self.valueLabel.font = font
 		self.addSubview(valueLabel)
+		
+		self.setUIOptions()
 	}
 	
 	private func addConstraints() {
@@ -93,6 +93,14 @@ internal final class ZCRMPathFunnelCell: UIView {
 		self.cellLabel.text = self.data.label
 		self.valueLabel.text = String(self.data.value)
 	}
+	
+	internal func setUIOptions() {
+		
+		self.cellLabel.font = self.options.stageFont
+		self.cellLabel.textColor = self.options.stageFontColor
+		self.valueLabel.font = self.options.valueFont
+		self.valueLabel.textColor = self.options.valueFontColor
+	}
 }
 
 internal final class ZCRMCompactFunnelCell: UIView {
@@ -104,6 +112,7 @@ internal final class ZCRMCompactFunnelCell: UIView {
 			}
 		}
 	}
+	internal var options: FunnelRenderOptions = FunnelRenderOptions()
 	private let isRateView: Bool
 	private let cellLabel: UILabel = UILabel()
 	private let valueLabel: UILabel = UILabel()
@@ -126,7 +135,6 @@ internal final class ZCRMCompactFunnelCell: UIView {
 	private func render() {
 		
 		self.cellLabel.translatesAutoresizingMaskIntoConstraints = false
-		self.cellLabel.font = UIFont.systemFont(ofSize: 17)
 		self.cellLabel.textAlignment = .center
 		self.addSubview(self.cellLabel)
 		
@@ -134,9 +142,9 @@ internal final class ZCRMCompactFunnelCell: UIView {
 			
 			self.valueLabel.translatesAutoresizingMaskIntoConstraints = false
 			self.valueLabel.textAlignment = .center
-			self.valueLabel.font = UIFont.systemFont(ofSize: 13)
 			self.addSubview(valueLabel)
 		}
+		self.setUIOptions()
 	}
 	
 	private func addConstraints() {
@@ -191,6 +199,21 @@ internal final class ZCRMCompactFunnelCell: UIView {
 			self.cellLabel.text = String(self.data.value)
 		}
 	}
+	
+	internal func setUIOptions() {
+		
+		if self.isRateView {
+			
+			self.cellLabel.font = self.options.rateFont
+			self.cellLabel.textColor = self.options.rateFontColor
+		} else {
+			
+			self.valueLabel.font = self.options.stageFont
+			self.valueLabel.textColor = self.options.stageFontColor
+			self.cellLabel.font = self.options.valueFont
+			self.cellLabel.textColor = self.options.valueFontColor
+		}
+	}
 }
 
 internal final class ZCRMClassicFunnelFooter: UICollectionViewCell {
@@ -223,7 +246,8 @@ internal final class ZCRMClassicFunnelFooter: UICollectionViewCell {
 		
 		self.label.translatesAutoresizingMaskIntoConstraints = false
 		self.label.textAlignment = .center
-		self.label.font = UIFont.systemFont(ofSize: 11)
+		self.label.font = self.options.stageFont
+		self.label.textColor = self.options.stageFontColor
 		self.addSubview(self.label)
 		
 		self.roundedView.translatesAutoresizingMaskIntoConstraints = false
@@ -252,8 +276,23 @@ internal final class ZCRMSegmentFunnelCell: UICollectionViewCell {
 			}
 		}
 	}
-	internal var options: FunnelRenderOptions = FunnelRenderOptions()
-	internal var isHeader: Bool = false
+	
+	internal var font: UIFont! {
+		didSet {
+			if font != nil {
+				self.label.font = font
+			}
+		}
+	}
+	
+	internal var fontColor: UIColor! {
+		didSet {
+			if fontColor != nil {
+				self.label.textColor = fontColor
+			}
+		}
+	}
+	
 	private let label: UILabel = UILabel()
 	
 	internal func render() {
@@ -261,7 +300,6 @@ internal final class ZCRMSegmentFunnelCell: UICollectionViewCell {
 		self.label.translatesAutoresizingMaskIntoConstraints = false
 		self.label.textAlignment = .center
 		self.label.numberOfLines = 2
-		self.label.font = UIFont.systemFont(ofSize: 11)
 		self.addSubview(self.label)
 		
 		var constraints: [NSLayoutConstraint] = []

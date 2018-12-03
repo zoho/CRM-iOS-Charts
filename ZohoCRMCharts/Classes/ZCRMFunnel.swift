@@ -29,6 +29,131 @@ public final class ZCRMFunnel: UIView {
 		}
 	}
 	
+	public var titleFont: UIFont! {
+		didSet {
+			if titleFont != nil {
+				self.renderOptions.titleFont = titleFont
+				self.updateTitleText()
+			}
+		}
+	}
+	
+	public var titleFontColor: UIColor! {
+		didSet {
+			if titleFontColor != nil {
+				self.renderOptions.titleFontColor = titleFontColor
+				self.updateTitleText()
+			}
+		}
+	}
+	
+	public var valueFont: UIFont! {
+		didSet {
+			if valueFont != nil {
+				self.renderOptions.valueFont = valueFont
+				self.updateChanges()
+			}
+		}
+	}
+	
+	public var valueFontColor: UIColor! {
+		didSet {
+			if valueFontColor != nil {
+				self.renderOptions.valueFontColor = valueFontColor
+				self.updateChanges()
+			}
+		}
+	}
+	
+	public var rateFont: UIFont! {
+		didSet {
+			if rateFont != nil {
+				self.renderOptions.rateFont = rateFont
+				self.updateChanges()
+			}
+		}
+	}
+	
+	public var rateFontColor: UIColor! {
+		didSet {
+			if rateFontColor != nil {
+				self.renderOptions.rateFontColor = rateFontColor
+				self.updateChanges()
+			}
+		}
+	}
+	
+	public var stageFont: UIFont! {
+		didSet {
+			if stageFont != nil {
+				self.renderOptions.stageFont = stageFont
+				self.updateChanges()
+			}
+		}
+	}
+	
+	public var stageFontColor: UIColor! {
+		didSet {
+			if stageFontColor != nil {
+				self.renderOptions.stageFontColor = stageFontColor
+				self.updateChanges()
+			}
+		}
+	}
+	
+	public var segmentFont: UIFont! {
+		didSet {
+			if segmentFont != nil {
+				self.renderOptions.segmentFont = segmentFont
+				self.updateChanges()
+			}
+		}
+	}
+	
+	public var segmentFontColor: UIColor! {
+		didSet {
+			if segmentFontColor != nil {
+				self.renderOptions.segmentFontColor = segmentFontColor
+				self.updateChanges()
+			}
+		}
+	}
+	
+	public var conversionRateFont: UIFont! {
+		didSet {
+			if conversionRateFont != nil {
+				self.renderOptions.conversionRateFont = conversionRateFont
+				self.updateChanges()
+			}
+		}
+	}
+	
+	public var conversionRateFontColor: UIColor! {
+		didSet {
+			if conversionRateFontColor != nil {
+				self.renderOptions.conversionRateFontColor = conversionRateFontColor
+				self.updateChanges()
+			}
+		}
+	}
+	
+	public var barColor: UIColor! {
+		didSet {
+			if barColor != nil && self.type  == .standard {
+				self.renderOptions.barColor = barColor
+				self.updateChanges()
+			}
+		}
+	}
+	
+	public var hideTitle: Bool! {
+		didSet {
+			if hideTitle != nil {
+				self.titleView.isHidden = hideTitle
+			}
+		}
+	}
+	
 	fileprivate let title: String
 	fileprivate let type: ZCRMCharts.ZCRMFunnelType
 	fileprivate var renderOptions: FunnelRenderOptions = FunnelRenderOptions()
@@ -38,7 +163,7 @@ public final class ZCRMFunnel: UIView {
 	fileprivate var data: [ZCRMFunnelData] = []
 	fileprivate var rates: [ZCRMFunnelData] = []
 	fileprivate var conversionRate: ZCRMFunnelData!
-	// used only for segement and in standard in classication configured
+	// used only for segement and in standard if classication configured
 	fileprivate var conversionRates: [ZCRMFunnelData] = []
 	fileprivate var stagesData: [ZCRMFunnelData] = []
 	fileprivate var stagesRate: [ZCRMFunnelData] = []
@@ -96,43 +221,43 @@ public final class ZCRMFunnel: UIView {
 
 fileprivate extension ZCRMFunnel{
 	
-	var pathStackViewHeight: CGFloat {
+	fileprivate var pathStackViewHeight: CGFloat {
 		get {
 			return self.frame.height * 0.25
 		}
 	}
 	
-	var pathStackViewWidth: CGFloat {
+	fileprivate var pathStackViewWidth: CGFloat {
 		get {
 			return 150 * self.stages.count.toCGFloat()
 		}
 	}
 	
-	var compactStackViewWidth: CGFloat {
+	fileprivate var compactStackViewWidth: CGFloat {
 		get {
 			return (200 * self.stages.count.toCGFloat()) - 80
 		}
 	}
 	
-	var compactStackViewHeight: CGFloat {
+	fileprivate var compactStackViewHeight: CGFloat {
 		get {
 			return self.frame.height * 0.40
 		}
 	}
 	
-	var classicStackViewHeight: CGFloat {
+	fileprivate var classicStackViewHeight: CGFloat {
 		get {
 			return (70 * self.stages.count.toCGFloat()) - 30
 		}
 	}
 	
-	var classicStackViewWidth: CGFloat {
+	fileprivate var classicStackViewWidth: CGFloat {
 		get {
 			return self.frame.width * 0.90
 		}
 	}
 	
-	var classicCollectionViewHeight: CGFloat {
+	fileprivate var classicCollectionViewHeight: CGFloat {
 		get {
 			
 			let footerHeight: CGFloat = 25
@@ -143,19 +268,19 @@ fileprivate extension ZCRMFunnel{
 		}
 	}
 	
-	var segmentHeaderColumnWidth: CGFloat {
+	fileprivate var segmentHeaderColumnWidth: CGFloat {
 		get {
 			return 150
 		}
 	}
 	
-	var segmentCellWidth: CGFloat {
+	fileprivate var segmentCellWidth: CGFloat {
 		get {
 			return 100
 		}
 	}
 	
-	var segmentCellHeight: CGFloat {
+	fileprivate var segmentCellHeight: CGFloat {
 		get {
 			let heightForCells = self.segmentCollectionViewHeight
 			return heightForCells / ( self.segments.count.toCGFloat() + 2)
@@ -163,13 +288,13 @@ fileprivate extension ZCRMFunnel{
 	}
 	
 	
-	var segmentCollectionViewHeight: CGFloat {
+	fileprivate var segmentCollectionViewHeight: CGFloat {
 		get {
 			return self.frame.height * 0.85
 		}
 	}
 	
-	var conversionRateViewHeight: CGFloat {
+	fileprivate var conversionRateViewHeight: CGFloat {
 		get {
 			return 30
 		}
@@ -198,6 +323,18 @@ fileprivate extension ZCRMFunnel{
 		}
 	}
 	
+	func updateChanges() {
+		
+		if self.type == .path {
+			self.updatePathFunnelUIOptions()
+		} else if self.type == .compact {
+			self.updateCompactFunnelUIOptions()
+		} else if self.type == .classic {
+			self.updateClassicFunnelUIOptions()
+		} else if self.type == .segment {
+			self.updateSegmentUIOptions()
+		}
+	}
 	
 	private func renderView() {
 		
@@ -255,16 +392,32 @@ fileprivate extension ZCRMFunnel{
 		
 		for (index, stage) in self.stages.enumerated() {
 			if index == 0 {
-				self.stackView1.addArrangedSubview(ZCRMPathFunnelCell(isStart: true, bgColor: stage.color))
+				let cell = ZCRMPathFunnelCell(isStart: true, bgColor: stage.color)
+				cell.options = self.renderOptions
+				cell.setUIOptions()
+				self.stackView1.addArrangedSubview(cell)
 				continue
 			}
 			let label = UILabel()
 			label.textAlignment = .center
+			label.font = self.renderOptions.rateFont
+			label.textColor = self.renderOptions.rateFontColor
 			stackView2.addArrangedSubview(label)
 			self.stackView1.addArrangedSubview(ZCRMPathFunnelCell(isStart: false, bgColor: stage.color))
 		}
+	}
+	
+	private func updatePathFunnelUIOptions() {
 		
+		for view in self.stackView1.arrangedSubviews {
+			(view as! ZCRMPathFunnelCell).options = self.renderOptions
+			(view as! ZCRMPathFunnelCell).setUIOptions()
+		}
 		
+		for label in self.stackView2.arrangedSubviews {
+			(label as! UILabel).font = self.renderOptions.rateFont
+			(label as! UILabel).textColor = self.renderOptions.rateFontColor
+		}
 	}
 	
 	private func addPathFunnelConstraints() {
@@ -281,6 +434,7 @@ fileprivate extension ZCRMFunnel{
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:[pathLabelStackView(pathLabelStackViewWitdh)]-0-|", options: [], metrics: ["pathLabelStackViewWitdh": pathLabelStackViewWitdh], views: ["pathLabelStackView": self.stackView2])
 		NSLayoutConstraint.activate(constraints)
 	}
+	
 	
 	private func renderCompactFunnel() {
 		
@@ -315,6 +469,15 @@ fileprivate extension ZCRMFunnel{
 		NSLayoutConstraint.activate(constraints)
 	}
 	
+	private func updateCompactFunnelUIOptions() {
+		
+		for view in self.stackView1.arrangedSubviews {
+			
+			(view as! ZCRMCompactFunnelCell).options = self.renderOptions
+			(view as! ZCRMCompactFunnelCell).setUIOptions()
+		}
+	}
+	
 	private func addCompactFunnelConstraints() {
 		
 		var constraints: [NSLayoutConstraint] = []
@@ -346,7 +509,8 @@ fileprivate extension ZCRMFunnel{
 			let stageLabel = UILabel()
 			stageLabel.translatesAutoresizingMaskIntoConstraints = false
 			stageLabel.backgroundColor = stage.color
-			stageLabel.font = UIFont.systemFont(ofSize: 14)
+			stageLabel.font = self.renderOptions.valueFont
+			stageLabel.textColor = self.renderOptions.valueFontColor
 			stageLabel.textAlignment = .center
 			stageLabel.layer.masksToBounds = true
 			stageLabel.layer.cornerRadius = 20
@@ -360,7 +524,8 @@ fileprivate extension ZCRMFunnel{
 			if index < self.stages.count - 1 {
 				let rateLabel = UILabel()
 				rateLabel.translatesAutoresizingMaskIntoConstraints = false
-				rateLabel.font = UIFont.systemFont(ofSize: 12)
+				rateLabel.font = self.renderOptions.rateFont
+				rateLabel.textColor = self.renderOptions.rateFontColor
 				rateLabel.textAlignment = .center
 				self.stackView1.addArrangedSubview(rateLabel)
 				
@@ -385,6 +550,19 @@ fileprivate extension ZCRMFunnel{
 		self.scrollView.addSubview(self.conversionRateView)
 	}
 	
+	private func updateClassicFunnelUIOptions() {
+		
+		for (index, view) in self.stackView1.arrangedSubviews.enumerated() {
+			if index % 2 == 0 {
+				(view as! UILabel).font = self.renderOptions.valueFont
+				(view as! UILabel).textColor = self.renderOptions.valueFontColor
+			} else {
+				(view as! UILabel).font = self.renderOptions.rateFont
+				(view as! UILabel).textColor = self.renderOptions.rateFontColor
+			}
+		}
+	}
+	
 	private func addClassicFunnelConstraints() {
 		
 		self.scrollView.contentSize.height = self.classicStackViewHeight + self.classicCollectionViewHeight + self.conversionRateViewHeight + 35
@@ -401,6 +579,14 @@ fileprivate extension ZCRMFunnel{
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[collectionView(collectionViewWidth)]|", options: [], metrics: ["collectionViewWidth": self.classicStackViewWidth], views: ["collectionView": self.collectionView])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|[stackView(stackViewHeight)]-15-[collectionView(collectionViewHeight)]-15-[conversionRateView(conversionRateViewHeight)]|", options: [], metrics: ["stackViewHeight": self.classicStackViewHeight, "collectionViewHeight": self.classicCollectionViewHeight, "conversionRateViewHeight": self.conversionRateViewHeight], views: ["stackView": self.stackView1, "collectionView": self.collectionView, "conversionRateView": self.conversionRateView])
 		NSLayoutConstraint.activate(constraints)
+	}
+	
+	private func updateSegmentUIOptions() {
+		
+		for view in self.stackView1.arrangedSubviews {
+			(view as! UILabel).font = self.renderOptions.segmentFont
+			(view as! UILabel).textColor = self.renderOptions.segmentFontColor
+		}
 	}
 	
 	private func renderSegmentFunnel() {
@@ -427,7 +613,8 @@ fileprivate extension ZCRMFunnel{
 		label.translatesAutoresizingMaskIntoConstraints = false
 		label.backgroundColor = .gray
 		label.textAlignment = .center
-		label.font = UIFont.systemFont(ofSize: 13)
+		label.font = self.renderOptions.segmentFont
+		label.textColor = self.renderOptions.segmentFontColor
 		self.stackView1.addArrangedSubview(label)
 		
 		if self.segmentsLabel != nil {
@@ -442,13 +629,15 @@ fileprivate extension ZCRMFunnel{
 			if index % 2 != 0 {
 				label.backgroundColor = .gray
 			}
-			label.font = UIFont.systemFont(ofSize: 13)
+			label.font = self.renderOptions.segmentFont
+			label.textColor = self.renderOptions.segmentFontColor
 			self.stackView1.addArrangedSubview(label)
 		}
 		
 		let fLabel = UILabel()
 		fLabel.translatesAutoresizingMaskIntoConstraints = false
-		fLabel.font = UIFont.systemFont(ofSize: 13)
+		fLabel.font = self.renderOptions.segmentFont
+		fLabel.textColor = self.renderOptions.segmentFontColor
 		fLabel.text = "Total"
 		fLabel.textAlignment = .center
 		if self.segments.count % 2 != 0 {
@@ -519,6 +708,7 @@ extension ZCRMFunnel: UICollectionViewDataSource, UICollectionViewDelegate, UICo
 		
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "classicFunnelFooter", for: indexPath) as! ZCRMClassicFunnelFooter
 		cell.text = "Leads Created"
+		cell.options = self.renderOptions
 		cell.color = self.stages[indexPath.row].color
 		cell.render()
 		return cell
@@ -534,20 +724,27 @@ extension ZCRMFunnel: UICollectionViewDataSource, UICollectionViewDelegate, UICo
 				
 				if indexPath.row % 2 == 0 { //  cells for stages heading
 					cell.text = self.stages[indexPath.row  % 2].label
+					cell.font = self.renderOptions.stageFont
+					cell.fontColor = self.renderOptions.stageFontColor
 				} else  { // cell for rate headers
 					cell.text = "➞"
 				}
 			} else {
 				cell.text = "Conversion Rate" // right corner header
+				cell.font = self.renderOptions.conversionRateFont
+				cell.fontColor = self.renderOptions.conversionRateFontColor
 			}
-			cell.isHeader = true
 			cell.backgroundColor = .gray
+			
 		} else {
 	
 			if (indexPath.row + 1) % indexPerRow == 0  { // for conversion rate for a segment
 				
 				let totalCells = indexPerRow * (self.segments.count + 2)
 				let lastCellIndex = totalCells - 1
+				cell.font = self.renderOptions.conversionRateFont
+				cell.fontColor = self.renderOptions.conversionRateFontColor
+				
 				if indexPath.row == lastCellIndex {
 					cell.text = self.conversionRate.label
 				} else {
@@ -559,33 +756,43 @@ extension ZCRMFunnel: UICollectionViewDataSource, UICollectionViewDelegate, UICo
 			} else if (indexPath.row + 1) >= (indexPerRow * (self.segments.count + 1)) { // total of a stage and total rate between stage
 				
 				let indexWithoutHeaderAndData = (indexPath.row) -  (indexPerRow * (self.segments.count + 1))
-				if indexPath.row % 2 == 0 {
+				if indexPath.row % 2 == 0 { // total
 					
 					let totalIndex = (indexWithoutHeaderAndData) / 2
 					cell.text = self.stagesData[totalIndex].label
-				} else {
+					cell.font = self.renderOptions.stageFont
+					cell.fontColor = self.renderOptions.stageFontColor
+					
+				} else { // rate
 					
 					let rateIndex = ((indexWithoutHeaderAndData + 1) / 2) - 1
 					cell.text = self.stagesRate[rateIndex].label
+					cell.font = self.renderOptions.rateFont
+					cell.fontColor = self.renderOptions.rateFontColor
 				}
-				
 			} else {
 				
 				if indexPath.row % 2 == 0 { // data cells of a stage
 					
 					let dataIndex = (indexPath.row - indexPerRow) / 2
 					cell.text = self.data[dataIndex].label
+					cell.font = self.renderOptions.valueFont
+					cell.fontColor = self.renderOptions.valueFontColor
+	
 				} else { // rate between two stages
 					
 					let indexWithoutHeader = (indexPath.row + 1) - indexPerRow
 					let rateIndex = (((indexWithoutHeader / 2) - 1) + (indexWithoutHeader / indexPerRow)) - ( 2 * (indexWithoutHeader / indexPerRow))
 					cell.text = self.rates[rateIndex].label
+					cell.font = self.renderOptions.rateFont
+					cell.fontColor = self.renderOptions.rateFontColor
 				}
 			}
 			if  (indexPath.row / indexPerRow) % 2 == 0  {
 				cell.backgroundColor = .gray
 			}
 		}
+		
 		cell.render()
 		return cell
 	}
