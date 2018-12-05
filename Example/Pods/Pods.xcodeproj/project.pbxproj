@@ -22,6 +22,7 @@
 		FE24E1C921A525650043CBBB /* ZCRMComparatorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE24E1C721A5255B0043CBBB /* ZCRMComparatorCell.swift */; };
 		FE5D86CB2180B37300204484 /* ZCRMCommonUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE5D86C92180B36A00204484 /* ZCRMCommonUtil.swift */; };
 		FE834D332189D38A00039101 /* ZCRMComparator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE834D312189D38000039101 /* ZCRMComparator.swift */; };
+		FE960F1521B5274C00DF9C01 /* ZCRMBarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE960F1421B5274C00DF9C01 /* ZCRMBarChart.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,7 @@
 		FE24E1C721A5255B0043CBBB /* ZCRMComparatorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMComparatorCell.swift; path = ZohoCRMCharts/Classes/ZCRMComparatorCell.swift; sourceTree = "<group>"; };
 		FE5D86C92180B36A00204484 /* ZCRMCommonUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZCRMCommonUtil.swift; path = ZohoCRMCharts/Classes/ZCRMCommonUtil.swift; sourceTree = "<group>"; };
 		FE834D312189D38000039101 /* ZCRMComparator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZCRMComparator.swift; path = ZohoCRMCharts/Classes/ZCRMComparator.swift; sourceTree = "<group>"; };
+		FE960F1421B5274C00DF9C01 /* ZCRMBarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZCRMBarChart.swift; path = ZohoCRMCharts/Classes/ZCRMBarChart.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +156,7 @@
 		BE88AF31A9DDA5B8178696E3D3FFDE32 /* ZohoCRMCharts */ = {
 			isa = PBXGroup;
 			children = (
+				FE960F1421B5274C00DF9C01 /* ZCRMBarChart.swift */,
 				FE11253A21AD79F80016E75F /* ZCRMFunnel.swift */,
 				FE11253B21AD79F90016E75F /* ZCRMFunnelCell.swift */,
 				FE24E1C721A5255B0043CBBB /* ZCRMComparatorCell.swift */,
@@ -303,6 +306,7 @@
 				FE11253D21AD79F90016E75F /* ZCRMFunnelCell.swift in Sources */,
 				FE110CBD21709A27000D0815 /* ZCRMKPICell.swift in Sources */,
 				FE110CBE21709A2B000D0815 /* ZCRMUIUtil.swift in Sources */,
+				FE960F1521B5274C00DF9C01 /* ZCRMBarChart.swift in Sources */,
 				FE834D332189D38A00039101 /* ZCRMComparator.swift in Sources */,
 				FE110CBF21709A34000D0815 /* ZCRMWrapper.swift in Sources */,
 				FE24E1C921A525650043CBBB /* ZCRMComparatorCell.swift in Sources */,

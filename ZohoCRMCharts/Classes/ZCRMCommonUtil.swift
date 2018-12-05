@@ -9,11 +9,11 @@
 import UIKit
 
 /**
-Error.
+	Error.
 */
 public struct ZCRMChartsError : Error {
 	
-	let message: String
+	private let message: String
 	
 	init(message: String) {
 		self.message = "ZCRMCharts - \(message)"
@@ -74,7 +74,7 @@ internal extension KPIUtil {
 
 internal extension UIView {
 	
-	func getHeightOf(percent: CGFloat) -> CGFloat {
+	internal func getHeightOf(percent: CGFloat) -> CGFloat {
 		return (self.frame.height / 100) * percent
 	}
 
@@ -82,7 +82,7 @@ internal extension UIView {
 		return (self.frame.width / 100) * percent
 	}
 	
-	func invalidateConstraints() {
+	internal func invalidateConstraints() {
 		
 		var constraints: [NSLayoutConstraint] = self.constraints
 		for subView in self.subviews {
@@ -93,58 +93,43 @@ internal extension UIView {
 		}
 	}
 	
-	func addBottomBorder(color: UIColor, width: CGFloat) {
+	internal func addBottomBorder(color: UIColor, width: CGFloat) {
 		
 		let borderLayer = CALayer()
 		borderLayer.backgroundColor = color.cgColor
 		borderLayer.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width, height: width)
 		self.layer.addSublayer(borderLayer)
 	}
-	
-	func addLeftShadow(shadowRadius: CGFloat = 2.0) {
-		
-		self.layer.masksToBounds = false
-		self.layer.shadowRadius = shadowRadius
-		self.layer.shadowOpacity = 1.0
-		
-		let path = UIBezierPath()
-		path.move(to: CGPoint(x: 0, y: 0))
-		path.addLine(to: CGPoint(x: shadowRadius, y: 0))
-		path.addLine(to: CGPoint(x: shadowRadius, y: self.frame.height))
-		path.addLine(to: CGPoint(x: 0, y: self.frame.height))
-		path.close()
-		self.layer.shadowPath = path.cgPath
-	}
 }
 
 internal extension String {
 	
-	func toCGFloat() -> CGFloat {
+	internal func toCGFloat() -> CGFloat {
 		return CGFloat(truncating: NumberFormatter().number(from: self)!)
 	}
 }
 
 internal extension Optional where Wrapped == String {
 	
-	var notNil: Bool {
+	internal var notNil: Bool {
 		return self != nil
 	}
 }
 
 internal extension Int {
 	
-	func toCGFloat() -> CGFloat {
+	internal func toCGFloat() -> CGFloat {
 		return CGFloat(self)
 	}
 }
 
 internal extension CGFloat {
 	
-	func toInt() -> Int {
+	internal func toInt() -> Int {
 		return Int(self)
 	}
 	
-	func toRadians() -> CGFloat {
+	internal func toRadians() -> CGFloat {
 		return self * CGFloat(Double.pi) / 180.0
 	}
 }

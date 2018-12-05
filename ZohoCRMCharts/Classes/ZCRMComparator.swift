@@ -182,7 +182,7 @@ public final class ZCRMComparator: UIView {
 
 fileprivate extension ZCRMComparator {
 	
-	var cellHeight: CGFloat {
+	fileprivate var cellHeight: CGFloat {
 		get {
 			let height = self.collectionViewHeight
 			var heightForCells = height * 0.75
@@ -196,7 +196,7 @@ fileprivate extension ZCRMComparator {
 		}
 	}
 	
-	var cellWidth: CGFloat {
+	fileprivate var cellWidth: CGFloat {
 		get {
 			if self.columnWidth != nil && self.type != .sport {
 				return columnWidth
@@ -212,7 +212,7 @@ fileprivate extension ZCRMComparator {
 		}
 	}
 	
-	var headerHeight: CGFloat {
+	fileprivate var headerHeight: CGFloat {
 		get {
 			if self.type == .elegant {
 				return self.cellHeight - 10
@@ -221,7 +221,7 @@ fileprivate extension ZCRMComparator {
 		}
 	}
 	
-	var collectionViewHeight: CGFloat {
+	fileprivate var collectionViewHeight: CGFloat {
 		get {
 			if self.type == .sport || self.type == .elegant {
 				return self.frame.height * 0.70
@@ -230,7 +230,7 @@ fileprivate extension ZCRMComparator {
 		}
 	}
 	
-	var collectionViewWidth: CGFloat {
+	fileprivate var collectionViewWidth: CGFloat {
 		get {
 			if self.type == .sport {
 				return self.frame.width * 0.75
@@ -244,14 +244,14 @@ fileprivate extension ZCRMComparator {
 
 fileprivate extension ZCRMComparator {
 	
-	func render() {
+	fileprivate func render() {
 		
 		self.clipsToBounds = true
 		self.renderTitleView()
 		self.renderView()
 	}
 	
-	func addConstraints() {
+	fileprivate func addConstraints() {
 		
 		if self.type == .sport {
 			self.addSportComparatorConstraints()
@@ -267,7 +267,7 @@ fileprivate extension ZCRMComparator {
 		self.updateTitleText()
 	}
 	
-	func updateTitleText() {
+	fileprivate func updateTitleText() {
 		
 		self.titleView.font = self.renderOptions.titleFont
 		self.titleView.textColor = self.renderOptions.titleFontColor
@@ -287,7 +287,7 @@ fileprivate extension ZCRMComparator {
 	/**
 		Adds the header view to the Comparator of type sport and elegant.
 	*/
-	func addHeaders() {
+	fileprivate func addHeaders() {
 		
 		let headers = self.headersView.arrangedSubviews
 		for header in headers {
@@ -309,18 +309,17 @@ fileprivate extension ZCRMComparator {
 		}
 	}
 	
-	func updateHeaders() {
+	fileprivate func updateHeaders() {
 		
-		if self.type == .classic {
-			return
-		}
-		for (index, view) in  self.headersView.arrangedSubviews.enumerated() {
-			let header = view as! ZCRMComparatorHeader
-			if self.type == .elegant && (index + 1) % 2 != 0 {
-				header.backgroundColor = self.renderOptions.elegantDiffColor
+		if self.type != .classic {
+			for (index, view) in  self.headersView.arrangedSubviews.enumerated() {
+				let header = view as! ZCRMComparatorHeader
+				if self.type == .elegant && (index + 1) % 2 != 0 {
+					header.backgroundColor = self.renderOptions.elegantDiffColor
+				}
+				header.options = self.renderOptions
+				header.setUIOptions()
 			}
-			header.options = self.renderOptions
-			header.setUIOptions()
 		}
 	}
 	
@@ -363,7 +362,7 @@ fileprivate extension ZCRMComparator {
 		}
 	}
 	
-	func updateChunks() {
+	fileprivate func updateChunks() {
 		
 		for view in self.chunksView.arrangedSubviews {
 			let chunkView = view as! ZCRMComparatorChunkView
@@ -558,7 +557,7 @@ extension ZCRMComparator: UICollectionViewDataSource, UICollectionViewDelegate, 
 // methods related to data source
 fileprivate extension ZCRMComparator {
 	
-	func setChunkDatas() {
+	fileprivate func setChunkDatas() {
 		
 		if self.type == .classic {
 			for (groupIndex, group) in self.groupings.groups.enumerated() {
@@ -566,16 +565,17 @@ fileprivate extension ZCRMComparator {
 					self.chunkDatas.append(self.dataSource.comparator(chunk, group, groupIndex: groupIndex, chunkIndex: chunkIndex))
 				}
 			}
-			return
-		}
-		for (chunkIndex, chunk) in self.chunks.enumerated() {
-			for (groupIndex, group) in self.groupings.groups.enumerated() {
-				self.chunkDatas.append(self.dataSource.comparator(chunk, group, groupIndex: groupIndex, chunkIndex: chunkIndex))
+		} else {
+			for (chunkIndex, chunk) in self.chunks.enumerated() {
+				for (groupIndex, group) in self.groupings.groups.enumerated() {
+					self.chunkDatas.append(self.dataSource.comparator(chunk, group, groupIndex: groupIndex, chunkIndex: chunkIndex))
+				}
 			}
 		}
+	
 	}
 	
-	func getMaxOfChunk(_ indexInArray: Int) -> Int {
+	fileprivate func getMaxOfChunk(_ indexInArray: Int) -> Int {
 		
 		let chunksLength = self.groupings.groups.count
 		let chunksRange = (indexInArray + 1).toCGFloat() / chunksLength.toCGFloat()
@@ -592,14 +592,14 @@ fileprivate extension ZCRMComparator {
 		return chunkValues.max()!
 	}
 	
-	func getChunk(chunkDataIndex: Int) -> ZCRMComparatorChunk {
+	fileprivate func getChunk(chunkDataIndex: Int) -> ZCRMComparatorChunk {
 		
 		let chunksLength = self.groupings.groups.count
 		let chunksRange = chunkDataIndex / chunksLength
 		return self.chunks[chunksRange.toCGFloat().rounded(.down).toInt()]
 	}
 	
-	func getGroupIndex(chunkDataIndex: Int) -> Int {
+	fileprivate func getGroupIndex(chunkDataIndex: Int) -> Int {
 		
 		let chunkDataRange = self.groupings.groups.count
 		return chunkDataIndex % chunkDataRange

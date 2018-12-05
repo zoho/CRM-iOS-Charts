@@ -308,3 +308,105 @@ internal final class ZCRMSegmentFunnelCell: UICollectionViewCell {
 		NSLayoutConstraint.activate(constraints)
 	}
 }
+
+internal final class ZCRMStandardFunnelConversionRateView: UIView {
+	
+	internal let fromValueLabel: UILabel = UILabel()
+	internal let toValueLabel: UILabel = UILabel()
+	internal let rateLabel: UILabel = UILabel()
+	internal var font: UIFont = UIFont.systemFont(ofSize: 14)
+	internal var fontColor: UIColor = .black
+	private let conversionRateView: UILabel = UILabel()
+	
+	internal init() {
+		super.init(frame: .zero)
+		self.render()
+	}
+	
+	required init?(coder aDecoder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
+	override func layoutSubviews() {
+		
+		self.addConstraints()
+		self.drawLines()
+	}
+	
+	private func render() {
+		
+		self.fromValueLabel.translatesAutoresizingMaskIntoConstraints = false
+		self.fromValueLabel.textAlignment = .center
+		self.addSubview(self.fromValueLabel)
+		
+		self.toValueLabel.translatesAutoresizingMaskIntoConstraints = false
+		self.toValueLabel.textAlignment = .center
+		self.addSubview(self.toValueLabel)
+
+		self.rateLabel.translatesAutoresizingMaskIntoConstraints = false
+		self.rateLabel.textAlignment = .center
+		self.addSubview(self.rateLabel)
+
+		self.conversionRateView.translatesAutoresizingMaskIntoConstraints = false
+		self.conversionRateView.textAlignment = .center
+		self.conversionRateView.text = "Conversion Rate"
+		self.addSubview(self.conversionRateView)
+	}
+	
+	private func addConstraints() {
+		
+		if self.frame.height == 0 {
+			return
+		}
+		let lHeight = self.frame.height * 0.15
+		var constraints: [NSLayoutConstraint] = []
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[fromValue]|", options: [], metrics: nil, views: ["fromValue": self.fromValueLabel])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[rate]|", options: [], metrics: nil, views: ["rate": self.rateLabel])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[toValue]|", options: [], metrics: nil, views: ["toValue": self.toValueLabel])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[conversionRateView]|", options: [], metrics: nil, views: ["conversionRateView": self.conversionRateView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[fromValue(==lHeight)]", options: [], metrics:  ["lHeight": lHeight], views: ["fromValue": self.fromValueLabel])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[toValue(==lHeight)]|", options: [], metrics:  ["lHeight": lHeight], views: ["toValue": self.toValueLabel, "fromValue": self.fromValueLabel])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[rate(==lHeight)][conversionRateView(==lHeight)]", options: [], metrics:  ["lHeight": lHeight], views: ["rate": self.rateLabel, "conversionRateView": self.conversionRateView])
+		constraints.append(NSLayoutConstraint(item: self.rateLabel, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
+		constraints.append(NSLayoutConstraint(item: self.conversionRateView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
+		NSLayoutConstraint.activate(constraints)
+	}
+	
+	private func drawLines() {
+		
+		self.layer.sublayers?.forEach({ (layer) in
+			if layer is CAShapeLayer {
+				layer.removeFromSuperlayer()
+			}
+		})
+		let xPos: CGFloat  = self.frame.width / 2
+		let labelHeight: CGFloat = self.frame.height * 0.15
+		let lineHeight = self.frame.height * 0.20
+		let linesInfo: [[String: CGFloat]] = [["y1":  labelHeight  , "y2":  labelHeight  + lineHeight], ["y1": self.frame.height - ( labelHeight
+			+ lineHeight) , "y2": self.frame.height - ( labelHeight) ]]
+		for line in linesInfo {
+			
+			let path = UIBezierPath()
+			path.move(to: CGPoint(x: xPos, y: line["y1"]!))
+			path.addLine(to: CGPoint(x: xPos, y: line["y2"]!))
+			let layer = CAShapeLayer()
+			layer.path = path.cgPath
+			layer.lineWidth = 2.0
+			layer.strokeColor = self.fontColor.cgColor
+			self.layer.insertSublayer(layer, at: 0)
+		}
+	}
+	
+	func setUIOptions() {
+		
+		self.fromValueLabel.font = self.font
+		self.toValueLabel.font = self.font
+		self.rateLabel.font = self.font
+		self.conversionRateView.font = self.font
+		self.fromValueLabel.textColor = self.fontColor
+		self.toValueLabel.textColor = self.fontColor
+		self.rateLabel.textColor = self.fontColor
+		self.conversionRateView.textColor = self.fontColor
+		self.drawLines()
+	}
+}

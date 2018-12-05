@@ -131,9 +131,9 @@ internal struct ZCRMComparatorUIUtil {
 	
 	static func getTextForChunkData(_ chunkData: ZCRMChunkData, options: ComparatorRenderOptions, objective: ZCRMCharts.Outcome, isHeader: Bool) -> NSMutableAttributedString{
 		
-		let font = isHeader ? options.groupFont : options.chunkDataFont
-		let color = isHeader ? options.groupFontColor : options.chunkDataFontColor
-		let outputString = NSMutableAttributedString(string: chunkData.label, attributes: [NSFontAttributeName: font, NSForegroundColorAttributeName: color])
+		let font: UIFont = isHeader ? options.groupFont : options.chunkDataFont
+		let color: UIColor = isHeader ? options.groupFontColor : options.chunkDataFontColor
+		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: chunkData.label, attributes: [NSFontAttributeName: font, NSForegroundColorAttributeName: color])
 		if chunkData.rate != nil {
 			var rateColor: UIColor!
 			if objective == .positive {

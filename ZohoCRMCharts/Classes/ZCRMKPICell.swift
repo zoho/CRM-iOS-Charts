@@ -125,7 +125,6 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	*/
 	private func setRateBar() {
 		
-		self.rateBar.layoutIfNeeded()
 		self.rateBar.layer.cornerRadius = 5
 		self.rateBar.clipsToBounds = true
 		self.rateBar.backgroundColor = self.options.rateBarColor
@@ -138,9 +137,9 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	*/
 	private func getRateBarLenght() -> CGFloat {
 		
-		let availaleSpace = self.getWidthOf(percent: 30)
-		let onePercentOfSpace = availaleSpace / 100
-		let percentOfDiff = (self.data.value.toCGFloat() * 100) / self.highRate
+		let availaleSpace: CGFloat = self.getWidthOf(percent: 30)
+		let onePercentOfSpace: CGFloat = availaleSpace / 100
+		let percentOfDiff: CGFloat = (self.data.value.toCGFloat() * 100) / self.highRate
 		return (onePercentOfSpace * percentOfDiff)
 	}
 }

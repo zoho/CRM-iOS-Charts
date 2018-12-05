@@ -315,7 +315,7 @@ fileprivate extension ZCRMKPI {
 	/**
 		Renders the view, related to its type.
 	*/
-	 func render() {
+	fileprivate func render() {
 		
 		self.backgroundColor = UIColor(red: 182/255.0, green: 182/255.0, blue: 182/255.0, alpha: 1)
 		self.renderKPIView()
@@ -324,7 +324,7 @@ fileprivate extension ZCRMKPI {
 	/**
 	Updates the changes made for any of child UI elements.
 	*/
-	func updateChanges() {
+	fileprivate func updateChanges() {
 		
 		if !self.isScorecard && !self.isRankings && self.data.count > 0{
 			self.renderKPIData()
@@ -334,7 +334,7 @@ fileprivate extension ZCRMKPI {
 	/**
 	Updates the title view with the given options.
 	*/
-	func updateTitleText() {
+	fileprivate func updateTitleText() {
 		
 		self.titleView.attributedText = NSAttributedString(string: self.title, attributes: [NSFontAttributeName : self.renderOptions.titleFont, NSForegroundColorAttributeName: self.renderOptions.titleFontColor ])
 	}
@@ -342,7 +342,7 @@ fileprivate extension ZCRMKPI {
 	/**
 	Sets the compared to text for standard, growth index and scorecard KPI.
 	*/
-	func updateComparedToViewText(text: String?) {
+	fileprivate func updateComparedToViewText(text: String?) {
 		
 		var textToFit = String()
 		if text.notNil {
@@ -353,7 +353,7 @@ fileprivate extension ZCRMKPI {
 		self.comparedToView.attributedText = NSAttributedString(string: textToFit, attributes: [ NSFontAttributeName: self.renderOptions.comparedToFont, NSForegroundColorAttributeName: self.renderOptions.comparedToFontColor])
 	}
 	
-	func updateFootNoteText(_ text: String? = nil) {
+	fileprivate func updateFootNoteText(_ text: String? = nil) {
 		
 		var textToFit = String()
 		if text.notNil {
@@ -364,7 +364,7 @@ fileprivate extension ZCRMKPI {
 		self.footNoteView.attributedText = NSAttributedString(string: textToFit, attributes: [ NSFontAttributeName: self.renderOptions.footNoteFont, NSForegroundColorAttributeName: self.renderOptions.footNoteColor ])
 	}
 	
-	func getCalculatedHeight() -> CGFloat {
+	fileprivate func getCalculatedHeight() -> CGFloat {
 		
 		var height: CGFloat = 0
 		if !self.isRankings && !self.isScorecard {
@@ -397,7 +397,7 @@ fileprivate extension ZCRMKPI {
 	/**
 		Sets the KPI data to the views.
 	*/
-	func renderKPIData() {
+	fileprivate func renderKPIData() {
 		
 		if self.isRankings || self.isScorecard {
 			self.setKpiData()
@@ -406,7 +406,7 @@ fileprivate extension ZCRMKPI {
 		}
 	}
 	
-	func addConstraints() {
+	fileprivate func addConstraints() {
 		
 		self.invalidateIntrinsicContentSize()
 		if self.isRankings || self.isScorecard {
@@ -526,7 +526,7 @@ fileprivate extension ZCRMKPI {
 */
 fileprivate extension ZCRMKPI {
 	
-	func isValidData() -> Bool {
+	fileprivate func isValidData() -> Bool {
 	
 		if self.isScorecard || self.isRankings {
 			return self.checkDataForKpi()

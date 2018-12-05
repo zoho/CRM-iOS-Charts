@@ -197,6 +197,7 @@ public struct ZCRMFunnelStage{
 
 	public init(label: String) {
 		self.label = label
+		self.color = UIColor.yellow
 	}
 
 	public init(label: String, color: UIColor) {

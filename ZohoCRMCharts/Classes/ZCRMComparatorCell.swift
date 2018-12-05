@@ -37,7 +37,7 @@ internal final class ZCRMComparatorCell: UICollectionViewCell {
 		self.addConstraints()
 	}
 	
-	func render() {
+	internal func render() {
 		
 		self.label.translatesAutoresizingMaskIntoConstraints = false
 		self.label.textAlignment = .center
@@ -78,12 +78,12 @@ internal final class ZCRMComparatorCell: UICollectionViewCell {
 	
 	private func getBarLength() -> CGFloat {
 		
-		let availableHeight = self.frame.height - (self.frame.height / 3)
+		let availableHeight: CGFloat = self.frame.height - (self.frame.height / 3)
 		if highValue == nil {
 			return availableHeight
 		}
-		let onePercent = availableHeight / 100
-		let percentOfDiff = (self.chunkData.value * 100) / self.highValue
+		let onePercent: CGFloat = availableHeight / 100
+		let percentOfDiff: Int = (self.chunkData.value * 100) / self.highValue
 		return percentOfDiff.toCGFloat() * onePercent
 	}
 	
@@ -128,7 +128,7 @@ internal final class ZCRMComparatorHeader: UIView {
 		self.addConstraints()
 	}
 	
-	func render() {
+	internal func render() {
 		
 		self.clipsToBounds = true
 		self.label.translatesAutoresizingMaskIntoConstraints = false
@@ -142,7 +142,7 @@ internal final class ZCRMComparatorHeader: UIView {
 		self.setUIOptions()
 	}
 	
-	func setUIOptions() {
+	internal func setUIOptions() {
 		
 		self.label.font = options.groupFont
 		self.label.textColor = options.groupFontColor
@@ -219,9 +219,9 @@ internal final class ZCRMComparatorHeader: UIView {
 
 internal final class ZCRMComparatorChunkView: UIView {
 	
-	var options: ComparatorRenderOptions = ComparatorRenderOptions()
-	var addBottomBorder: Bool = false
-	let label: UILabel = UILabel()
+	internal var options: ComparatorRenderOptions = ComparatorRenderOptions()
+	internal var addBottomBorder: Bool = false
+	internal let label: UILabel = UILabel()
 	
 	init() {
 		
@@ -239,6 +239,7 @@ internal final class ZCRMComparatorChunkView: UIView {
 			self.addBottomBorder(color: .black, width: 1)
 		}
 	}
+	
 	private func render() {
 		
 		self.clipsToBounds = true
@@ -253,7 +254,7 @@ internal final class ZCRMComparatorChunkView: UIView {
 		self.setUIOptions()
 	}
 	
-	func setUIOptions() {
+	internal func setUIOptions() {
 		
 		self.label.font = options.chunkFont
 		self.label.textColor = options.chunkFontColor
