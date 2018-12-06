@@ -295,7 +295,7 @@ fileprivate extension ZCRMComparator {
 		}
 		for (index, group) in self.groupings.groups.enumerated() {
 			
-			let header = ZCRMComparatorHeader(type: self.type, true)
+			let header = ZCRMComparatorHeader(type: self.type, self.groupings.isAvatarNeeded)
 			header.group = group
 			header.options = self.renderOptions
 			header.alignVertical = self.showGroupsVertically
@@ -571,8 +571,28 @@ fileprivate extension ZCRMComparator {
 					self.chunkDatas.append(self.dataSource.comparator(chunk, group, groupIndex: groupIndex, chunkIndex: chunkIndex))
 				}
 			}
+			if self.groupings.isAvatarNeeded {
+				self.setGroupImages()
+			}
 		}
 	
+	}
+	
+	private func setGroupImages() {
+		
+		for (index, group) in self.groupings.groups.enumerated() {
+			
+			self.dataSource.imageFor(group) { (image) in
+				self.setImageFor(index, image: image)
+			}
+		}
+	}
+	
+	private func setImageFor(_ groupAtIndex: Int, image: UIImage) {
+		
+		if self.headersView.arrangedSubviews.count > groupAtIndex {
+			(self.headersView.arrangedSubviews[groupAtIndex] as! ZCRMComparatorHeader).group.image = image
+		}
 	}
 	
 	fileprivate func getMaxOfChunk(_ indexInArray: Int) -> Int {

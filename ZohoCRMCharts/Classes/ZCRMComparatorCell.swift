@@ -109,7 +109,9 @@ internal final class ZCRMComparatorHeader: UIView {
 	
 	internal var group: ZCRMComparatorGroup! {
 		didSet {
-			self.setData()
+			if group != nil {
+				self.setData()
+			}
 		}
 	}
 	
@@ -136,8 +138,8 @@ internal final class ZCRMComparatorHeader: UIView {
 		self.addSubview(self.label)
 		if self.isAvatarNeeded {
 			self.imageView.translatesAutoresizingMaskIntoConstraints = false
+			self.imageView.clipsToBounds = true
 			self.addSubview(self.imageView)
-			self.imageView.backgroundColor = .red
 		}
 		self.setUIOptions()
 	}

@@ -129,6 +129,7 @@ public struct ZCRMComparatorGroup {
 	internal let label: String
 	internal let value: String
 	internal var image: UIImage!
+	public var tag: Int64 = 0
 	
 	public init(label: String, value: String) {
 		self.label = label
@@ -140,7 +141,6 @@ public struct ZCRMComparatorGroup {
 		self.value = value
 		self.image = image
 	}
-	
 }
 
 public struct ZCRMComparatorGroupings {
@@ -186,6 +186,8 @@ public struct ZCRMComparatorChunk {
 public protocol ZCRMComparatorDataSource: class {
 	
 	func comparator(_ chunk: ZCRMComparatorChunk, _ group: ZCRMComparatorGroup, groupIndex: Int, chunkIndex: Int) -> ZCRMChunkData
+	
+	func imageFor(_ group: ZCRMComparatorGroup, completion : @escaping (UIImage) -> () )
 }
 
 
