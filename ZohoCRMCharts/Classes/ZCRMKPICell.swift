@@ -113,9 +113,9 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 		self.rateLabel.layer.cornerRadius = 5
 		self.rateLabel.clipsToBounds = true
 		self.rateLabel.backgroundColor = self.options.neutralColor
-		if self.data.objective == .positive {
+		if self.data.outcome == .positive {
 			self.rateLabel.backgroundColor = self.options.positiveColor
-		} else if self.data.objective == .negative {
+		} else if self.data.outcome == .negative {
 			self.rateLabel.backgroundColor = self.options.negativeColor
 		}
 	}

@@ -96,9 +96,9 @@ internal struct ZCRMKPIUIUtil {
 		
 		let fontSize = options.simpleKpiValueFont.pointSize
 		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.value, attributes: [NSFontAttributeName: options.simpleKpiValueFont, NSForegroundColorAttributeName: options.valueFontColor])
-		if (data.objective == .positive) {
+		if (data.outcome == .positive) {
 			outputString.append(ZCRMUIUtil.getIncText(ofSize: (fontSize/2) + 3, baselineOffset: 2.5, color: options.positiveColor))
-		} else if (data.objective == .negative) {
+		} else if (data.outcome == .negative) {
 			outputString.append(ZCRMUIUtil.getDecText(ofSize: (fontSize/2) + 3, baselineOffset: 2, color: options.negativeColor))
 		} else {
 			outputString.append(ZCRMUIUtil.getNeutralText(ofSize: (fontSize/2) + 4, baselineOffset: 2.5, color: options.neutralColor))
@@ -111,9 +111,9 @@ internal struct ZCRMKPIUIUtil {
 		
 		let fontSize = options.simpleKpiValueFont.pointSize
 		var valueColor = options.neutralColor
-		if data.objective == .positive {
+		if data.outcome == .positive {
 			valueColor = options.positiveColor
-		} else if data.objective == .negative {
+		} else if data.outcome == .negative {
 			valueColor = options.negativeColor
 		}
 		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.rate, attributes: [ NSFontAttributeName: options.simpleKpiValueFont, NSForegroundColorAttributeName: valueColor])
@@ -129,17 +129,17 @@ internal struct ZCRMKPIUIUtil {
 
 internal struct ZCRMComparatorUIUtil {
 	
-	static func getTextForChunkData(_ chunkData: ZCRMChunkData, options: ComparatorRenderOptions, objective: ZCRMCharts.Outcome, isHeader: Bool) -> NSMutableAttributedString{
+	static func getTextForChunkData(_ chunkData: ZCRMChunkData, options: ComparatorRenderOptions, outcome: ZCRMCharts.Outcome, isHeader: Bool) -> NSMutableAttributedString{
 		
 		let font: UIFont = isHeader ? options.groupFont : options.chunkDataFont
 		let color: UIColor = isHeader ? options.groupFontColor : options.chunkDataFontColor
 		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: chunkData.label, attributes: [NSFontAttributeName: font, NSForegroundColorAttributeName: color])
 		if chunkData.rate != nil {
 			var rateColor: UIColor!
-			if objective == .positive {
+			if outcome == .positive {
 				rateColor = options.positiveColor
 				outputString.append(ZCRMUIUtil.getIncText(ofSize: options.chunkDataFont.pointSize, baselineOffset: 0, color: rateColor))
-			} else if objective == .negative {
+			} else if outcome == .negative {
 				rateColor = options.negativeColor
 				outputString.append(ZCRMUIUtil.getDecText(ofSize: options.chunkDataFont.pointSize, baselineOffset: 0, color: rateColor))
 			} else {

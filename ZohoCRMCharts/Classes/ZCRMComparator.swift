@@ -525,7 +525,7 @@ extension ZCRMComparator: UICollectionViewDataSource, UICollectionViewDelegate, 
 	private func renderElegantComparatorCell(_ cell: ZCRMComparatorCell, index: Int) {
 		
 		let chunk = self.getChunk(chunkDataIndex: index)
-		cell.objective = chunk.objective
+		cell.outcome = chunk.outcome
 		if (self.getGroupIndex(chunkDataIndex: index) + 1) % 2 != 0 {
 			cell.backgroundColor = self.renderOptions.elegantDiffColor
 		}
@@ -543,7 +543,7 @@ extension ZCRMComparator: UICollectionViewDataSource, UICollectionViewDelegate, 
 			cell.backgroundColor = self.renderOptions.classicHeaderRowColor
 		} else if !self.chunkDatas.isEmpty {
 			let chunk = self.getChunk(chunkDataIndex: cellIndex)
-			cell.objective = chunk.objective
+			cell.outcome = chunk.outcome
 			cell.chunkData = self.chunkDatas[cellIndex]
 		}
 		let totalCells = (self.groupings.groups.count + 1) * self.chunks.count
@@ -562,13 +562,13 @@ fileprivate extension ZCRMComparator {
 		if self.type == .classic {
 			for (groupIndex, group) in self.groupings.groups.enumerated() {
 				for (chunkIndex, chunk) in self.chunks.enumerated() {
-					self.chunkDatas.append(self.dataSource.comparator(chunk, group, groupIndex: groupIndex, chunkIndex: chunkIndex))
+					self.chunkDatas.append(self.dataSource.comparator(chunk, group, chunkIndex: chunkIndex, groupIndex: groupIndex))
 				}
 			}
 		} else {
 			for (chunkIndex, chunk) in self.chunks.enumerated() {
 				for (groupIndex, group) in self.groupings.groups.enumerated() {
-					self.chunkDatas.append(self.dataSource.comparator(chunk, group, groupIndex: groupIndex, chunkIndex: chunkIndex))
+					self.chunkDatas.append(self.dataSource.comparator(chunk, group, chunkIndex: chunkIndex, groupIndex: groupIndex))
 				}
 			}
 			if self.groupings.isAvatarNeeded {

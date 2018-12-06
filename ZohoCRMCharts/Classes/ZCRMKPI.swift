@@ -539,7 +539,7 @@ fileprivate extension ZCRMKPI {
 		var isValidData = true
 		let data = self.data[0]
 		if self.isStandard || self.isGrowthIndex {
-			if data.rate == nil || data.comparedToLabel == nil || data.comparedToValue == nil || data.objective == nil {
+			if data.rate == nil || data.comparedToLabel == nil || data.comparedToValue == nil || data.outcome == nil {
 				isValidData = false
 			}
 		}
@@ -554,7 +554,7 @@ fileprivate extension ZCRMKPI {
 				isValidData = false
 				break
 			}
-			if self.isScorecard && (kpiRow.objective == nil || kpiRow.rate == nil) {
+			if self.isScorecard && (kpiRow.outcome == nil || kpiRow.rate == nil) {
 				isValidData = false
 				break
 			}

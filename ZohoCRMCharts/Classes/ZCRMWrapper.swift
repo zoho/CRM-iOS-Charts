@@ -52,7 +52,7 @@ public struct ZCRMKPIRow {
 	internal var value: String!
 	internal var label: String!
 	internal var rate: String!
-	internal var objective: ZCRMCharts.Outcome!
+	internal var outcome: ZCRMCharts.Outcome!
 	public var comparedToLabel: String!
 	public var comparedToValue: String!
 	
@@ -70,12 +70,12 @@ public struct ZCRMKPIRow {
 	- parameters:
 		- value: value of the standard/growth index kpi component.
 		- rate: rate differed from the compared one.
-		- objective: objective of the kpi.
+		- outcome: outcome of the kpi.
 	*/
-	public init(value: String, rate: String, objective: ZCRMCharts.Outcome) {
+	public init(value: String, rate: String, outcome: ZCRMCharts.Outcome) {
 		self.value = value
 		self.rate = rate
-		self.objective = objective
+		self.outcome = outcome
 	}
 	
 	/**
@@ -86,11 +86,11 @@ public struct ZCRMKPIRow {
 		- rate: rate of growth outcome.
 		- status: it is a increment/decrement/neutral.
 	*/
-	public init(label: String, value: String, rate: String, objective: ZCRMCharts.Outcome){
+	public init(label: String, value: String, rate: String, outcome: ZCRMCharts.Outcome){
 		self.label = label
 		self.value = value;
 		self.rate = rate
-		self.objective = objective
+		self.outcome = outcome
 	}
 	
 	/**
@@ -135,12 +135,6 @@ public struct ZCRMComparatorGroup {
 		self.label = label
 		self.value = value
 	}
-	
-	public init(label: String, value: String, image: UIImage) {
-		self.label = label
-		self.value = value
-		self.image = image
-	}
 }
 
 public struct ZCRMComparatorGroupings {
@@ -166,15 +160,15 @@ public struct ZCRMComparatorChunk {
 	
 	internal let label: String
 	internal var color: UIColor = .green
-	internal var objective: ZCRMCharts.Outcome!
+	internal var outcome: ZCRMCharts.Outcome!
 	
 	public init(label: String) {
 		self.label = label
 	}
 	
-	public init(label: String, objective: ZCRMCharts.Outcome) {
+	public init(label: String, outcome: ZCRMCharts.Outcome) {
 		self.label = label
-		self.objective = objective
+		self.outcome = outcome
 	}
 	
 	public init(label: String, color: UIColor) {
@@ -185,7 +179,7 @@ public struct ZCRMComparatorChunk {
 
 public protocol ZCRMComparatorDataSource: class {
 	
-	func comparator(_ chunk: ZCRMComparatorChunk, _ group: ZCRMComparatorGroup, groupIndex: Int, chunkIndex: Int) -> ZCRMChunkData
+	func comparator(_ chunk: ZCRMComparatorChunk, _ group: ZCRMComparatorGroup, chunkIndex: Int, groupIndex: Int) -> ZCRMChunkData
 	
 	func imageFor(_ group: ZCRMComparatorGroup, completion : @escaping (UIImage) -> () )
 }
