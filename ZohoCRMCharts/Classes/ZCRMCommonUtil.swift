@@ -143,3 +143,19 @@ internal func getScreenWidthOf(percent: CGFloat) -> CGFloat {
 	
 	return (UIScreen.main.bounds.width / 100) * percent
 }
+
+internal extension Array where Element: Equatable {
+	
+	internal func isEqual(_ array: [Element]) -> Bool {
+		
+		if array.count != self.count { return false }
+		var isEqual = true
+		for (index, element) in array.enumerated() {
+			if element != self[index] {
+				isEqual = false
+				break
+			}
+		}
+		return isEqual
+	}
+}

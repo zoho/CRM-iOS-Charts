@@ -126,14 +126,12 @@ public struct ZCRMChunkData {
 
 public struct ZCRMComparatorGroup {
 	
-	internal let label: String
-	internal let value: String
+	public let label: String
 	internal var image: UIImage!
-	public var tag: Int64 = 0
+	public var tag: String = ""
 	
-	public init(label: String, value: String) {
+	public init(label: String) {
 		self.label = label
-		self.value = value
 	}
 }
 
@@ -158,9 +156,10 @@ public struct ZCRMComparatorGroupings {
 
 public struct ZCRMComparatorChunk {
 	
-	internal let label: String
-	internal var color: UIColor = .green
-	internal var outcome: ZCRMCharts.Outcome!
+	public let label: String
+	public internal(set) var color: UIColor = .green
+	public internal(set) var outcome: ZCRMCharts.Outcome!
+	public var tag: String = ""
 	
 	public init(label: String) {
 		self.label = label
@@ -181,7 +180,7 @@ public protocol ZCRMComparatorDataSource: class {
 	
 	func comparator(_ chunk: ZCRMComparatorChunk, _ group: ZCRMComparatorGroup, chunkIndex: Int, groupIndex: Int) -> ZCRMChunkData
 	
-	func imageFor(_ group: ZCRMComparatorGroup, completion : @escaping (UIImage) -> () )
+	func groupImage(_ of: ZCRMComparatorGroup, completion : @escaping (UIImage) -> () )
 }
 
 
@@ -190,6 +189,7 @@ public struct ZCRMFunnelStage{
 
 	public let label: String
 	public private(set) var color: UIColor!
+	public var tag: String = ""
 
 	public init(label: String) {
 		self.label = label
@@ -204,9 +204,10 @@ public struct ZCRMFunnelStage{
 }
 
 public struct ZCRMFunnelSegment{
-
+	
 	public let label: String
-
+	public var tag: String = ""
+	
 	public init(label: String) {
 		self.label = label
 	}
@@ -231,5 +232,3 @@ public protocol ZCRMFunnelDataSource: class {
 
 	func conversionRateFor(_ funnel: ZCRMFunnel, _ segment: ZCRMFunnelSegment?) -> ZCRMFunnelData
 }
-
-

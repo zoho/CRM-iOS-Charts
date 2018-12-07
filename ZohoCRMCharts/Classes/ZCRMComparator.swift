@@ -175,8 +175,22 @@ public final class ZCRMComparator: UIView {
 	}
 	
 	public override func layoutSubviews() {
-		
+		super.layoutSubviews()
 		self.addConstraints()
+	}
+	
+	public func reloadData()  {
+		
+		if self.dataSource != nil {
+			self.setChunkDatas()
+		}
+	}
+	
+	public func reloadGroupImages() {
+		
+		if self.type != .classic && self.dataSource != nil {
+			self.setGroupImages()
+		}
 	}
 }
 
@@ -571,18 +585,16 @@ fileprivate extension ZCRMComparator {
 					self.chunkDatas.append(self.dataSource.comparator(chunk, group, chunkIndex: chunkIndex, groupIndex: groupIndex))
 				}
 			}
-			if self.groupings.isAvatarNeeded {
-				self.setGroupImages()
-			}
+			self.reloadGroupImages()
 		}
 	
 	}
 	
-	private func setGroupImages() {
+	fileprivate func setGroupImages() {
 		
 		for (index, group) in self.groupings.groups.enumerated() {
 			
-			self.dataSource.imageFor(group) { (image) in
+			self.dataSource.groupImage(group) { (image) in
 				self.setImageFor(index, image: image)
 			}
 		}

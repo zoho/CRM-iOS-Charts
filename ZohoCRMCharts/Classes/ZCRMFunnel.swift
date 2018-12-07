@@ -217,7 +217,18 @@ public final class ZCRMFunnel: UIView {
 	}
 	
 	public override func layoutSubviews() {
+		super.layoutSubviews()
 		self.addConstraints()
+	}
+	
+	public func reloadData() {
+		
+		if dataSource != nil {
+			self.loadData()
+			if self.type != .segment {
+				self.setData()
+			}
+		}
 	}
 }
 
