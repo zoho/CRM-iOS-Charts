@@ -582,7 +582,9 @@ fileprivate extension ZCRMFunnel{
 		self.conversionRateView.translatesAutoresizingMaskIntoConstraints = false
 		self.conversionRateView.font = self.renderOptions.conversionRateFont
 		self.conversionRateView.textColor = self.renderOptions.conversionRateFontColor
-		self.conversionRateView.text = "Conversion Rate: \(self.conversionRate.label)"
+		if self.conversionRate != nil {
+			self.conversionRateView.text = "Conversion Rate: \(self.conversionRate.label)"
+		}
 		self.conversionRateView.textAlignment = .center
 		self.scrollView.addSubview(self.conversionRateView)
 	}

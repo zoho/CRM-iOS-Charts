@@ -139,10 +139,10 @@ public final class ZCRMComparator: UIView {
 	
 	public var columnWidth: CGFloat!
 	
-	fileprivate let title: String
-	fileprivate let type: ZCRMCharts.ZCRMComparatorType
-	fileprivate let groupings: ZCRMComparatorGroupings
-	fileprivate let chunks: [ZCRMComparatorChunk]
+	public let title: String
+	public let type: ZCRMCharts.ZCRMComparatorType
+	public let groupings: ZCRMComparatorGroupings
+	public let chunks: [ZCRMComparatorChunk]
 	fileprivate let titleView: UILabel = UILabel()
 	fileprivate var renderOptions: ComparatorRenderOptions = ComparatorRenderOptions()
 	fileprivate var collectionView: UICollectionView!

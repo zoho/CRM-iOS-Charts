@@ -127,7 +127,7 @@ public struct ZCRMChunkData {
 public struct ZCRMComparatorGroup {
 	
 	public let label: String
-	internal var image: UIImage!
+	public var image: UIImage!
 	public var tag: String = ""
 	
 	public init(label: String) {
@@ -137,9 +137,9 @@ public struct ZCRMComparatorGroup {
 
 public struct ZCRMComparatorGroupings {
 	
-	internal let groups: [ZCRMComparatorGroup]
-	internal let isAvatarNeeded: Bool
-	internal var label: String!
+	public let groups: [ZCRMComparatorGroup]
+	public let isAvatarNeeded: Bool
+	public private(set) var label: String!
 	
 	public init(groups: [ZCRMComparatorGroup], isAvatarNeeded: Bool) {
 		self.isAvatarNeeded = isAvatarNeeded
