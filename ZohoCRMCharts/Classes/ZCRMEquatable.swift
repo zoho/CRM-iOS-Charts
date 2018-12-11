@@ -15,7 +15,7 @@ extension ZCRMKPIRow: Equatable {
 extension ZCRMChunkData: Equatable {
 	
 	public static func == (lhs: ZCRMChunkData, rhs: ZCRMChunkData) -> Bool {
-		return lhs.label == rhs.label && lhs.value == rhs.value && lhs.rate == rhs.rate
+		return lhs.label == rhs.label && lhs.value == rhs.value && lhs.rate == rhs.rate && lhs.outcome == rhs.outcome 
 	}
 }
 
@@ -36,7 +36,7 @@ extension ZCRMComparatorGroupings: Equatable {
 extension ZCRMComparatorChunk: Equatable {
 	
 	public static func == (lhs: ZCRMComparatorChunk, rhs: ZCRMComparatorChunk) -> Bool {
-		return lhs.color == rhs.color && lhs.label == rhs.label && lhs.outcome == rhs.outcome && lhs.tag == rhs.tag
+		return lhs.color == rhs.color && lhs.label == rhs.label && lhs.tag == rhs.tag
 	}
 }
 

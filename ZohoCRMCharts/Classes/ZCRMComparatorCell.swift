@@ -12,7 +12,6 @@ internal final class ZCRMComparatorCell: UICollectionViewCell {
 	
 	internal var type: ZCRMCharts.ZCRMComparatorType!
 	internal var options: ComparatorRenderOptions = ComparatorRenderOptions()
-	internal var outcome: ZCRMCharts.Outcome = .neutral
 	internal var isHeader: Bool = false
 	private let label: UILabel = UILabel()
 	private let container: UIView = UIView()
@@ -92,7 +91,7 @@ internal final class ZCRMComparatorCell: UICollectionViewCell {
 		if self.type == .sport {
 			self.label.text = self.chunkData.label
 		} else if self.type == .elegant || self.type == .classic {
-			self.label.attributedText = ZCRMComparatorUIUtil.getTextForChunkData(self.chunkData, options: self.options, outcome: self.outcome, isHeader: self.isHeader)
+			self.label.attributedText = ZCRMComparatorUIUtil.getTextForChunkData(self.chunkData, options: self.options, isHeader: self.isHeader)
 		}
 	}
 	

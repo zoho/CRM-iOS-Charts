@@ -129,17 +129,17 @@ internal struct ZCRMKPIUIUtil {
 
 internal struct ZCRMComparatorUIUtil {
 	
-	static func getTextForChunkData(_ chunkData: ZCRMChunkData, options: ComparatorRenderOptions, outcome: ZCRMCharts.Outcome, isHeader: Bool) -> NSMutableAttributedString{
+	static func getTextForChunkData(_ chunkData: ZCRMChunkData, options: ComparatorRenderOptions, isHeader: Bool) -> NSMutableAttributedString {
 		
 		let font: UIFont = isHeader ? options.groupFont : options.chunkDataFont
 		let color: UIColor = isHeader ? options.groupFontColor : options.chunkDataFontColor
 		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: chunkData.label, attributes: [NSFontAttributeName: font, NSForegroundColorAttributeName: color])
 		if chunkData.rate != nil {
 			var rateColor: UIColor!
-			if outcome == .positive {
+			if chunkData.outcome == .positive {
 				rateColor = options.positiveColor
 				outputString.append(ZCRMUIUtil.getIncText(ofSize: options.chunkDataFont.pointSize, baselineOffset: 0, color: rateColor))
-			} else if outcome == .negative {
+			} else if chunkData.outcome == .negative {
 				rateColor = options.negativeColor
 				outputString.append(ZCRMUIUtil.getDecText(ofSize: options.chunkDataFont.pointSize, baselineOffset: 0, color: rateColor))
 			} else {

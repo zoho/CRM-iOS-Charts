@@ -111,16 +111,18 @@ public struct ZCRMChunkData {
 	internal let label: String
 	internal let value: Int
 	internal var rate: String!
+	internal var outcome: ZCRMCharts.Outcome!
 	
 	public init(label: String, value: Int) {
 		self.label = label
 		self.value = value
 	}
 	
-	public init(label: String, value: Int, rate: String) {
+	public init(label: String, value: Int, rate: String, outcome: ZCRMCharts.Outcome) {
 		self.label = label
 		self.value = value
 		self.rate = rate
+		self.outcome = outcome
 	}
 }
 
@@ -158,18 +160,12 @@ public struct ZCRMComparatorChunk {
 	
 	public let label: String
 	public internal(set) var color: UIColor = .green
-	public internal(set) var outcome: ZCRMCharts.Outcome!
 	public var tag: String = ""
 	
 	public init(label: String) {
 		self.label = label
 	}
-	
-	public init(label: String, outcome: ZCRMCharts.Outcome) {
-		self.label = label
-		self.outcome = outcome
-	}
-	
+
 	public init(label: String, color: UIColor) {
 		self.label = label
 		self.color = color

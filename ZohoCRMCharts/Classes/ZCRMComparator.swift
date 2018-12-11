@@ -539,7 +539,7 @@ extension ZCRMComparator: UICollectionViewDataSource, UICollectionViewDelegate, 
 	private func renderElegantComparatorCell(_ cell: ZCRMComparatorCell, index: Int) {
 		
 		let chunk = self.getChunk(chunkDataIndex: index)
-		cell.outcome = chunk.outcome
+		
 		if (self.getGroupIndex(chunkDataIndex: index) + 1) % 2 != 0 {
 			cell.backgroundColor = self.renderOptions.elegantDiffColor
 		}
@@ -556,8 +556,6 @@ extension ZCRMComparator: UICollectionViewDataSource, UICollectionViewDelegate, 
 			cell.chunkData = ZCRMChunkData(label: self.chunks[index].label, value: 0)
 			cell.backgroundColor = self.renderOptions.classicHeaderRowColor
 		} else if !self.chunkDatas.isEmpty {
-			let chunk = self.getChunk(chunkDataIndex: cellIndex)
-			cell.outcome = chunk.outcome
 			cell.chunkData = self.chunkDatas[cellIndex]
 		}
 		let totalCells = (self.groupings.groups.count + 1) * self.chunks.count
