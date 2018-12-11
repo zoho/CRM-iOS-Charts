@@ -151,6 +151,7 @@ public final class ZCRMComparator: UIView {
 	fileprivate let chunksView: UIStackView = UIStackView()
 	fileprivate let headersView: UIStackView = UIStackView()
 	fileprivate var chunkDatas: [ZCRMChunkData] = []
+	fileprivate static var groupingsDefaultImage: UIImage = UIImage()
 	
 	public init(title: String, type: ZCRMCharts.ZCRMComparatorType, groupings: ZCRMComparatorGroupings, chunks: [ZCRMComparatorChunk]) {
 		self.title = title
@@ -307,10 +308,20 @@ fileprivate extension ZCRMComparator {
 		for header in headers {
 			header.removeFromSuperview()
 		}
+		
+		var isAvartarNeeded =  false
+		if self.groupings.defaultImage != nil {
+			ZCRMComparator.groupingsDefaultImage = self.groupings.defaultImage
+			isAvartarNeeded = true
+		}
 		for (index, group) in self.groupings.groups.enumerated() {
 			
-			let header = ZCRMComparatorHeader(type: self.type, self.groupings.isAvatarNeeded)
-			header.group = group
+			var groupData = group
+			if isAvartarNeeded {
+				groupData.image = self.groupings.defaultImage
+			}
+			let header = ZCRMComparatorHeader(type: self.type, isAvartarNeeded)
+			header.group = groupData
 			header.options = self.renderOptions
 			header.alignVertical = self.showGroupsVertically
 			if self.type == .elegant && (index + 1) % 2 != 0 {
@@ -592,7 +603,7 @@ fileprivate extension ZCRMComparator {
 		
 		for (index, group) in self.groupings.groups.enumerated() {
 			
-			self.dataSource.groupImage(group) { (image) in
+			self.dataSource.groupImage(of: group) { (image) in
 				self.setImageFor(index, image: image)
 			}
 		}
@@ -633,5 +644,12 @@ fileprivate extension ZCRMComparator {
 		
 		let chunkDataRange = self.groupings.groups.count
 		return chunkDataIndex % chunkDataRange
+	}
+}
+
+public extension ZCRMComparatorDataSource {
+	
+	func groupImage(of group: ZCRMComparatorGroup, completion : @escaping (UIImage) -> () ) {
+		completion(ZCRMComparator.groupingsDefaultImage)
 	}
 }

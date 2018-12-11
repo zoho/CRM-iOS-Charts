@@ -129,7 +129,7 @@ public struct ZCRMChunkData {
 public struct ZCRMComparatorGroup {
 	
 	public let label: String
-	public var image: UIImage!
+	internal var image: UIImage!
 	public var tag: String = ""
 	
 	public init(label: String) {
@@ -140,16 +140,19 @@ public struct ZCRMComparatorGroup {
 public struct ZCRMComparatorGroupings {
 	
 	public let groups: [ZCRMComparatorGroup]
-	public let isAvatarNeeded: Bool
+	public private(set) var defaultImage: UIImage!
 	public private(set) var label: String!
 	
-	public init(groups: [ZCRMComparatorGroup], isAvatarNeeded: Bool) {
-		self.isAvatarNeeded = isAvatarNeeded
+	public init(groups: [ZCRMComparatorGroup]) {
 		self.groups = groups
 	}
 	
-	public init(groups: [ZCRMComparatorGroup], isAvatarNeeded: Bool, label: String) {
-		self.isAvatarNeeded = isAvatarNeeded
+	public init(groups: [ZCRMComparatorGroup], defaultImage: UIImage) {
+		self.groups = groups
+		self.defaultImage = defaultImage
+	}
+	
+	public init(groups: [ZCRMComparatorGroup], label: String) {
 		self.groups = groups
 		self.label = label
 	}
@@ -176,7 +179,7 @@ public protocol ZCRMComparatorDataSource: class {
 	
 	func comparator(_ chunk: ZCRMComparatorChunk, _ group: ZCRMComparatorGroup, chunkIndex: Int, groupIndex: Int) -> ZCRMChunkData
 	
-	func groupImage(_ of: ZCRMComparatorGroup, completion : @escaping (UIImage) -> () )
+	func groupImage(of group: ZCRMComparatorGroup, completion : @escaping (UIImage) -> () )
 }
 
 
