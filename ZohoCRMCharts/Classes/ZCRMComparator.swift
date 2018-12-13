@@ -152,6 +152,7 @@ public final class ZCRMComparator: UIView {
 	fileprivate let headersView: UIStackView = UIStackView()
 	fileprivate var chunkDatas: [ZCRMChunkData] = []
 	fileprivate static var groupingsDefaultImage: UIImage = UIImage()
+	private var didSetConstraints: Bool = false
 	
 	public init(title: String, type: ZCRMCharts.ZCRMComparatorType, groupings: ZCRMComparatorGroupings, chunks: [ZCRMComparatorChunk]) {
 		self.title = title
@@ -176,8 +177,49 @@ public final class ZCRMComparator: UIView {
 	}
 	
 	public override func layoutSubviews() {
+		
+		if !self.didSetConstraints {
+			
+			self.addConstraints()
+			self.didSetConstraints = true
+		} else {
+
+			for constraint in self.scrollView.constraints {
+				if constraint.firstAttribute == .height {
+					constraint.constant = self.type == .classic ? self.collectionViewHeight : self.headerHeight + self.collectionViewHeight
+				}
+			}
+			for constraint in self.headersView.constraints {
+				if constraint.firstAttribute == .height {
+					constraint.constant = self.headerHeight
+				}
+				if constraint.firstAttribute == .width {
+					constraint.constant = self.collectionViewWidth
+				}
+			}
+			for constraint in self.collectionView.constraints {
+				if constraint.firstAttribute == .height {
+					constraint.constant = self.collectionViewHeight
+				}
+				if constraint.firstAttribute == .width {
+					constraint.constant = self.collectionViewWidth
+				}
+			}
+			for constraint in self.chunksView.constraints {
+				if constraint.firstAttribute == .height && constraint.firstItem is UIStackView {
+					constraint.constant = self.collectionViewHeight
+				}
+				if constraint.firstAttribute == .width {
+					constraint.constant = self.chunksWidth
+				}
+			}
+			if self.type == .sport {
+				self.setSportComparatorConfigs()
+			} else {
+				self.collectionViewFlowLayout.itemSize = CGSize(width: self.cellWidth, height: self.cellHeight)
+			}
+		}
 		super.layoutSubviews()
-		self.addConstraints()
 	}
 	
 	public func reloadData()  {
@@ -216,14 +258,35 @@ fileprivate extension ZCRMComparator {
 			if self.columnWidth != nil && self.type != .sport {
 				return columnWidth
 			}
-			if self.type == .elegant {
-				return 150
-			} else if self.type == .classic {
-				return 120
+
+			var cellWidth: CGFloat = 150
+			
+			if self.type == .sport {
+				let width = self.collectionViewWidth
+				let widthForCells = width * 0.7
+				cellWidth = widthForCells /  self.groupings.groups.count.toCGFloat()
+			} else {
+				
+				let cvWidth = self.frame.width - self.chunksWidth
+				let totalWidthForCells = self.type == .classic ? cellWidth * self.chunks.count.toCGFloat() : cellWidth * self.groupings.groups.count.toCGFloat()
+				if totalWidthForCells < cvWidth {
+					cellWidth = self.type == .classic ? cvWidth / self.chunks.count.toCGFloat() : cvWidth / self.groupings.groups.count.toCGFloat()
+				}
+				
 			}
-			let width = self.collectionViewWidth
-			let widthForCells = width * 0.7
-			return widthForCells /  self.groupings.groups.count.toCGFloat()
+			return cellWidth
+		}
+	}
+	
+	fileprivate var chunksWidth: CGFloat {
+		get {
+			var width: CGFloat = 120
+			if self.frame.width > 400 {
+				width = 150
+			} else if self.frame.width > 800 {
+				width = 200
+			}
+			return width
 		}
 	}
 	
@@ -428,10 +491,24 @@ fileprivate extension ZCRMComparator {
 	}
 	
 	private func addSportComparatorConstraints() {
+
+		self.setSportComparatorConfigs()
+		var constraints: [NSLayoutConstraint] = []
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[scrollView(==\(self.headerHeight + self.collectionViewHeight))]-0-|", options: [], metrics: nil, views: ["title": self.titleView, "scrollView": self.scrollView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[chunksView]-0-[scrollView(==\(self.collectionViewWidth))]-0-|", options: [], metrics: nil, views: ["chunksView": self.chunksView, "scrollView": self.scrollView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[chunksLabel(==\(self.collectionViewHeight))]-0-|", options: [], metrics: nil, views: ["chunksLabel": self.chunksView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[headers(==\(self.collectionViewWidth))]-0-|", options: [], metrics: nil, views: ["headers": self.headersView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[collectionView(==\(self.collectionViewWidth))]-0-|", options: [], metrics: nil, views: ["collectionView": self.collectionView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[headers(==\(self.headerHeight))]-0-[collectionView(==\(self.collectionViewHeight))]-0-|", options: [], metrics: nil, views: ["headers": self.headersView, "collectionView": self.collectionView])
+		NSLayoutConstraint.activate(constraints)
+	}
+	
+	fileprivate func setSportComparatorConfigs() {
 		
 		let horizontalSpacing = ((self.collectionViewWidth * 0.3) / (self.groupings.groups.count + 1).toCGFloat()) / 2
 		let verticalSpacing = ((self.collectionViewHeight * 0.25) / self.chunks.count.toCGFloat()) / 2
 		self.scrollView.bounces = false
+		self.scrollView.isScrollEnabled = false
 		self.scrollView.contentSize.width = self.collectionViewWidth
 		self.scrollView.contentSize.height = self.collectionViewHeight
 		self.chunksView.layoutMargins = UIEdgeInsets(top: verticalSpacing * 3, left: horizontalSpacing * 2, bottom: 0, right: 0)
@@ -441,16 +518,7 @@ fileprivate extension ZCRMComparator {
 		self.collectionViewFlowLayout.itemSize = CGSize(width: self.cellWidth, height: self.cellHeight)
 		self.collectionViewFlowLayout.sectionInset = UIEdgeInsets(top: verticalSpacing, left: horizontalSpacing * 2, bottom: verticalSpacing, right: horizontalSpacing * 2)
 
-		var constraints: [NSLayoutConstraint] = []
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[scrollView]-0-|", options: [], metrics: nil, views: ["title": self.titleView, "scrollView": self.scrollView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[chunksView]-0-[scrollView(==\(self.collectionViewWidth))]-0-|", options: [], metrics: nil, views: ["chunksView": self.chunksView, "scrollView": self.scrollView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[chunksLabel(==\(self.collectionViewHeight))]-0-|", options: [], metrics: nil, views: ["chunksLabel": self.chunksView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[headers(==\(self.collectionViewWidth))]-0-|", options: [], metrics: nil, views: ["headers": self.headersView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[collectionView(==\(self.collectionViewWidth))]-0-|", options: [], metrics: nil, views: ["collectionView": self.collectionView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[headers(==\(self.headerHeight))]-0-[collectionView(==\(self.collectionViewHeight))]-0-|", options: [], metrics: nil, views: ["headers": self.headersView, "collectionView": self.collectionView])
-		NSLayoutConstraint.activate(constraints)
 	}
-	
 	private func addElegantComparatorConstraints() {
 		
 		self.scrollView.contentSize.width = self.cellWidth * self.groupings.groups.count.toCGFloat()
@@ -460,18 +528,15 @@ fileprivate extension ZCRMComparator {
 		self.collectionViewFlowLayout.itemSize = CGSize(width: self.cellWidth, height: self.cellHeight)
 		self.collectionViewFlowLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 	
-		var chunksWidth = 120
-		if self.frame.width > 400 {
-			chunksWidth = 150
-		}
 		var constraints: [NSLayoutConstraint] = []
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[scrollView(==\(self.headerHeight + self.collectionViewHeight))]-0-|", options: [], metrics: nil, views: ["title": self.titleView, "scrollView": self.scrollView])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat:  "H:|-0-[chunksView(<=\(chunksWidth))]-10-[scrollView]-0-|", options: [], metrics: nil, views: ["chunksView": self.chunksView, "scrollView": self.scrollView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[chunksLabel(==collectionView)]-0-|", options: [], metrics: nil, views: ["chunksLabel": self.chunksView, "collectionView": self.collectionView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[chunksLabel(==\(self.collectionViewHeight))]-0-|", options: [], metrics: nil, views: ["chunksLabel": self.chunksView])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[headers(==\(self.scrollView.contentSize.width))]-0-|", options: [], metrics: nil, views: ["headers": self.headersView])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[collectionView(==\(self.scrollView.contentSize.width))]-0-|", options: [], metrics: nil, views: ["collectionView": self.collectionView])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[headers(==\(self.headerHeight))]-0-[collectionView(==\(self.collectionViewHeight))]-0-|", options: [], metrics: nil, views: ["headers": self.headersView, "collectionView": self.collectionView])
 		NSLayoutConstraint.activate(constraints)
+
 	}
 	
 	private func addClassicComparatorConstraints() {
@@ -483,8 +548,8 @@ fileprivate extension ZCRMComparator {
 
 		var constraints: [NSLayoutConstraint] = []
 		constraints += NSLayoutConstraint.constraints(withVisualFormat:  "H:|[chunksView(==\(self.cellWidth))][scrollView]|", options: [], metrics: nil, views: ["chunksView": self.chunksView, "scrollView": self.scrollView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[chunksLabel(==collectionView)]|", options: [], metrics: nil, views: ["chunksLabel": self.chunksView, "collectionView": self.collectionView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[scrollView(==\(self.collectionViewHeight))]-0-|", options: [], metrics: nil, views: ["title" : self.titleView, "scrollView": self.scrollView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[chunksLabel(==\(self.collectionViewHeight))]|", options: [], metrics: nil, views: ["chunksLabel": self.chunksView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[scrollView(==\(self.collectionViewHeight))]-0-|", options: [], metrics: nil, views: ["title" : self.titleView, "scrollView": self.scrollView])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[collectionView(==\(self.collectionViewWidth))]-0-|", options: [], metrics: nil, views: ["collectionView": self.collectionView])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[collectionView(==\(self.collectionViewHeight))]-0-|", options: [], metrics: nil, views: ["collectionView": self.collectionView])
 		NSLayoutConstraint.activate(constraints)
@@ -549,10 +614,10 @@ extension ZCRMComparator: UICollectionViewDataSource, UICollectionViewDelegate, 
 	
 	private func renderElegantComparatorCell(_ cell: ZCRMComparatorCell, index: Int) {
 		
-		let chunk = self.getChunk(chunkDataIndex: index)
-		
 		if (self.getGroupIndex(chunkDataIndex: index) + 1) % 2 != 0 {
 			cell.backgroundColor = self.renderOptions.elegantDiffColor
+		} else {
+				cell.backgroundColor = self.backgroundColor
 		}
 		if !self.chunkDatas.isEmpty {
 			cell.chunkData = self.chunkDatas[index]
