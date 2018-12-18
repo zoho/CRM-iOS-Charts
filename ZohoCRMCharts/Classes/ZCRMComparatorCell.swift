@@ -78,7 +78,7 @@ internal final class ZCRMComparatorCell: UICollectionViewCell {
 	private func getBarLength() -> CGFloat {
 		
 		let availableHeight: CGFloat = self.frame.height - (self.frame.height / 3)
-		if highValue == nil {
+		if highValue == nil || self.highValue == 0 {
 			return availableHeight
 		}
 		let onePercent: CGFloat = availableHeight / 100
@@ -88,11 +88,7 @@ internal final class ZCRMComparatorCell: UICollectionViewCell {
 	
 	private func setData() {
 		
-		if self.type == .sport {
-			self.label.text = self.chunkData.label
-		} else if self.type == .elegant || self.type == .classic {
-			self.label.attributedText = ZCRMComparatorUIUtil.getTextForChunkData(self.chunkData, options: self.options, isHeader: self.isHeader)
-		}
+		self.label.attributedText = ZCRMComparatorUIUtil.getTextForChunkData(self.chunkData, options: self.options, isHeader: self.isHeader)
 	}
 	
 }

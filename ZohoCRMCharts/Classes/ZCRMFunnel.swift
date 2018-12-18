@@ -1184,9 +1184,26 @@ fileprivate extension ZCRMFunnel {
 		var maxRate: ZCRMFunnelData = rates[0]
 		for rate in rates {
 			if rate.value > maxRate.value {
+				
+				
 				maxRate = rate
 			}
 		}
 		return maxRate
+	}
+}
+
+public extension ZCRMFunnelDataSource {
+	
+	func funnel(_ stage: ZCRMFunnelStage, segment: ZCRMFunnelSegment) -> ZCRMFunnelData {
+		fatalError("funnel(_ stage: ZCRMFunnelStage, segment: ZCRMFunnelSegment) has not been implemented")
+	}
+	
+	func conversionRateFor(_ funnel: ZCRMFunnel, _ segment: ZCRMFunnelSegment) -> ZCRMFunnelData {
+		fatalError("conversionRateFor(_ funnel: ZCRMFunnel, _ segment: ZCRMFunnelSegment) has not been implemented")
+	}
+	
+	func rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage, fromStageIndex: Int, toStageIndex: Int, segment: ZCRMFunnelSegment) -> ZCRMFunnelData {
+		fatalError("rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage, fromStageIndex: Int, toStageIndex: Int, segment: ZCRMFunnelSegment) has not been implemented")
 	}
 }
