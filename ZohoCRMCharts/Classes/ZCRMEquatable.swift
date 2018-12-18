@@ -8,7 +8,7 @@
 extension ZCRMKPIRow: Equatable {
 	
 	public static func == (lhs: ZCRMKPIRow, rhs: ZCRMKPIRow) -> Bool {
-		return lhs.comparedToLabel == rhs.comparedToLabel && lhs.comparedToValue == rhs.comparedToValue && lhs.label == rhs.label && lhs.outcome == rhs.outcome && lhs.value == rhs.value && lhs.rate == rhs.rate
+		return lhs.comparedToLabel == rhs.comparedToLabel && lhs.comparedToValue == rhs.comparedToValue && lhs.displayLabel == rhs.displayLabel && lhs.outcome == rhs.outcome && lhs.displayValue == rhs.displayValue && lhs.rate == rhs.rate && rhs.value == lhs.value
 	}
 }
 

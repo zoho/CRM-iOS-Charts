@@ -550,7 +550,7 @@ fileprivate extension ZCRMKPI {
 		
 		var isValidData = true
 		for kpiRow in self.data {
-			if kpiRow.label == nil {
+			if kpiRow.displayLabel == nil || kpiRow.value == nil {
 				isValidData = false
 				break
 			}

@@ -93,8 +93,8 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	*/
 	private func renderData() {
 		
-		self.rowLabel.attributedText = NSMutableAttributedString(string: self.data.label, attributes: [ NSFontAttributeName : self.options.labelFont, NSForegroundColorAttributeName : self.options.labelFontColor, NSBaselineOffsetAttributeName: 0])
-		self.valueLabel.attributedText = NSMutableAttributedString(string: self.data.value , attributes: [ NSFontAttributeName : self.options.valueFont, NSForegroundColorAttributeName: self.options.valueFontColor, NSBaselineOffsetAttributeName: 0])
+		self.rowLabel.attributedText = NSMutableAttributedString(string: self.data.displayLabel, attributes: [ NSFontAttributeName : self.options.labelFont, NSForegroundColorAttributeName : self.options.labelFontColor, NSBaselineOffsetAttributeName: 0])
+		self.valueLabel.attributedText = NSMutableAttributedString(string: self.data.displayValue , attributes: [ NSFontAttributeName : self.options.valueFont, NSForegroundColorAttributeName: self.options.valueFontColor, NSBaselineOffsetAttributeName: 0])
 		
 		if self.isScorecard {
 			self.setRateText()

@@ -1006,7 +1006,7 @@ fileprivate extension ZCRMFunnel {
 	private func loadCommonFunnelData() {
 		
 		for stage in self.stages {
-			self.data.append(self.dataSource.funnel(stage, segment: nil))
+			self.data.append(self.dataSource.funnel(stage))
 		}
 	}
 	
@@ -1018,7 +1018,7 @@ fileprivate extension ZCRMFunnel {
 			}
 		}
 		for stage in self.stages {
-			self.stagesData.append(self.dataSource.funnel(stage, segment: nil))
+			self.stagesData.append(self.dataSource.funnel(stage))
 		}
 	}
 	
@@ -1048,9 +1048,9 @@ fileprivate extension ZCRMFunnel {
 			if index == 0 {
 				continue
 			}
-			self.rates.append(self.dataSource.rateFor(self.stages[index - 1], stage, fromStageIndex: index - 1, toStageIndex: index, segment: nil))
+			self.rates.append(self.dataSource.rateFor(self.stages[index - 1], stage, fromStageIndex: index - 1, toStageIndex: index))
 		}
-		self.conversionRate = self.dataSource.conversionRateFor(self, nil)
+		self.conversionRate = self.dataSource.conversionRateFor(self)
 	}
 	
 	private func loadRateForSegement() {
@@ -1068,9 +1068,9 @@ fileprivate extension ZCRMFunnel {
 			if index == 0 {
 				continue
 			}
-			self.stagesRate.append(self.dataSource.rateFor(self.stages[index - 1], stage, fromStageIndex: index - 1, toStageIndex: index, segment: nil))
+			self.stagesRate.append(self.dataSource.rateFor(self.stages[index - 1], stage, fromStageIndex: index - 1, toStageIndex: index))
 		}
-		self.conversionRate = self.dataSource.conversionRateFor(self, nil)
+		self.conversionRate = self.dataSource.conversionRateFor(self)
 	}
 	
 	private func loadRateForStandard() {

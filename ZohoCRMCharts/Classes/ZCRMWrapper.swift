@@ -49,8 +49,9 @@ public struct ZCRMCharts {
 */
 public struct ZCRMKPIRow {
 	
-	internal var value: String!
-	internal var label: String!
+	internal var displayValue: String!
+	internal var displayLabel: String!
+	internal var value: Int!
 	internal var rate: String!
 	internal var outcome: ZCRMCharts.Outcome!
 	public var comparedToLabel: String!
@@ -59,21 +60,21 @@ public struct ZCRMKPIRow {
 	/**
 	For KPI of type Basic.
 	- parameters:
-		- value: The value of the basic kpi component.
+		- displayValue: The value of the basic kpi component.
 	*/
-	public init(value: String){
-		self.value = value
+	public init(displayValue: String){
+		self.displayValue = displayValue
 	}
 	
 	/**
 	For KPI of type Standard/Growth Index.
 	- parameters:
-		- value: value of the standard/growth index kpi component.
+		- displayValue: value of the standard/growth index kpi component.
 		- rate: rate differed from the compared one.
 		- outcome: outcome of the kpi.
 	*/
-	public init(value: String, rate: String, outcome: ZCRMCharts.Outcome) {
-		self.value = value
+	public init(displayValue: String, rate: String, outcome: ZCRMCharts.Outcome) {
+		self.displayValue = displayValue
 		self.rate = rate
 		self.outcome = outcome
 	}
@@ -81,14 +82,14 @@ public struct ZCRMKPIRow {
 	/**
 	For KPI of type Scorecard.
 	- parameters:
-		- label: label for the kpi row data.
-		- value: value for the kpi row.
+		- displayLabel: label for the kpi row data.
+		- displayValue: value for the kpi row.
 		- rate: rate of growth outcome.
 		- status: it is a increment/decrement/neutral.
 	*/
-	public init(label: String, value: String, rate: String, outcome: ZCRMCharts.Outcome){
-		self.label = label
-		self.value = value;
+	public init(displayLabel: String, displayValue: String, rate: String, outcome: ZCRMCharts.Outcome){
+		self.displayLabel = displayLabel
+		self.displayValue = displayValue
 		self.rate = rate
 		self.outcome = outcome
 	}
@@ -96,12 +97,13 @@ public struct ZCRMKPIRow {
 	/**
 	For KPI of type Rankings.
 	- parameters:
-		- label: label for the kpi row data.
-		- value: value for the kpi row.
+		- displayLabel: label for the kpi row data.
+		- displayValue: value for the kpi row.
 	*/
-	public init(label: String, value: String) {
-		self.label = label
-		self.value = value;
+	public init(displayLabel: String, displayValue: String, value: Int) {
+		self.displayLabel = displayLabel
+		self.displayValue = displayValue
+		self.value = value
 	}
 	
 }
@@ -225,9 +227,15 @@ public struct ZCRMFunnelData{
 
 public protocol ZCRMFunnelDataSource: class {
 
-	func rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage, fromStageIndex: Int, toStageIndex: Int, segment: ZCRMFunnelSegment?) -> ZCRMFunnelData
+	func rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage, fromStageIndex: Int, toStageIndex: Int) -> ZCRMFunnelData
 
-	func funnel(_ stage: ZCRMFunnelStage, segment: ZCRMFunnelSegment?) -> ZCRMFunnelData
+	func rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage, fromStageIndex: Int, toStageIndex: Int, segment: ZCRMFunnelSegment) -> ZCRMFunnelData
 
-	func conversionRateFor(_ funnel: ZCRMFunnel, _ segment: ZCRMFunnelSegment?) -> ZCRMFunnelData
+	func funnel(_ stage: ZCRMFunnelStage) -> ZCRMFunnelData
+
+	func funnel(_ stage: ZCRMFunnelStage, segment: ZCRMFunnelSegment) -> ZCRMFunnelData
+	
+	func conversionRateFor(_ funnel: ZCRMFunnel) -> ZCRMFunnelData
+	
+	func conversionRateFor(_ funnel: ZCRMFunnel, _ segment: ZCRMFunnelSegment) -> ZCRMFunnelData
 }

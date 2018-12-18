@@ -95,7 +95,7 @@ internal struct ZCRMKPIUIUtil {
 	static func getValueTextForStandardKPI(data: ZCRMKPIRow, options: KPIRenderOptions) -> NSMutableAttributedString {
 		
 		let fontSize = options.simpleKpiValueFont.pointSize
-		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.value, attributes: [NSFontAttributeName: options.simpleKpiValueFont, NSForegroundColorAttributeName: options.valueFontColor])
+		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.displayValue, attributes: [NSFontAttributeName: options.simpleKpiValueFont, NSForegroundColorAttributeName: options.valueFontColor])
 		if (data.outcome == .positive) {
 			outputString.append(ZCRMUIUtil.getIncText(ofSize: (fontSize/2) + 3, baselineOffset: 2.5, color: options.positiveColor))
 		} else if (data.outcome == .negative) {
@@ -117,12 +117,12 @@ internal struct ZCRMKPIUIUtil {
 			valueColor = options.negativeColor
 		}
 		let outputString: NSMutableAttributedString = NSMutableAttributedString(string: data.rate, attributes: [ NSFontAttributeName: options.simpleKpiValueFont, NSForegroundColorAttributeName: valueColor])
-		outputString.append(NSAttributedString(string: " " + data.value, attributes: [ NSFontAttributeName: UIFont.systemFont(ofSize: (fontSize/2) + 1), NSForegroundColorAttributeName: options.valueFontColor, NSBaselineOffsetAttributeName: 2.5]))
+		outputString.append(NSAttributedString(string: " " + data.displayValue, attributes: [ NSFontAttributeName: UIFont.systemFont(ofSize: (fontSize/2) + 1), NSForegroundColorAttributeName: options.valueFontColor, NSBaselineOffsetAttributeName: 2.5]))
 		return outputString
 	}
 	
 	static func getValueTextForBasicKPI(data: ZCRMKPIRow, options: KPIRenderOptions) -> NSMutableAttributedString {
-		return NSMutableAttributedString(string: data.value, attributes: [ NSFontAttributeName: options.simpleKpiValueFont, NSForegroundColorAttributeName: options.valueFontColor])
+		return NSMutableAttributedString(string: data.displayValue, attributes: [ NSFontAttributeName: options.simpleKpiValueFont, NSForegroundColorAttributeName: options.valueFontColor])
 	}
 	
 }
