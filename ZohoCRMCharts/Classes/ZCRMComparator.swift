@@ -151,7 +151,7 @@ public final class ZCRMComparator: UIView {
 	fileprivate let chunksView: UIStackView = UIStackView()
 	fileprivate let headersView: UIStackView = UIStackView()
 	fileprivate var chunkDatas: [ZCRMChunkData] = []
-	fileprivate static var groupingsDefaultImage: UIImage = UIImage()
+	fileprivate static var groupingsDefaultImage: UIImage!
 	private var didSetConstraints: Bool = false
 	
 	public init(title: String, type: ZCRMCharts.ZCRMComparatorType, groupings: ZCRMComparatorGroupings, chunks: [ZCRMComparatorChunk]) {
@@ -373,18 +373,18 @@ fileprivate extension ZCRMComparator {
 		}
 		
 		var isAvartarNeeded =  false
-		if self.groupings.defaultImage != nil {
-			ZCRMComparator.groupingsDefaultImage = self.groupings.defaultImage
+		if self.groupings.isAvatarNeeded != nil {
 			isAvartarNeeded = true
+			if self.groupings.loadingImage != nil {
+				ZCRMComparator.groupingsDefaultImage = self.groupings.loadingImage
+			}
 		}
+		
+		
 		for (index, group) in self.groupings.groups.enumerated() {
 			
-			var groupData = group
-			if isAvartarNeeded {
-				groupData.image = self.groupings.defaultImage
-			}
 			let header = ZCRMComparatorHeader(type: self.type, isAvartarNeeded)
-			header.group = groupData
+			header.group = group
 			header.options = self.renderOptions
 			header.alignVertical = self.showGroupsVertically
 			if self.type == .elegant && (index + 1) % 2 != 0 {
@@ -669,7 +669,9 @@ fileprivate extension ZCRMComparator {
 		for (index, group) in self.groupings.groups.enumerated() {
 			
 			self.dataSource.groupImage(of: group) { (image) in
-				self.setImageFor(index, image: image)
+				if let image = image {
+					self.setImageFor(index, image: image)
+				}
 			}
 		}
 	}
@@ -714,7 +716,7 @@ fileprivate extension ZCRMComparator {
 
 public extension ZCRMComparatorDataSource {
 	
-	func groupImage(of group: ZCRMComparatorGroup, completion : @escaping (UIImage) -> () ) {
+	func groupImage(of group: ZCRMComparatorGroup, completion : @escaping (UIImage?) -> () ) {
 		completion(ZCRMComparator.groupingsDefaultImage)
 	}
 }

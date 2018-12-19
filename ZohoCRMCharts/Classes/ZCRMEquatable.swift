@@ -29,7 +29,7 @@ extension ZCRMComparatorGroup: Equatable {
 extension ZCRMComparatorGroupings: Equatable {
 	
 	public static func == (lhs: ZCRMComparatorGroupings, rhs: ZCRMComparatorGroupings) -> Bool {
-		return lhs.groups.isEqual(rhs.groups)  && lhs.defaultImage == rhs.defaultImage && lhs.label == rhs.label
+		return lhs.groups.isEqual(rhs.groups)  && lhs.isAvatarNeeded == rhs.isAvatarNeeded && lhs.label == rhs.label && lhs.loadingImage == rhs.loadingImage
 	}
 }
 

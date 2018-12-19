@@ -208,7 +208,10 @@ internal final class ZCRMComparatorHeader: UIView {
 		self.label.text = self.group.label
 		if self.isAvatarNeeded {
 			if self.group.image != nil {
+				self.imageView.backgroundColor = .clear
 				self.imageView.image = self.group.image
+			} else {
+				self.imageView.backgroundColor = .gray
 			}
 		}
 	}
