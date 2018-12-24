@@ -101,6 +101,7 @@ internal final class ZCRMComparatorHeader: UIView {
 	internal var options: ComparatorRenderOptions = ComparatorRenderOptions()
 	private var isAvatarNeeded: Bool
 	private var type: ZCRMCharts.ZCRMComparatorType
+	private var didSetConstraints: Bool = false
 	
 	internal var group: ZCRMComparatorGroup! {
 		didSet {
@@ -122,8 +123,40 @@ internal final class ZCRMComparatorHeader: UIView {
 	}
 	
 	override func layoutSubviews() {
-		self.addConstraints()
+		if !didSetConstraints {
+			self.addConstraints()
+			self.didSetConstraints = true
+		}
 	}
+//	
+//	private func updateConstraintOfChild() {
+//		
+//		var consToDeac: [NSLayoutConstraint] = []
+//		if self.isAvatarNeeded {
+//			for constraint in self.imageView.constraints {
+//				if constraint.firstAttribute == .width || constraint.firstAttribute == .height  {
+//					var radius: CGFloat = 0
+//					if self.type == .sport {
+//						if self.alignVertical {
+//							radius = self.getHeightOf(percent: 25)
+//						} else {
+//							radius = self.getHeightOf(percent: 40)
+//						}
+//					} else  {
+//						radius = self.getWidthOf(percent: 20)
+//					}
+//					constraint.constant = radius
+//				}
+//				
+//			}
+//		}
+//		for constraint in self.label.constraints {
+//			if constraint.firstAttribute == .width || constraint.firstAttribute == .height {
+//				consToDeac.append(constraint)
+//			}
+//		}
+//		NSLayoutConstraint.deactivate(constraints)
+//	}
 	
 	internal func render() {
 		
@@ -211,7 +244,7 @@ internal final class ZCRMComparatorHeader: UIView {
 				self.imageView.backgroundColor = .clear
 				self.imageView.image = self.group.image
 			} else {
-				self.imageView.backgroundColor = .gray
+				self.imageView.backgroundColor = self.group.avatarBgColor
 			}
 		}
 	}

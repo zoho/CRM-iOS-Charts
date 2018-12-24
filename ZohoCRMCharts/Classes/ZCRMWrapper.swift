@@ -133,6 +133,8 @@ public struct ZCRMComparatorGroup {
 	public let label: String
 	internal var image: UIImage!
 	public var tag: String = ""
+	public var bgColor: UIColor = UIColor(red: 180/255, green: 180/255, blue: 180/255, alpha: 1)
+	public var avatarBgColor: UIColor = .gray
 	
 	public init(label: String) {
 		self.label = label

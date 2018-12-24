@@ -372,23 +372,21 @@ fileprivate extension ZCRMComparator {
 			header.removeFromSuperview()
 		}
 		
-		var isAvartarNeeded =  false
-		if self.groupings.isAvatarNeeded != nil {
-			isAvartarNeeded = true
+		if self.groupings.isAvatarNeeded {
 			if self.groupings.loadingImage != nil {
 				ZCRMComparator.groupingsDefaultImage = self.groupings.loadingImage
 			}
 		}
 		
 		
-		for (index, group) in self.groupings.groups.enumerated() {
+		for (_, group) in self.groupings.groups.enumerated() {
 			
-			let header = ZCRMComparatorHeader(type: self.type, isAvartarNeeded)
+			let header = ZCRMComparatorHeader(type: self.type, self.groupings.isAvatarNeeded)
 			header.group = group
 			header.options = self.renderOptions
 			header.alignVertical = self.showGroupsVertically
-			if self.type == .elegant && (index + 1) % 2 != 0 {
-				header.backgroundColor = self.renderOptions.elegantDiffColor
+			if self.type == .elegant {
+				header.backgroundColor = group.bgColor
 			} else {
 				header.backgroundColor = self.backgroundColor
 			}
@@ -402,8 +400,8 @@ fileprivate extension ZCRMComparator {
 		if self.type != .classic {
 			for (index, view) in  self.headersView.arrangedSubviews.enumerated() {
 				let header = view as! ZCRMComparatorHeader
-				if self.type == .elegant && (index + 1) % 2 != 0 {
-					header.backgroundColor = self.renderOptions.elegantDiffColor
+				if self.type == .elegant {
+					header.backgroundColor = self.groupings.groups[index].bgColor
 				}
 				header.options = self.renderOptions
 				header.setUIOptions()
@@ -614,11 +612,8 @@ extension ZCRMComparator: UICollectionViewDataSource, UICollectionViewDelegate, 
 	
 	private func renderElegantComparatorCell(_ cell: ZCRMComparatorCell, index: Int) {
 		
-		if (self.getGroupIndex(chunkDataIndex: index) + 1) % 2 != 0 {
-			cell.backgroundColor = self.renderOptions.elegantDiffColor
-		} else {
-				cell.backgroundColor = self.backgroundColor
-		}
+		let group = self.groupings.groups[self.getGroupIndex(chunkDataIndex: index)]
+		cell.backgroundColor = group.bgColor
 		if !self.chunkDatas.isEmpty {
 			cell.chunkData = self.chunkDatas[index]
 		}
