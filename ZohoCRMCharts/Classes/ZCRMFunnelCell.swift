@@ -192,12 +192,10 @@ internal final class ZCRMCompactFunnelCell: UIView {
 	
 	private func setData() {
 		
-		if self.isRateView {
-			self.cellLabel.text = self.data.label
-		} else {
-			self.valueLabel.text = self.data.label
+		self.cellLabel.text = self.data.label
+		if !self.isRateView {
 			self.cellLabel.text = String(self.data.value)
-		}
+		} 
 	}
 	
 	internal func setUIOptions() {

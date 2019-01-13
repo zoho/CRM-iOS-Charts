@@ -72,7 +72,41 @@ internal extension KPIUtil {
 	}
 }
 
+internal protocol ZCRMLayoutConstrainDelegate: class {
+	
+	var viewConstraints:[NSLayoutConstraint] { get set }
+	
+	func activate(constraints: [NSLayoutConstraint], _ append: Bool)
+	
+	func deactivateConstraints()
+}
+
+internal extension ZCRMLayoutConstrainDelegate {
+	
+	func activate(constraints: [NSLayoutConstraint], _ append: Bool = false) {
+		if append {
+			self.viewConstraints += constraints
+		} else  {
+			self.viewConstraints = constraints
+		}
+		NSLayoutConstraint.activate(constraints)
+	}
+	
+	func deactivateConstraints() {
+		if !self.viewConstraints.isEmpty {
+			NSLayoutConstraint.deactivate(self.viewConstraints)
+		}
+	}
+}
+
 internal extension UIView {
+	
+	internal struct tag {
+		static let bottom: Int = -1
+		static let top: Int = -2
+		static let right: Int = -3
+		static let left: Int = -4
+	}
 	
 	internal func getHeightOf(percent: CGFloat) -> CGFloat {
 		return (self.frame.height / 100) * percent
@@ -95,11 +129,43 @@ internal extension UIView {
 	
 	internal func addBottomBorder(color: UIColor, width: CGFloat) {
 		
-		let borderLayer = CALayer()
-		borderLayer.backgroundColor = color.cgColor
-		borderLayer.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width, height: width)
-		self.layer.addSublayer(borderLayer)
+		let border = UIView()
+		border.backgroundColor = color
+		border.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
+		border.frame = CGRect(x: 0, y: frame.size.height - width, width: frame.size.width, height: width)
+		self.addSubview(border)
 	}
+	
+	internal func addRightBorder(color: UIColor, width: CGFloat) {
+		
+		let border = UIView()
+		border.backgroundColor = color
+		border.autoresizingMask = [.flexibleHeight, .flexibleLeftMargin]
+		border.frame = CGRect(x: self.frame.size.width - width, y: 0, width: width, height: self.frame.size.height)
+		let gradientLayer:CAGradientLayer = CAGradientLayer()
+		gradientLayer.frame.size = border.frame.size
+		gradientLayer.colors = [UIColor.white.cgColor, color.cgColor]
+		gradientLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
+		gradientLayer.endPoint = CGPoint(x: 1.0, y: 1.0)
+		border.layer.addSublayer(gradientLayer)
+		self.addSubview(border)
+	}
+	
+	internal func addTopBorder(color: UIColor, width: CGFloat) {
+		
+		let border = UIView()
+		border.backgroundColor = color
+		border.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
+		border.frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: width)
+		let gradientLayer:CAGradientLayer = CAGradientLayer()
+		gradientLayer.frame.size = border.frame.size
+		gradientLayer.colors = [UIColor.white.cgColor, color.cgColor]
+		gradientLayer.startPoint = CGPoint(x: 1.0, y: 1.0)
+		gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.0)
+		border.layer.addSublayer(gradientLayer)
+		self.addSubview(border)
+	}
+	
 }
 
 internal extension String {

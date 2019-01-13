@@ -8,13 +8,14 @@
 
 import UIKit
 
-internal final class ZCRMComparatorCell: UICollectionViewCell {
+internal final class ZCRMComparatorCell: UICollectionViewCell, ZCRMLayoutConstrainDelegate {
 	
 	internal var type: ZCRMCharts.ZCRMComparatorType!
 	internal var options: ComparatorRenderOptions = ComparatorRenderOptions()
 	internal var isHeader: Bool = false
 	private let label: UILabel = UILabel()
 	private let container: UIView = UIView()
+	internal var viewConstraints: [NSLayoutConstraint] = []
 	internal var chunkData: ZCRMChunkData! {
 		didSet {
 			if chunkData != nil {
@@ -33,11 +34,13 @@ internal final class ZCRMComparatorCell: UICollectionViewCell {
 	
 	override func layoutSubviews() {
 		
+		self.deactivateConstraints()
 		self.addConstraints()
 	}
 	
 	internal func render() {
 		
+		self.clipsToBounds = true
 		self.label.translatesAutoresizingMaskIntoConstraints = false
 		self.label.textAlignment = .center
 		self.addSubview(self.label)
@@ -53,7 +56,7 @@ internal final class ZCRMComparatorCell: UICollectionViewCell {
 		if self.type == .sport {
 			self.addSportConstraints()
 		} else if self.type == .elegant || self.type == .classic{
-			self.addElegantConstraints()
+			self.addElegantOrClassicConstraints()
 		}
 	}
 	
@@ -64,22 +67,22 @@ internal final class ZCRMComparatorCell: UICollectionViewCell {
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[container]-0-|", options: [], metrics: nil, views: ["container": self.container])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[label(==\(self.frame.height / 3))]", options: [], metrics: nil, views: ["label": self.label])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[container(==\(self.getBarLength()))]-0-|", options: [], metrics: nil, views: ["label": self.label, "container": self.container])
-		NSLayoutConstraint.activate(constraints)
+		self.activate(constraints: constraints)
 	}
 	
-	private func addElegantConstraints() {
+	private func addElegantOrClassicConstraints() {
 		
 		var constraints: [NSLayoutConstraint] = []
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-[label]-|", options: [], metrics: nil, views: ["label": self.label])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[label]-0-|", options: [], metrics: nil, views: ["label": self.label])
-		NSLayoutConstraint.activate(constraints)
+		self.activate(constraints: constraints)
 	}
 	
 	private func getBarLength() -> CGFloat {
 		
 		let availableHeight: CGFloat = self.frame.height - (self.frame.height / 3)
 		if highValue == nil || self.highValue == 0 {
-			return availableHeight
+			return 0
 		}
 		let onePercent: CGFloat = availableHeight / 100
 		let percentOfDiff: Int = (self.chunkData.value * 100) / self.highValue
@@ -87,21 +90,20 @@ internal final class ZCRMComparatorCell: UICollectionViewCell {
 	}
 	
 	private func setData() {
-		
 		self.label.attributedText = ZCRMComparatorUIUtil.getTextForChunkData(self.chunkData, options: self.options, isHeader: self.isHeader)
 	}
-	
 }
 
-internal final class ZCRMComparatorHeader: UIView {
+internal final class ZCRMComparatorHeader: UIView, ZCRMLayoutConstrainDelegate {
 	
 	private let imageView: UIImageView = UIImageView()
 	private let label: UILabel = UILabel()
-	internal var alignVertical: Bool!
+	internal var alignVertical: Bool = false
 	internal var options: ComparatorRenderOptions = ComparatorRenderOptions()
 	private var isAvatarNeeded: Bool
 	private var type: ZCRMCharts.ZCRMComparatorType
 	private var didSetConstraints: Bool = false
+	internal var viewConstraints: [NSLayoutConstraint] = []
 	
 	internal var group: ZCRMComparatorGroup! {
 		didSet {
@@ -123,40 +125,9 @@ internal final class ZCRMComparatorHeader: UIView {
 	}
 	
 	override func layoutSubviews() {
-		if !didSetConstraints {
-			self.addConstraints()
-			self.didSetConstraints = true
-		}
+		self.deactivateConstraints()
+		self.addConstraints()
 	}
-//	
-//	private func updateConstraintOfChild() {
-//		
-//		var consToDeac: [NSLayoutConstraint] = []
-//		if self.isAvatarNeeded {
-//			for constraint in self.imageView.constraints {
-//				if constraint.firstAttribute == .width || constraint.firstAttribute == .height  {
-//					var radius: CGFloat = 0
-//					if self.type == .sport {
-//						if self.alignVertical {
-//							radius = self.getHeightOf(percent: 25)
-//						} else {
-//							radius = self.getHeightOf(percent: 40)
-//						}
-//					} else  {
-//						radius = self.getWidthOf(percent: 20)
-//					}
-//					constraint.constant = radius
-//				}
-//				
-//			}
-//		}
-//		for constraint in self.label.constraints {
-//			if constraint.firstAttribute == .width || constraint.firstAttribute == .height {
-//				consToDeac.append(constraint)
-//			}
-//		}
-//		NSLayoutConstraint.deactivate(constraints)
-//	}
 	
 	internal func render() {
 		
@@ -189,32 +160,21 @@ internal final class ZCRMComparatorHeader: UIView {
 	private func addSportHeaderConstraints() {
 		
 		var constraints: [NSLayoutConstraint] = []
-		constraints.append(NSLayoutConstraint(item: self.label, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: self, attribute: NSLayoutAttribute.centerX, multiplier: 1, constant: 0))
+	
+		constraints.append(NSLayoutConstraint(item: self.label, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: self, attribute: NSLayoutAttribute.centerY, multiplier: 1, constant: 0))
 		
 		if self.isAvatarNeeded {
 			
-			self.imageView.backgroundColor = .red
-			constraints.append(NSLayoutConstraint(item: self.imageView, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: self, attribute: NSLayoutAttribute.centerX, multiplier: 1, constant: 0))
+			self.imageView.layer.cornerRadius = self.getHeightOf(percent: 40) / 2
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[image(==\(self.getHeightOf(percent: 40)))]", options: [], metrics: nil, views: ["image": self.imageView])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|[label]|", options: [], metrics: nil, views: ["label": self.label])
+			constraints +=  NSLayoutConstraint.constraints(withVisualFormat: "H:|[image(==\(self.getHeightOf(percent: 40)))]-[label]|", options: [ ], metrics: nil, views: ["image": self.imageView, "label": self.label])
+			constraints.append(NSLayoutConstraint(item: self.imageView, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: self, attribute: NSLayoutAttribute.centerY, multiplier: 1, constant: 0))
 			
-			if self.alignVertical {
-				
-				self.label.transform = CGAffineTransform(rotationAngle: -1.5708)
-				self.imageView.layer.cornerRadius = self.getHeightOf(percent: 25) / 2
-				
-				constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[label]-2-[image(==\(self.getHeightOf(percent: 25)))]-|", options: [], metrics: nil, views: ["label": self.label, "image": self.imageView])
-				constraints +=  NSLayoutConstraint.constraints(withVisualFormat: "H:[image(==\(self.getHeightOf(percent: 25)))]", options: [ ], metrics: nil, views: ["image": self.imageView])
-			} else {
-				
-				self.imageView.layer.cornerRadius = self.getHeightOf(percent: 40) / 2
-				
-				constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-\(self.getHeightOf(percent: 10))-[image(==\(self.getHeightOf(percent: 40)))]-[label]-|", options: [], metrics: nil, views: ["image": self.imageView, "label": self.label])
-				constraints +=  NSLayoutConstraint.constraints(withVisualFormat: "H:[image(==\(self.getHeightOf(percent: 40)))]", options: [ ], metrics: nil, views: ["image": self.imageView])
-			}
 		} else {
-			self.label.transform = CGAffineTransform(rotationAngle: -1.5708)
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-[label]-|", options: [], metrics: nil, views: ["label": self.label])
+			constraints.append(NSLayoutConstraint(item: self.label, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: self, attribute: NSLayoutAttribute.centerX, multiplier: 1, constant: 0))
 		}
-		NSLayoutConstraint.activate(constraints)
+		self.activate(constraints: constraints)
 	}
 	
 	private func addElegantHeaderConstraints() {
@@ -233,7 +193,7 @@ internal final class ZCRMComparatorHeader: UIView {
 			constraints +=  NSLayoutConstraint.constraints(withVisualFormat: "H:|-[label]-|", options: [ ], metrics: nil, views: ["label": self.label])
 		}
 		constraints.append(NSLayoutConstraint(item: self.label, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: self, attribute: NSLayoutAttribute.centerY, multiplier: 1, constant: 0))
-		NSLayoutConstraint.activate(constraints)
+		self.activate(constraints: constraints)
 	}
 	
 	private func setData() {
@@ -250,14 +210,13 @@ internal final class ZCRMComparatorHeader: UIView {
 	}
 }
 
-internal final class ZCRMComparatorChunkView: UIView {
+internal final class ZCRMComparatorChunkView: UIView, ZCRMLayoutConstrainDelegate {
 	
 	internal var options: ComparatorRenderOptions = ComparatorRenderOptions()
 	internal var addBottomBorder: Bool = false
 	internal let label: UILabel = UILabel()
-	
+	internal var viewConstraints: [NSLayoutConstraint] = []
 	init() {
-		
 		super.init(frame: .zero)
 		self.render()
 	}
@@ -268,6 +227,8 @@ internal final class ZCRMComparatorChunkView: UIView {
 	
 	override func layoutSubviews() {
 		
+		self.deactivateConstraints()
+		self.addConstraints()
 		if self.addBottomBorder {
 			self.addBottomBorder(color: .black, width: 1)
 		}
@@ -280,11 +241,15 @@ internal final class ZCRMComparatorChunkView: UIView {
 		self.label.textAlignment = .center
 		self.label.numberOfLines = 2
 		self.addSubview(self.label)
+		self.setUIOptions()
+	}
+	
+	private func addConstraints() {
+		
 		var constraints: [NSLayoutConstraint] = []
 		constraints +=  NSLayoutConstraint.constraints(withVisualFormat: "H:|-[label]-|", options: [ ], metrics: nil, views: ["label": self.label])
 		constraints.append(NSLayoutConstraint(item: self.label, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: self, attribute: NSLayoutAttribute.centerY, multiplier: 1, constant: 0))
-		NSLayoutConstraint.activate(constraints)
-		self.setUIOptions()
+		self.activate(constraints: constraints)
 	}
 	
 	internal func setUIOptions() {

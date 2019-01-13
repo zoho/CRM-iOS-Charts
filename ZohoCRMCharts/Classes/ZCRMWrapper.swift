@@ -8,7 +8,6 @@
 
 import UIKit
 
-
 public struct ZCRMCharts {
 	
 	public enum ZCRMKPIType: String {
@@ -35,7 +34,7 @@ public struct ZCRMCharts {
 		case compact
 		case classic
 	}
-
+	
 	public enum Outcome {
 		
 		case positive
@@ -49,7 +48,7 @@ public struct ZCRMCharts {
 */
 public struct ZCRMKPIRow {
 	
-	internal var displayValue: String!
+	internal var displayValue: String
 	internal var displayLabel: String!
 	internal var value: Int!
 	internal var rate: String!
@@ -133,7 +132,7 @@ public struct ZCRMComparatorGroup {
 	public let label: String
 	internal var image: UIImage!
 	public var tag: String = ""
-	public var bgColor: UIColor = UIColor(red: 180/255, green: 180/255, blue: 180/255, alpha: 1)
+	public var bgColor: UIColor = UIColor(red: 220/255, green: 220/255, blue: 220/255, alpha: 1)
 	public var avatarBgColor: UIColor = .gray
 	
 	public init(label: String) {
@@ -145,8 +144,8 @@ public struct ZCRMComparatorGroupings {
 	
 	public let groups: [ZCRMComparatorGroup]
 	public var loadingImage: UIImage!
-	public private(set) var isAvatarNeeded: Bool!
- 	public private(set) var label: String!
+	public private(set) var isAvatarNeeded: Bool = false
+	public private(set) var label: String!
 	
 	public init(groups: [ZCRMComparatorGroup]) {
 		self.groups = groups
@@ -173,7 +172,7 @@ public struct ZCRMComparatorChunk {
 	public init(label: String) {
 		self.label = label
 	}
-
+	
 	public init(label: String, color: UIColor) {
 		self.label = label
 		self.color = color
@@ -187,24 +186,21 @@ public protocol ZCRMComparatorDataSource: class {
 	func groupImage(of group: ZCRMComparatorGroup, completion : @escaping (UIImage?) -> () )
 }
 
-
-
 public struct ZCRMFunnelStage{
-
+	
 	public let label: String
 	public private(set) var color: UIColor!
 	public var tag: String = ""
-
+	
 	public init(label: String) {
 		self.label = label
 		self.color = UIColor.yellow
 	}
-
+	
 	public init(label: String, color: UIColor) {
 		self.label = label
 		self.color = color
 	}
-	
 }
 
 public struct ZCRMFunnelSegment{
@@ -218,10 +214,10 @@ public struct ZCRMFunnelSegment{
 }
 
 public struct ZCRMFunnelData{
-
+	
 	internal let label: String
 	internal let value: Int
-
+	
 	public init(label: String, value: Int) {
 		self.label = label
 		self.value = value
@@ -229,13 +225,13 @@ public struct ZCRMFunnelData{
 }
 
 public protocol ZCRMFunnelDataSource: class {
-
+	
 	func rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage, fromStageIndex: Int, toStageIndex: Int) -> ZCRMFunnelData
-
+	
 	func rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage, fromStageIndex: Int, toStageIndex: Int, segment: ZCRMFunnelSegment) -> ZCRMFunnelData
-
+	
 	func funnel(_ stage: ZCRMFunnelStage) -> ZCRMFunnelData
-
+	
 	func funnel(_ stage: ZCRMFunnelStage, segment: ZCRMFunnelSegment) -> ZCRMFunnelData
 	
 	func conversionRateFor(_ funnel: ZCRMFunnel) -> ZCRMFunnelData

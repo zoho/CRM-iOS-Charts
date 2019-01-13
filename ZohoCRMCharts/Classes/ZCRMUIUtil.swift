@@ -79,7 +79,7 @@ internal struct ZCRMUIUtil {
 	static func getDecText(ofSize: CGFloat, baselineOffset: NSNumber, color: UIColor) -> NSAttributedString {
 		return NSAttributedString(string: " ▼ ", attributes: [ NSFontAttributeName : UIFont.systemFont(ofSize: ofSize), NSForegroundColorAttributeName: color , NSBaselineOffsetAttributeName: baselineOffset])
 	}
-
+	
 	static func getIncText(ofSize: CGFloat, baselineOffset: NSNumber, color: UIColor) -> NSAttributedString {
 		return NSAttributedString(string: " ▲ ", attributes: [ NSFontAttributeName : UIFont.systemFont(ofSize: ofSize), NSForegroundColorAttributeName: color, NSBaselineOffsetAttributeName: baselineOffset])
 	}
@@ -151,4 +151,3 @@ internal struct ZCRMComparatorUIUtil {
 		return outputString
 	}
 }
-
