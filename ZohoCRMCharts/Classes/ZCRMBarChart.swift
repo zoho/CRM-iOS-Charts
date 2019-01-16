@@ -23,14 +23,10 @@ internal final class ZCRMBarChart: UIView {
 	private let mainLayer: CALayer = CALayer()
 	
 	private var bottomSpace: CGFloat {
-		get {
-			return self.frame.height * 0.15
-		}
+		return self.frame.height * 0.1
 	}
 	private var topSpace: CGFloat {
-		get {
-			return self.frame.height * 0.10
-		}
+		return self.frame.height * 0.1
 	}
 	
 	internal init() {
@@ -68,16 +64,16 @@ internal final class ZCRMBarChart: UIView {
 	
 	private func addBar(index: Int, data: ZCRMBarData) {
 		
-		let x: CGFloat = index.toCGFloat() * space + index.toCGFloat() * (barWidth + space) + space
+		let x: CGFloat = index.toCGFloat() * self.space + index.toCGFloat() * (self.barWidth + self.space) + self.space
 		let y: CGFloat = self.getBarYPos(value: data.value)
 		self.drawBar(x: x, y: y)
-		self.addText(x: x, y: y - 30, text: String(data.value.toInt()), color: self.valueFontColor)
-		self.addLabel(x: x, y: mainLayer.frame.height - bottomSpace, text: data.title)
+		self.addText(x: x, y: y - self.topSpace, text: String(data.value.toInt()), color: self.valueFontColor)
+		self.addLabel(x: x, y: mainLayer.frame.height - self.bottomSpace - 3, text: data.title)
 	}
 	
 	private func addRatetext(index: Int, rate: String) {
 		
-		let x: CGFloat = index.toCGFloat() * space + index.toCGFloat() * (barWidth + space) + space
+		let x: CGFloat = index.toCGFloat() * self.space + index.toCGFloat() * (self.barWidth + self.space) + self.space
 		let y: CGFloat = (self.mainLayer.frame.height - self.topSpace - self.bottomSpace) / 2
 		self.addText(x: x, y: y, text: rate, color: self.rateFontColor)
 		self.drawArrowText(x: x, y: y + 30)
@@ -86,7 +82,7 @@ internal final class ZCRMBarChart: UIView {
 	private func addText(x: CGFloat, y: CGFloat, text: String, color: UIColor) {
 		
 		let textLayer: CATextLayer = CATextLayer()
-		textLayer.frame = CGRect(x: x, y: y, width: self.barWidth, height: 20)
+		textLayer.frame = CGRect(x: x, y: y, width: self.barWidth, height: self.topSpace)
 		textLayer.backgroundColor = UIColor.clear.cgColor
 		textLayer.alignmentMode = kCAAlignmentCenter
 		textLayer.contentsScale = UIScreen.main.scale
@@ -106,6 +102,7 @@ internal final class ZCRMBarChart: UIView {
 		label.contentScaleFactor = UIScreen.main.scale
 		label.font = UIFont.systemFont(ofSize: 10)
 		label.textColor = self.titleFontColor
+		label.adjustsFontSizeToFitWidth = true
 		self.addSubview(label)
 	}
 	
@@ -133,9 +130,10 @@ internal final class ZCRMBarChart: UIView {
 	
 	private func getBarYPos(value: CGFloat) -> CGFloat {
 	
-		let hightRate = (value * 100 / maxValue) / 100
-		let height: CGFloat = hightRate * (self.mainLayer.frame.height - self.bottomSpace - self.topSpace)
-		return self.mainLayer.frame.height - height - self.bottomSpace
+		let heightPercent = (value * 100) / self.maxValue
+		let maxHeight = self.mainLayer.frame.height - self.bottomSpace - self.topSpace
+		let onePercentOfHeight = maxHeight / 100
+		return self.mainLayer.frame.height - self.bottomSpace - (onePercentOfHeight * heightPercent)
 	}
 }
 

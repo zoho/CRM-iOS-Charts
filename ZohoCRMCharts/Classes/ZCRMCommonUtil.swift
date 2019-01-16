@@ -5,7 +5,6 @@
 //  Created by Sarath Kumar Rajendran on 24/10/18.
 //  Copyright © 2018 Zoho CRM. All rights reserved.
 //
-
 import UIKit
 
 /**
@@ -72,7 +71,7 @@ internal extension KPIUtil {
 	}
 }
 
-internal protocol ZCRMLayoutConstrainDelegate: class {
+internal protocol ZCRMLayoutConstraintDelegate: class {
 	
 	var viewConstraints:[NSLayoutConstraint] { get set }
 	
@@ -81,7 +80,7 @@ internal protocol ZCRMLayoutConstrainDelegate: class {
 	func deactivateConstraints()
 }
 
-internal extension ZCRMLayoutConstrainDelegate {
+internal extension ZCRMLayoutConstraintDelegate {
 	
 	func activate(constraints: [NSLayoutConstraint], _ append: Bool = false) {
 		if append {

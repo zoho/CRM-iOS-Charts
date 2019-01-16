@@ -226,15 +226,17 @@ public struct ZCRMFunnelData{
 
 public protocol ZCRMFunnelDataSource: class {
 	
-	func rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage, fromStageIndex: Int, toStageIndex: Int) -> ZCRMFunnelData
+	func rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage) -> ZCRMFunnelData
 	
-	func rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage, fromStageIndex: Int, toStageIndex: Int, segment: ZCRMFunnelSegment) -> ZCRMFunnelData
+	func rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage, segment: ZCRMFunnelSegment) -> ZCRMFunnelData
 	
 	func funnel(_ stage: ZCRMFunnelStage) -> ZCRMFunnelData
 	
 	func funnel(_ stage: ZCRMFunnelStage, segment: ZCRMFunnelSegment) -> ZCRMFunnelData
 	
 	func conversionRateFor(_ funnel: ZCRMFunnel) -> ZCRMFunnelData
+	
+	func overallDropRateFor(_ funnel: ZCRMFunnel) -> ZCRMFunnelData
 	
 	func conversionRateFor(_ funnel: ZCRMFunnel, _ segment: ZCRMFunnelSegment) -> ZCRMFunnelData
 }

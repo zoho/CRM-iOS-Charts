@@ -8,7 +8,7 @@
 
 import UIKit
 
-public final class ZCRMComparator: UIView, ZCRMLayoutConstrainDelegate {
+public final class ZCRMComparator: UIView, ZCRMLayoutConstraintDelegate {
 	
 	public var dataSource: ZCRMComparatorDataSource! {
 		didSet {
@@ -191,36 +191,29 @@ public final class ZCRMComparator: UIView, ZCRMLayoutConstrainDelegate {
 fileprivate extension ZCRMComparator {
 	
 	fileprivate var columCount: Int {
-		get {
-			return self.type == .classic ? self.chunks.count : self.groupings.groups.count
-		}
+		return self.type == .classic ? self.chunks.count : self.groupings.groups.count
 	}
 	
 	fileprivate var rowCount: Int {
-		get {
-			return self.type == .classic ? self.groupings.groups.count + 1 : self.chunks.count
-		}
+		return self.type == .classic ? self.groupings.groups.count + 1 : self.chunks.count
 	}
 	
 	fileprivate var cellWidth: CGFloat {
-		get {
-			if self.columnWidth != nil && self.type != .sport {
-				return columnWidth
-			}
-			var cellWidth: CGFloat = 150
-			let cvWidth = self.frame.width - self.chunksWidth
-			let totalWidthForCells = cellWidth * self.columCount.toCGFloat()
-			if totalWidthForCells < cvWidth {
-				cellWidth = self.type == .classic ? cvWidth / self.chunks.count.toCGFloat() : cvWidth / self.groupings.groups.count.toCGFloat()
-			}
-			return cellWidth
+		
+		if self.columnWidth != nil && self.type != .sport {
+			return columnWidth
 		}
+		var cellWidth: CGFloat = 150
+		let cvWidth = self.frame.width - self.chunksWidth
+		let totalWidthForCells = cellWidth * self.columCount.toCGFloat()
+		if totalWidthForCells < cvWidth {
+			cellWidth = self.type == .classic ? cvWidth / self.chunks.count.toCGFloat() : cvWidth / self.groupings.groups.count.toCGFloat()
+		}
+		return cellWidth
 	}
 	
 	fileprivate var chunksWidth: CGFloat {
-		get {
-			return self.frame.width * 0.35
-		}
+		return self.frame.width * 0.35
 	}
 }
 
@@ -405,9 +398,9 @@ fileprivate extension ZCRMComparator {
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[headers(==\(scollViewCSWidth))]-0-|", options: [], metrics: nil, views: ["headers": self.headersView])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[collectionView(==\(scollViewCSWidth))]-0-|", options: [], metrics: nil, views: ["collectionView": self.collectionView])
 		self.activate(constraints: constraints)
-		
-		constraints =  []
 		self.chunksView.layoutIfNeeded()
+		constraints.removeAll()
+		
 		let headerHeight: CGFloat = self.chunksView.frame.height / (self.rowCount + 1).toCGFloat()
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[headers(headerHeight)]-0-[collectionView(cVHeight)]-0-|", options: [], metrics: ["headerHeight": headerHeight, "cVHeight": self.chunksView.frame.height - headerHeight], views: ["headers": self.headersView, "collectionView": self.collectionView])
 		self.activate(constraints: constraints, true)
@@ -446,11 +439,11 @@ fileprivate extension ZCRMComparator {
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[headers(==scollViewCSWidth)]-0-|", options: [], metrics: ["scollViewCSWidth": scollViewCSWidth], views: ["headers": self.headersView])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[collectionView(==scollViewCSWidth)]-0-|", options: [], metrics: ["scollViewCSWidth": scollViewCSWidth], views: ["collectionView": self.collectionView])
 		self.activate(constraints: constraints)
-		
+		constraints.removeAll()
 		self.chunksView.layoutIfNeeded()
+		
 		let headerHeight: CGFloat = self.chunksView.frame.height / (self.rowCount + 1).toCGFloat()
 		let cVHeight = self.chunksView.frame.height - headerHeight + 0.175
-		constraints = []
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|[headers(headerHeight)][collectionView(==cVHeight)]|", options: [], metrics: ["headerHeight": headerHeight, "cVHeight": cVHeight], views: ["headers": self.headersView, "collectionView": self.collectionView])
 		self.activate(constraints: constraints, true)
 		self.collectionViewFlowLayout.itemSize = CGSize(width: self.cellWidth, height: cVHeight / self.rowCount.toCGFloat())
@@ -470,8 +463,7 @@ fileprivate extension ZCRMComparator {
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[collectionView(==scollViewCSWidth)]-0-|", options: [], metrics: ["scollViewCSWidth": scollViewCSWidth], views: ["collectionView": self.collectionView])
 		self.activate(constraints: constraints)
 		self.chunksView.layoutIfNeeded()
-		
-		constraints = []
+		constraints.removeAll()
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|[collectionView(cVHeight)]|", options: [], metrics: ["cVHeight": self.chunksView.frame.height], views: ["collectionView": self.collectionView])
 		self.activate(constraints: constraints, true)
 		

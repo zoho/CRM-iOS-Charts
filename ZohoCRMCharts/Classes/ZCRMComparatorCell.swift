@@ -8,7 +8,7 @@
 
 import UIKit
 
-internal final class ZCRMComparatorCell: UICollectionViewCell, ZCRMLayoutConstrainDelegate {
+internal final class ZCRMComparatorCell: UICollectionViewCell, ZCRMLayoutConstraintDelegate {
 	
 	internal var type: ZCRMCharts.ZCRMComparatorType!
 	internal var options: ComparatorRenderOptions = ComparatorRenderOptions()
@@ -94,7 +94,7 @@ internal final class ZCRMComparatorCell: UICollectionViewCell, ZCRMLayoutConstra
 	}
 }
 
-internal final class ZCRMComparatorHeader: UIView, ZCRMLayoutConstrainDelegate {
+internal final class ZCRMComparatorHeader: UIView, ZCRMLayoutConstraintDelegate {
 	
 	private let imageView: UIImageView = UIImageView()
 	private let label: UILabel = UILabel()
@@ -210,7 +210,7 @@ internal final class ZCRMComparatorHeader: UIView, ZCRMLayoutConstrainDelegate {
 	}
 }
 
-internal final class ZCRMComparatorChunkView: UIView, ZCRMLayoutConstrainDelegate {
+internal final class ZCRMComparatorChunkView: UIView, ZCRMLayoutConstraintDelegate {
 	
 	internal var options: ComparatorRenderOptions = ComparatorRenderOptions()
 	internal var addBottomBorder: Bool = false

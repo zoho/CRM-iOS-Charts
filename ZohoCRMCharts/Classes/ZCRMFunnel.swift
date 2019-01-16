@@ -8,15 +8,13 @@
 
 import UIKit
 
-public final class ZCRMFunnel: UIView {
+public final class ZCRMFunnel: UIView, ZCRMLayoutConstraintDelegate {
 	
 	public var dataSource: ZCRMFunnelDataSource! {
 		didSet {
 			if dataSource != nil {
 				self.loadData()
-				if self.type != .segment {
-					self.setData()
-				}
+				self.setData()
 			}
 		}
 	}
@@ -33,7 +31,7 @@ public final class ZCRMFunnel: UIView {
 		didSet {
 			if titleFont != nil {
 				self.renderOptions.titleFont = titleFont
-				self.updateTitleText()
+				self.updateTitleUIOptions()
 			}
 		}
 	}
@@ -42,7 +40,7 @@ public final class ZCRMFunnel: UIView {
 		didSet {
 			if titleFontColor != nil {
 				self.renderOptions.titleFontColor = titleFontColor
-				self.updateTitleText()
+				self.updateTitleUIOptions()
 			}
 		}
 	}
@@ -123,7 +121,7 @@ public final class ZCRMFunnel: UIView {
 		didSet {
 			if conversionRateFont != nil {
 				self.renderOptions.conversionRateFont = conversionRateFont
-				self.updateChanges()
+				self.updateConverionRateViewUIOptions()
 			}
 		}
 	}
@@ -132,7 +130,7 @@ public final class ZCRMFunnel: UIView {
 		didSet {
 			if conversionRateFontColor != nil {
 				self.renderOptions.conversionRateFontColor = conversionRateFontColor
-				self.updateChanges()
+				self.updateConverionRateViewUIOptions()
 			}
 		}
 	}
@@ -154,12 +152,14 @@ public final class ZCRMFunnel: UIView {
 		}
 	}
 	
-	fileprivate let title: String
-	fileprivate let type: ZCRMCharts.ZCRMFunnelType
-	fileprivate var renderOptions: FunnelRenderOptions = FunnelRenderOptions()
-	fileprivate let stages: [ZCRMFunnelStage]
-	fileprivate var segments: [ZCRMFunnelSegment] = []
+	internal var viewConstraints: [NSLayoutConstraint] = []
 	
+	public let title: String
+	public let type: ZCRMCharts.ZCRMFunnelType
+	public let stages: [ZCRMFunnelStage]
+	public var segments: [ZCRMFunnelSegment] = []
+	
+	fileprivate var renderOptions: FunnelRenderOptions = FunnelRenderOptions()
 	fileprivate var data: [ZCRMFunnelData] = []
 	fileprivate var rates: [ZCRMFunnelData] = []
 	fileprivate var conversionRate: ZCRMFunnelData!
@@ -217,7 +217,7 @@ public final class ZCRMFunnel: UIView {
 	}
 	
 	public override func layoutSubviews() {
-		super.layoutSubviews()
+		self.deactivateConstraints()
 		self.addConstraints()
 	}
 	
@@ -232,106 +232,14 @@ public final class ZCRMFunnel: UIView {
 	}
 }
 
-//MARK: - Private calculated properties for UI rendering.
-
-fileprivate extension ZCRMFunnel{
-	
-	fileprivate var pathStackViewHeight: CGFloat {
-		get {
-			return self.frame.height * 0.25
-		}
-	}
-	
-	fileprivate var pathStackViewWidth: CGFloat {
-		get {
-			return 150 * self.stages.count.toCGFloat()
-		}
-	}
-	
-	fileprivate var compactStackViewWidth: CGFloat {
-		get {
-			return (200 * self.stages.count.toCGFloat()) - 80
-		}
-	}
-	
-	fileprivate var compactStackViewHeight: CGFloat {
-		get {
-			return self.frame.height * 0.40
-		}
-	}
-	
-	fileprivate var classicStackViewHeight: CGFloat {
-		get {
-			return (70 * self.stages.count.toCGFloat()) - 30
-		}
-	}
-	
-	fileprivate var classicStackViewWidth: CGFloat {
-		get {
-			return self.frame.width * 0.90
-		}
-	}
-	
-	fileprivate var classicCollectionViewHeight: CGFloat {
-		get {
-			
-			let footerHeight: CGFloat = 25
-			if self.stages.count > 3 {
-				return footerHeight * 2
-			}
-			return footerHeight
-		}
-	}
-	
-	fileprivate var segmentHeaderColumnWidth: CGFloat {
-		get {
-			return 150
-		}
-	}
-	
-	fileprivate var segmentCellWidth: CGFloat {
-		get {
-			return 100
-		}
-	}
-	
-	fileprivate var segmentCellHeight: CGFloat {
-		get {
-			let heightForCells = self.segmentCollectionViewHeight
-			return heightForCells / ( self.segments.count.toCGFloat() + 2)
-		}
-	}
-	
-	
-	fileprivate var segmentCollectionViewHeight: CGFloat {
-		get {
-			return self.frame.height * 0.85
-		}
-	}
-	
-	fileprivate var conversionRateViewHeight: CGFloat {
-		get {
-			return 30
-		}
-	}
-	
-	fileprivate var standardCollectionViewHeight: CGFloat {
-		get {
-			return self.frame.height * 0.45
-		}
-	}
-	
-	fileprivate var standardCellHeight: CGFloat {
-		get {
-			let heightForCells = self.standardCollectionViewHeight
-			return heightForCells / (self.segments.count.toCGFloat() + 1)
-		}
-	}
-}
-
 //MARK: - UI Rendering.
 
 fileprivate extension ZCRMFunnel{
+	
+	
+	fileprivate var rowCount: Int {
+		return self.segments.count + (self.type == .segment ? 2 : 1)
+	}
 	
 	func render() {
 		
@@ -357,15 +265,16 @@ fileprivate extension ZCRMFunnel{
 	
 	func updateChanges() {
 		
-		if self.type == .path {
-			self.updatePathFunnelUIOptions()
-		} else if self.type == .compact {
+		switch self.type {
+		case .path:
+			self.updatePathUIOptions()
+		case .compact:
 			self.updateCompactFunnelUIOptions()
-		} else if self.type == .classic {
+		case .classic:
 			self.updateClassicFunnelUIOptions()
-		} else if self.type == .segment {
+		case .segment:
 			self.updateSegmentUIOptions()
-		} else {
+		case .standard:
 			self.updateStandardUIOptions()
 		}
 	}
@@ -387,13 +296,25 @@ fileprivate extension ZCRMFunnel{
 	
 	private func renderTitleView() {
 		self.setTitleView()
-		self.updateTitleText()
+		self.updateTitleUIOptions()
 	}
 	
-	func updateTitleText() {
+	func updateTitleUIOptions() {
 		
 		self.titleView.font = self.renderOptions.titleFont
 		self.titleView.textColor = self.renderOptions.titleFontColor
+	}
+	
+	func updateConverionRateViewUIOptions() {
+		
+		if self.type == .standard {
+			self.standardConversionRateView.font = self.renderOptions.conversionRateFont
+			self.standardConversionRateView.fontColor = self.renderOptions.conversionRateFontColor
+			self.standardConversionRateView.setUIOptions()
+		} else {
+			self.conversionRateView.font = self.renderOptions.conversionRateFont
+			self.conversionRateView.textColor = self.renderOptions.conversionRateFontColor
+		}
 	}
 	
 	private func setTitleView() {
@@ -407,16 +328,22 @@ fileprivate extension ZCRMFunnel{
 		NSLayoutConstraint.activate(constraints)
 	}
 	
+	private func addConverionRateView() {
+		
+		self.updateConverionRateViewUIOptions()
+		self.conversionRateView.translatesAutoresizingMaskIntoConstraints = false
+		self.conversionRateView.textAlignment = .center
+		self.conversionRateView.numberOfLines = 1
+		self.addSubview(self.conversionRateView)
+	}
 	
 	private func renderPathFunnel() {
 		
 		self.scrollView.translatesAutoresizingMaskIntoConstraints = false
-		self.scrollView.showsHorizontalScrollIndicator = false
 		self.addSubview(self.scrollView)
 		
 		self.stackView1.translatesAutoresizingMaskIntoConstraints = false
 		self.stackView1.axis = .horizontal
-		self.stackView1.spacing = -5
 		self.stackView1.distribution = .fillEqually
 		self.scrollView.addSubview(self.stackView1)
 		
@@ -427,23 +354,25 @@ fileprivate extension ZCRMFunnel{
 		self.scrollView.addSubview(self.stackView2)
 		
 		for (index, stage) in self.stages.enumerated() {
+			
+			let cell = ZCRMPathFunnelCell(isStart: index == 0, bgColor: stage.color)
+			cell.options = self.renderOptions
+			cell.setUIOptions()
+			self.stackView1.addArrangedSubview(cell)
 			if index == 0 {
-				let cell = ZCRMPathFunnelCell(isStart: true, bgColor: stage.color)
-				cell.options = self.renderOptions
-				cell.setUIOptions()
-				self.stackView1.addArrangedSubview(cell)
 				continue
 			}
 			let label = UILabel()
-			label.textAlignment = .center
+			label.textAlignment = .left
 			label.font = self.renderOptions.rateFont
 			label.textColor = self.renderOptions.rateFontColor
-			stackView2.addArrangedSubview(label)
-			self.stackView1.addArrangedSubview(ZCRMPathFunnelCell(isStart: false, bgColor: stage.color))
+			self.stackView2.addArrangedSubview(label)
+			
 		}
+		self.addConverionRateView()
 	}
 	
-	private func updatePathFunnelUIOptions() {
+	private func updatePathUIOptions() {
 		
 		for view in self.stackView1.arrangedSubviews {
 			(view as! ZCRMPathFunnelCell).options = self.renderOptions
@@ -458,24 +387,30 @@ fileprivate extension ZCRMFunnel{
 	
 	private func addPathFunnelConstraints() {
 		
+		let pathCellStackViewWidth = 180 * self.stages.count.toCGFloat()
 		var constraints: [NSLayoutConstraint] = []
-		self.scrollView.contentSize.width = self.pathStackViewWidth
-		self.scrollView.contentSize.height = self.pathStackViewHeight * 2
-		let pathLabelStackViewWitdh = ( self.pathStackViewWidth / self.stages.count.toCGFloat()) * (self.stages.count.toCGFloat() - 1)
+		self.scrollView.contentSize.width = pathCellStackViewWidth
+		let stageCount = self.stages.count.toCGFloat()
+		let pathLabelStackViewWitdh = ( pathCellStackViewWidth / stageCount) * (stageCount - 1)
 		
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-10-[scrollView(scrollViewHeight)]-|", options: [], metrics: ["scrollViewHeight" : self.pathStackViewHeight * 2], views: ["title": self.titleView, "scrollView": self.scrollView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView": self.scrollView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[pathStackView(pathStackViewWidth)]-0-|", options: [], metrics: ["pathStackViewWidth": self.pathStackViewWidth], views: ["pathStackView": self.stackView1])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[pathStackView(pathStackViewHeight)]-0-[pathLabelStackView(pathStackViewHeight)]-0-|", options: [], metrics: ["pathStackViewHeight": self.pathStackViewHeight], views: ["pathStackView": self.stackView1, "pathLabelStackView": self.stackView2])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:[pathLabelStackView(pathLabelStackViewWitdh)]-0-|", options: [], metrics: ["pathLabelStackViewWitdh": pathLabelStackViewWitdh], views: ["pathLabelStackView": self.stackView2])
-		NSLayoutConstraint.activate(constraints)
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[scrollView][conversionRateView]-|", options: [], metrics: nil, views: ["title": self.titleView, "scrollView": self.scrollView, "conversionRateView": self.conversionRateView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-[scrollView]|", options: [], metrics: nil, views: ["scrollView": self.scrollView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[conversionRateView]|", options: [], metrics: nil, views: ["conversionRateView": self.conversionRateView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:[pathLabelStackView(pathLabelStackViewWitdh)]|", options: [], metrics: ["pathLabelStackViewWitdh": pathLabelStackViewWitdh], views: ["pathLabelStackView": self.stackView2])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[pathStackView(pathStackViewWidth)]|", options: [], metrics: ["pathStackViewWidth": pathCellStackViewWidth], views: ["pathStackView": self.stackView1])
+		self.activate(constraints: constraints)
+		
+		self.scrollView.layoutIfNeeded()
+		constraints.removeAll()
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|[pathStackView(pathStackViewHeight)][pathLabelStackView(pathStackViewHeight)]|", options: [], metrics: ["pathStackViewHeight": self.scrollView.frame.height / 2], views: ["pathStackView": self.stackView1, "pathLabelStackView": self.stackView2])
+		self.activate(constraints: constraints, true)
+		self.stackView1.spacing = self.scrollView.frame.height / 6 * -1 + 5
 	}
-	
 	
 	private func renderCompactFunnel() {
 		
 		self.scrollView.translatesAutoresizingMaskIntoConstraints = false
-		self.scrollView.showsHorizontalScrollIndicator = false
+		self.scrollView.bounces = true
 		self.addSubview(self.scrollView)
 		
 		self.stackView1.translatesAutoresizingMaskIntoConstraints = false
@@ -483,26 +418,20 @@ fileprivate extension ZCRMFunnel{
 		self.stackView1.spacing = 0
 		self.scrollView.addSubview(self.stackView1)
 		
-		var constraints: [NSLayoutConstraint] = []
 		for (index, stage) in self.stages.enumerated() {
 			
 			let valueCell = ZCRMCompactFunnelCell(isRateView: false)
 			valueCell.translatesAutoresizingMaskIntoConstraints = false
 			self.stackView1.addArrangedSubview(valueCell)
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:[valueCell\(index)(valueCellWidth)]", options: [], metrics: ["valueCellWidth": 120], views: ["valueCell\(index)": valueCell])
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[valueCell\(index)]-0-|", options: [], metrics: nil, views: ["valueCell\(index)": valueCell])
-			
 			if index < self.stages.count - 1 {
 				
 				let rateCell = ZCRMCompactFunnelCell(isRateView: true)
 				rateCell.translatesAutoresizingMaskIntoConstraints = false
 				rateCell.backgroundColor = stage.color
 				self.stackView1.addArrangedSubview(rateCell)
-				constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:[rateCell\(index)(rateCellWidth)]", options: [], metrics: ["rateCellWidth": 80], views: ["rateCell\(index)": rateCell])
-				constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[rateCell]-0-|", options: [], metrics: nil, views: ["rateCell": rateCell])
 			}
 		}
-		NSLayoutConstraint.activate(constraints)
+		self.addConverionRateView()
 	}
 	
 	private func updateCompactFunnelUIOptions() {
@@ -516,15 +445,24 @@ fileprivate extension ZCRMFunnel{
 	
 	private func addCompactFunnelConstraints() {
 		
-		var constraints: [NSLayoutConstraint] = []
-		self.scrollView.contentSize.width = self.compactStackViewWidth
-		self.scrollView.contentSize.height = self.compactStackViewHeight
+		let scrollViewCSWidth = (150 * self.stages.count + 80 * (self.stages.count - 1)).toCGFloat()
+		self.scrollView.contentSize.width = scrollViewCSWidth
 		
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-10-[scrollView]->=10-|", options: [], metrics: ["scrollViewHeight": self.compactStackViewHeight], views: ["title": self.titleView, "scrollView": self.scrollView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView": self.scrollView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[stackView(stackViewWidth)]", options: [], metrics: ["stackViewWidth": self.compactStackViewWidth], views: ["stackView": self.stackView1])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[stackView(stackViewHeight)]-0-|", options: [], metrics: ["stackViewHeight": self.compactStackViewHeight], views: ["stackView": self.stackView1])
-		NSLayoutConstraint.activate(constraints)
+		var constraints: [NSLayoutConstraint] = []
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[scrollView]-[conversionRateView]-|", options: [], metrics: nil, views: ["title": self.titleView, "scrollView": self.scrollView, "conversionRateView": self.conversionRateView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-[scrollView]|", options: [], metrics: nil, views: ["scrollView": self.scrollView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[conversionRateView]|", options: [], metrics: nil, views: ["conversionRateView": self.conversionRateView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[stackView(stackViewWidth)]", options: [], metrics: ["stackViewWidth": scrollViewCSWidth], views: ["stackView": self.stackView1])
+		self.activate(constraints: constraints)
+		
+		self.scrollView.layoutIfNeeded()
+		constraints.removeAll()
+		constraints.append(NSLayoutConstraint(item: self.stackView1, attribute: .height, relatedBy: .equal, toItem: self.scrollView, attribute: .height, multiplier: 0, constant: self.scrollView.frame.height))
+		for (index, compactCell) in self.stackView1.arrangedSubviews.enumerated() {
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:[compactCell\(index)(width)]", options: [], metrics: ["width": index % 2 == 0 ? 150 : 80], views: ["compactCell\(index)": compactCell])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|[compactCell\(index)]|", options: [], metrics: nil, views: ["compactCell\(index)": compactCell])
+		}
+		self.activate(constraints: constraints, true)
 	}
 	
 	private func renderClassicFunnel() {
@@ -539,7 +477,6 @@ fileprivate extension ZCRMFunnel{
 		self.stackView1.alignment = .center
 		self.scrollView.addSubview(self.stackView1)
 		
-		var constraints: [NSLayoutConstraint] = []
 		for (index, stage) in self.stages.enumerated() {
 			
 			let stageLabel = UILabel()
@@ -559,13 +496,10 @@ fileprivate extension ZCRMFunnel{
 				rateLabel.textColor = self.renderOptions.rateFontColor
 				rateLabel.textAlignment = .center
 				self.stackView1.addArrangedSubview(rateLabel)
-				
-				constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[rateLabel\(index)]|", options: [], metrics: nil, views: ["rateLabel\(index)": rateLabel])
-				constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[rateLabel\(index)(rateLabelHeight)]", options: [], metrics: ["rateLabelHeight": 30], views: ["rateLabel\(index)": rateLabel])
 			}
 		}
-		NSLayoutConstraint.activate(constraints)
 		
+		self.collectionViewFlowLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 		self.collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewFlowLayout)
 		self.collectionView.register(ZCRMClassicFunnelFooter.self, forCellWithReuseIdentifier: "classicFunnelFooter")
 		self.collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -574,14 +508,7 @@ fileprivate extension ZCRMFunnel{
 		self.collectionView.delegate = self
 		self.scrollView.addSubview(self.collectionView)
 		
-		self.conversionRateView.translatesAutoresizingMaskIntoConstraints = false
-		self.conversionRateView.font = self.renderOptions.conversionRateFont
-		self.conversionRateView.textColor = self.renderOptions.conversionRateFontColor
-		if self.conversionRate != nil {
-			self.conversionRateView.text = "Conversion Rate: \(self.conversionRate.label)"
-		}
-		self.conversionRateView.textAlignment = .center
-		self.scrollView.addSubview(self.conversionRateView)
+		self.addConverionRateView()
 	}
 	
 	private func updateClassicFunnelUIOptions() {
@@ -599,31 +526,43 @@ fileprivate extension ZCRMFunnel{
 	
 	private func addClassicFunnelConstraints() {
 		
-		var constraints: [NSLayoutConstraint] = []
-		for (i, stageLabel) in self.stackView1.arrangedSubviews.enumerated() {
-			
-			if i % 2 == 0 {
-				
-				let index = i / 2
-				let stageLableWidth = self.classicStackViewWidth * ((100 - (index.toCGFloat() * 12.5)) / 100)
-				constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:[stageLabel\(index)(stageLableWidth)]", options: [], metrics: ["stageLableWidth": stageLableWidth], views: ["stageLabel\(index)": stageLabel])
-				constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[stageLabel\(index)(stageLabelHeight)]", options: [], metrics: ["stageLabelHeight": 40], views: ["stageLabel\(index)": stageLabel])
+		let classicCollectionViewHeight: CGFloat = {
+			var footerHeight: CGFloat = 25
+			if self.stages.count > 2 {
+				footerHeight *= 3
 			}
+			return footerHeight
+		}()
+		let stackViewHeight = (70 * self.stages.count.toCGFloat()) - 30
+		self.scrollView.contentSize.height = stackViewHeight + classicCollectionViewHeight
+		let stackViewWidth = self.frame.width * 0.90
+		
+		var constraints: [NSLayoutConstraint] = []
+		
+		for (i, label) in self.stackView1.arrangedSubviews.enumerated() {
+			
+			let labelHeight = i % 2 == 0 ? 40 : 30
+			let labelWidth = i % 2 == 0 ? stackViewWidth * ((100 - ((i / 2).toCGFloat() * 12.5)) / 100) : stackViewWidth
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:[label\(i)(width)]", options: [], metrics: ["width": labelWidth], views: ["label\(i)": label])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[label\(i)(height)]", options: [], metrics: ["height": labelHeight], views: ["label\(i)": label])
 		}
-		
-		self.scrollView.contentSize.height = self.classicStackViewHeight + self.classicCollectionViewHeight + self.conversionRateViewHeight + 35
-		self.collectionViewFlowLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-		
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:[scrollView(scrollViewWidth)]", options: [], metrics: ["scrollViewWidth": self.classicStackViewWidth], views: ["scrollView": self.scrollView])
-		constraints.append(NSLayoutConstraint(item: self.scrollView, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-15-[scrollView]-|", options: [], metrics: nil, views: ["title": self.titleView, "scrollView": self.scrollView])
-		
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[stackView]|", options: [], metrics:nil, views: ["stackView": self.stackView1])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[collectionView]|", options: [], metrics: nil, views: ["collectionView": self.collectionView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:[scrollView(scrollViewWidth)]", options: [], metrics: ["scrollViewWidth": stackViewWidth], views: ["scrollView": self.scrollView])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[conversionRateView]|", options: [], metrics: nil, views: ["conversionRateView": self.conversionRateView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[collectionView(collectionViewWidth)]|", options: [], metrics: ["collectionViewWidth": self.classicStackViewWidth], views: ["collectionView": self.collectionView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|[stackView(stackViewHeight)]-15-[collectionView(collectionViewHeight)]-15-[conversionRateView(conversionRateViewHeight)]|", options: [], metrics: ["stackViewHeight": self.classicStackViewHeight, "collectionViewHeight": self.classicCollectionViewHeight, "conversionRateViewHeight": self.conversionRateViewHeight], views: ["stackView": self.stackView1, "collectionView": self.collectionView, "conversionRateView": self.conversionRateView])
-		NSLayoutConstraint.activate(constraints)
+		constraints.append(NSLayoutConstraint(item: self.scrollView, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-15-[scrollView]-[conversionRateView]-|", options: [], metrics: nil, views: ["title": self.titleView, "scrollView": self.scrollView, "conversionRateView": self.conversionRateView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[stackView]|", options: [], metrics:nil, views: ["stackView": self.stackView1])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[collectionView(collectionViewWidth)]|", options: [], metrics: ["collectionViewWidth": stackViewWidth], views: ["collectionView": self.collectionView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|[stackView(stackViewHeight)]-15-[collectionView(collectionViewHeight)]|", options: [], metrics: ["stackViewHeight": stackViewHeight, "collectionViewHeight": classicCollectionViewHeight], views: ["stackView": self.stackView1, "collectionView": self.collectionView])
+		self.activate(constraints: constraints)
+		
+		var footerWidth = stackViewWidth / 2
+		if footerWidth < 100  {
+			footerWidth = 150
+		}
+		self.collectionViewFlowLayout.itemSize = CGSize(width: footerWidth, height: 25)
+		self.collectionViewFlowLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+		self.collectionViewFlowLayout.minimumLineSpacing = 0
+		self.collectionViewFlowLayout.minimumInteritemSpacing = 0
 	}
 	
 	private func updateSegmentUIOptions() {
@@ -658,6 +597,7 @@ fileprivate extension ZCRMFunnel{
 			let label = UILabel()
 			label.translatesAutoresizingMaskIntoConstraints = false
 			label.backgroundColor = .gray
+			label.numberOfLines = 2
 			label.textAlignment = .center
 			label.font = self.renderOptions.segmentFont
 			label.textColor = self.renderOptions.segmentFontColor
@@ -669,6 +609,7 @@ fileprivate extension ZCRMFunnel{
 			let label = UILabel()
 			label.translatesAutoresizingMaskIntoConstraints = false
 			label.text = segment.label
+			label.numberOfLines = 2
 			label.textAlignment = .center
 			if index % 2 != 0 && self.type == .segment {
 				label.backgroundColor = .gray
@@ -690,19 +631,33 @@ fileprivate extension ZCRMFunnel{
 			fLabel.backgroundColor = .gray
 		}
 		self.stackView1.addArrangedSubview(fLabel)
+		if self.type == .segment {
+			self.addConverionRateView()
+		}
 	}
 	
 	private func addSegmentFunnelConstraints() {
 		
+		let segmentCellWidth: CGFloat = 100
+		let headerColumnWidth = self.frame.width * 0.35 < 120 ? 120 : self.frame.width * 0.35
+		let collectionViewWidth = segmentCellWidth * (self.stages.count * 2).toCGFloat()
 		var constraints: [NSLayoutConstraint] = []
-		let collectionViewWidth = self.segmentCellWidth * (self.stages.count * 2).toCGFloat()
 		
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[segmentsView(segmentsViewWidth)][scrollView]|", options: [], metrics: ["segmentsViewWidth": self.segmentHeaderColumnWidth], views: ["segmentsView": self.stackView1, "scrollView": self.scrollView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[segmentsView(==collectionView)]|", options: [], metrics: nil, views: ["segmentsView": self.stackView1, "collectionView": self.collectionView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[scrollView(scrollViewHeight)]|", options: [], metrics: ["scrollViewHeight": self.segmentCollectionViewHeight], views: ["title": self.titleView, "scrollView": self.scrollView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[segmentsView(segmentsViewWidth)][scrollView]|", options: [], metrics: ["segmentsViewWidth":  headerColumnWidth], views: ["segmentsView": self.stackView1, "scrollView": self.scrollView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[segmentsView]-[conversionRateView]-|", options: [], metrics: nil, views: ["title": self.titleView,"segmentsView": self.stackView1, "conversionRateView": self.conversionRateView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[scrollView]-[conversionRateView]-|", options: [], metrics:  nil, views: ["title": self.titleView, "scrollView": self.scrollView, "conversionRateView": self.conversionRateView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[conversionRateView]|", options: [], metrics: nil, views: ["conversionRateView": self.conversionRateView])
+		self.activate(constraints: constraints)
+		constraints.removeAll()
+		self.stackView1.layoutIfNeeded()
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[collectionView(collectionViewWidth)]|", options: [], metrics: ["collectionViewWidth": collectionViewWidth], views: ["collectionView": self.collectionView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|[collectionView(collectionViewHeight)]|", options: [], metrics: ["collectionViewHeight": self.segmentCollectionViewHeight], views: ["collectionView": self.collectionView])
-		NSLayoutConstraint.activate(constraints)
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|[collectionView(collectionViewHeight)]|", options: [], metrics: ["collectionViewHeight": self.stackView1.frame.height], views: ["collectionView": self.collectionView])
+		self.activate(constraints: constraints, true)
+		
+		self.collectionViewFlowLayout.itemSize = CGSize(width: segmentCellWidth, height: self.stackView1.frame.height / self.rowCount.toCGFloat())
+		self.collectionViewFlowLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+		self.collectionViewFlowLayout.minimumLineSpacing = 0
+		self.collectionViewFlowLayout.minimumInteritemSpacing = 0
 	}
 	
 	
@@ -721,11 +676,8 @@ fileprivate extension ZCRMFunnel{
 		self.standardConversionRateView.translatesAutoresizingMaskIntoConstraints = false
 		self.addSubview(self.standardConversionRateView)
 		
-		let space = self.segments.count > 0 ? self.segmentCellWidth * 0.20 : self.segmentCellWidth * 0.10
 		self.barChart.translatesAutoresizingMaskIntoConstraints = false
 		self.barChart.color = self.renderOptions.barColor
-		self.barChart.barWidth = self.segmentCellWidth * 0.60
-		self.barChart.space = space
 		self.barChart.valueFontColor = self.renderOptions.valueFontColor
 		self.barChart.titleFontColor = self.renderOptions.stageFontColor
 		self.barChart.rateFontColor = self.renderOptions.rateFontColor
@@ -752,54 +704,52 @@ fileprivate extension ZCRMFunnel{
 	
 	private func addStandardFunnelConstraints() {
 		
-		let chartWidth = self.segments.count > 0 ? self.segmentCellWidth * (self.stages.count * 2).toCGFloat() : (self.segmentCellWidth * 0.8) * (self.stages.count * 2).toCGFloat()
-		
+		let cellWidth: CGFloat = self.segments.isEmpty ? 80 : 100
+		let space = cellWidth * 0.1
+		let cVWidth = cellWidth * (self.stages.count * 2).toCGFloat()
+		let chartWidth =  self.segments.isEmpty ? cVWidth - cellWidth : cVWidth
+		let rateWidth = self.frame.width * 0.35 < 120 ? 120 : self.frame.width * 0.35
+		self.barChart.barWidth = cellWidth - (space * 2)
+		self.barChart.space = space
+		self.scrollView.contentSize.width = self.segments.isEmpty ? chartWidth : cVWidth
 		var constraints: [NSLayoutConstraint] = []
-		
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[rateView(rateViewWidth)][scrollView]|", options: [], metrics: ["rateViewWidth": self.segmentHeaderColumnWidth ], views: ["rateView": self.standardConversionRateView, "scrollView": self.scrollView])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[scrollView(scrollViewHeight)]|", options: [], metrics: ["scrollViewHeight": self.standardCollectionViewHeight * 2], views:[ "title": self.titleView, "scrollView": self.scrollView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[rateView(rateViewWidth)][scrollView]|", options: [], metrics: ["rateViewWidth": rateWidth], views: ["rateView": self.standardConversionRateView, "scrollView": self.scrollView])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[scrollView]|", options: [], metrics: nil, views:[ "title": self.titleView, "scrollView": self.scrollView])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[barChart(chartWidth)]|", options: [], metrics: ["chartWidth": chartWidth], views: ["barChart": self.barChart])
 		
 		if self.segments.count > 0 {
 			
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[rateView(conversionRateHeight)][segmentsView(==rateView)]|", options: [], metrics: ["conversionRateHeight": self.standardCollectionViewHeight], views: ["title": self.titleView,"rateView": self.standardConversionRateView, "segmentsView": self.stackView1, "collectionView": self.collectionView])
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|[barChart(collectionViewHeight)][collectionView(collectionViewHeight)]|", options: [], metrics: ["barChartHeight": self.standardCollectionViewHeight , "collectionViewHeight": self.standardCollectionViewHeight], views: ["barChart": self.barChart, "collectionView": self.collectionView])
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[collectionView(collectionViewWidth)]|", options: [], metrics: ["collectionViewWidth": chartWidth], views: ["collectionView": self.collectionView])
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[segmentsView(rateViewWidth)][scrollView]|", options: [], metrics: ["rateViewWidth": self.segmentHeaderColumnWidth ], views: ["segmentsView": self.stackView1, "scrollView": self.scrollView])
+			let barChartHeight = self.frame.height * 0.45
+			
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[rateView(conversionRateHeight)][segmentsView]|", options: [], metrics: ["conversionRateHeight": barChartHeight], views: ["title": self.titleView,"rateView": self.standardConversionRateView, "segmentsView": self.stackView1, "collectionView": self.collectionView])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[segmentsView(rateViewWidth)][scrollView]|", options: [], metrics: ["rateViewWidth": rateWidth], views: ["segmentsView": self.stackView1, "scrollView": self.scrollView])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:[collectionView(collectionViewWidth)]", options: [], metrics: ["collectionViewWidth": cVWidth], views: ["collectionView": self.collectionView])
+
+			self.activate(constraints: constraints)
+			self.stackView1.layoutIfNeeded()
+			
+			constraints.removeAll()
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|[barChart(barChartHeight)][collectionView(collectionViewHeight)]|", options: [], metrics: ["barChartHeight": barChartHeight , "collectionViewHeight": self.stackView1.frame.height], views: ["barChart": self.barChart, "collectionView": self.collectionView])
+			self.activate(constraints: constraints, true)
+			
+			self.collectionViewFlowLayout.itemSize = CGSize(width: cellWidth, height: self.stackView1.frame.height / self.rowCount.toCGFloat())
+			self.collectionViewFlowLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+			self.collectionViewFlowLayout.minimumLineSpacing = 0
+			self.collectionViewFlowLayout.minimumInteritemSpacing = 0
+			
 		} else {
 			
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[title]-[rateView]|", options: [], metrics: nil, views: ["title": self.titleView,"rateView": self.standardConversionRateView])
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|[barChart(==rateView)]|", options: [], metrics: nil, views: ["barChart": self.barChart, "rateView": self.standardConversionRateView])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|[barChart(scrollView)]|", options: [], metrics: nil, views: ["barChart": self.barChart, "scrollView": self.scrollView])
+			self.activate(constraints: constraints)
 		}
-		NSLayoutConstraint.activate(constraints)
 	}
-	
 }
 
 //MARK: - Collection view delegate.
 
 extension ZCRMFunnel: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 	
-	public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		
-		var width: CGFloat!
-		var height: CGFloat!
-		if self.type == .classic {
-			var footerWidth = self.classicStackViewWidth / 3
-			if footerWidth < 40 {
-				footerWidth = self.classicStackViewWidth / 2
-			}
-			width = footerWidth
-			height = 25
-		} else if self.type == .standard {
-			width = self.segmentCellWidth
-			height = self.standardCellHeight
-		} else if self.type == .segment {
-			width = self.segmentCellWidth
-			height = self.segmentCellHeight
-		}
-		return CGSize(width: width, height: height)
-	}
 	public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 		
 		var count: Int!
@@ -826,14 +776,6 @@ extension ZCRMFunnel: UICollectionViewDataSource, UICollectionViewDelegate, UICo
 		return cell
 	}
 	
-	public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-		return 0
-	}
-	
-	public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-		return 0
-	}
-	
 	private func getClassicFunnelFooterCell(_ collectionView: UICollectionView, indexPath: IndexPath) -> ZCRMClassicFunnelFooter {
 		
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "classicFunnelFooter", for: indexPath) as! ZCRMClassicFunnelFooter
@@ -851,9 +793,9 @@ extension ZCRMFunnel: UICollectionViewDataSource, UICollectionViewDelegate, UICo
 		if indexPath.row < indexPerRow{
 			
 			if indexPath.row < indexPerRow - 1 {
-				
+			
 				if indexPath.row % 2 == 0 { //  cells for stages heading
-					cell.text = self.stages[indexPath.row  % 2].label
+					cell.text = self.stages[indexPath.row  / 2].label
 					cell.font = self.renderOptions.stageFont
 					cell.fontColor = self.renderOptions.stageFontColor
 				} else  { // cell for rate headers
@@ -892,13 +834,6 @@ extension ZCRMFunnel: UICollectionViewDataSource, UICollectionViewDelegate, UICo
 					cell.text = self.stagesData[totalIndex].label
 					cell.font = self.renderOptions.stageFont
 					cell.fontColor = self.renderOptions.stageFontColor
-					
-				} else { // rate
-					
-					let rateIndex = ((indexWithoutHeaderAndData + 1) / 2) - 1
-					cell.text = self.stagesRate[rateIndex].label
-					cell.font = self.renderOptions.rateFont
-					cell.fontColor = self.renderOptions.rateFontColor
 				}
 			} else {
 				
@@ -954,14 +889,7 @@ extension ZCRMFunnel: UICollectionViewDataSource, UICollectionViewDelegate, UICo
 				cell.text = self.stagesData[totalIndex].label
 				cell.font = self.renderOptions.stageFont
 				cell.fontColor = self.renderOptions.stageFontColor
-			} else {
-				
-				let rateIndex = (indexWithoutData + 1) / 2 - 1
-				cell.text = self.stagesRate[rateIndex].label
-				cell.font = self.renderOptions.rateFont
-				cell.fontColor = self.renderOptions.rateFontColor
 			}
-			
 		} else {
 			
 			if indexPath.row % 2 == 0 {
@@ -1001,7 +929,7 @@ fileprivate extension ZCRMFunnel {
 	private func loadFunnelData() {
 		
 		if self.type == .segment {
-			self.loadFunnelDatasForSegement()
+			self.loadSegmentFunnelData()
 		} else if self.type == .standard {
 			self.loadStandardFunnelData()
 		} else {
@@ -1016,7 +944,7 @@ fileprivate extension ZCRMFunnel {
 		}
 	}
 	
-	private func loadFunnelDatasForSegement() {
+	private func loadSegmentFunnelData() {
 		
 		for segment in self.segments {
 			for stage in self.stages {
@@ -1031,7 +959,7 @@ fileprivate extension ZCRMFunnel {
 	private func loadStandardFunnelData() {
 		
 		if self.segments.count > 0 {
-			self.loadFunnelDatasForSegement()
+			self.loadSegmentFunnelData()
 		} else {
 			self.loadCommonFunnelData()
 		}
@@ -1054,27 +982,21 @@ fileprivate extension ZCRMFunnel {
 			if index == 0 {
 				continue
 			}
-			self.rates.append(self.dataSource.rateFor(self.stages[index - 1], stage, fromStageIndex: index - 1, toStageIndex: index))
+			self.rates.append(self.dataSource.rateFor(self.stages[index - 1], stage))
 		}
-		self.conversionRate = self.dataSource.conversionRateFor(self)
+		self.conversionRate = self.type == .path ? self.dataSource.overallDropRateFor(self) : self.dataSource.conversionRateFor(self)
 	}
 	
 	private func loadRateForSegement() {
 		
-		for (index, segment) in self.segments.enumerated() {
+		for segment in self.segments {
 			for (stageIndex, stage) in self.stages.enumerated() {
 				if stageIndex == 0 {
 					continue
 				}
-				self.rates.append(self.dataSource.rateFor(self.stages[stageIndex - 1], stage, fromStageIndex: stageIndex - 1, toStageIndex: index, segment: segment))
+				self.rates.append(self.dataSource.rateFor(self.stages[stageIndex - 1], stage , segment: segment))
 			}
 			self.conversionRates.append(self.dataSource.conversionRateFor(self, segment))
-		}
-		for (index, stage) in self.stages.enumerated() {
-			if index == 0 {
-				continue
-			}
-			self.stagesRate.append(self.dataSource.rateFor(self.stages[index - 1], stage, fromStageIndex: index - 1, toStageIndex: index))
 		}
 		self.conversionRate = self.dataSource.conversionRateFor(self)
 	}
@@ -1083,9 +1005,22 @@ fileprivate extension ZCRMFunnel {
 		
 		if self.segments.count > 0 {
 			self.loadRateForSegement()
+			for (index, stage) in self.stages.enumerated() {
+				if index == 0 {
+					continue
+				}
+				self.stagesRate.append(self.dataSource.rateFor(self.stages[index - 1], stage))
+			}
 		} else {
-			self.loadCommonRate()
+			for (index, stage) in self.stages.enumerated() {
+				if index == 0 {
+					continue
+				}
+				self.rates.append(self.dataSource.rateFor(self.stages[index - 1], stage))
+			}
 		}
+		
+		self.conversionRate = self.type == .path ? self.dataSource.overallDropRateFor(self) : self.dataSource.conversionRateFor(self)
 	}
 	
 	fileprivate func setSegmentLabel() {
@@ -1105,6 +1040,8 @@ fileprivate extension ZCRMFunnel {
 			self.setCompactFunnelData()
 		} else if self.type == .standard {
 			self.setStandardFunnelData()
+		} else {
+			self.setConversionRateText()
 		}
 	}
 	
@@ -1112,11 +1049,12 @@ fileprivate extension ZCRMFunnel {
 		
 		for (index, view) in self.stackView1.arrangedSubviews.enumerated() {
 			if index % 2 == 0 {
-				(view as! UILabel).text = self.data[index % 2].label
+				(view as! UILabel).text = self.data[index / 2].label
 			} else  {
 				(view as! UILabel).text = self.rates[(index - 1) / 2].label
 			}
 		}
+		self.setConversionRateText()
 	}
 	
 	private func setPathFunnelData() {
@@ -1125,29 +1063,28 @@ fileprivate extension ZCRMFunnel {
 			(view as! ZCRMPathFunnelCell).data = ZCRMFunnelData(label: self.stages[index].label, value: self.data[index].value)
 		}
 		for (index, view) in self.stackView2.arrangedSubviews.enumerated() {
-			
 			(view as! UILabel).text = self.rates[index].label
 		}
+		self.setConversionRateText()
 	}
 	
 	private func setCompactFunnelData() {
 		
 		for (index, view) in self.stackView1.arrangedSubviews.enumerated() {
-			var data: ZCRMFunnelData!
+			var data: ZCRMFunnelCellData!
 			if index % 2 == 0 {
-				data = ZCRMFunnelData(label: self.stages[index / 2].label, value: self.data[index / 2].value)
+				data = ZCRMFunnelCellData(label: self.stages[index / 2].label, value: self.data[index / 2].label)
 			} else {
-				data = self.rates[((index - 1) / 2)]
+				data = ZCRMFunnelCellData(label: self.rates[((index - 1) / 2)].label, value: "")
 			}
 			(view as! ZCRMCompactFunnelCell).data = data
 		}
+		self.setConversionRateText()
 	}
 	
 	private func setStandardFunnelData() {
 		
-		self.standardConversionRateView.fromValueLabel.text = self.getMinimumRate().label
-		self.standardConversionRateView.rateLabel.text = self.conversionRate.label
-		self.standardConversionRateView.toValueLabel.text = self.getMaxRate().label
+		
 		var barData: [ZCRMBarData] = []
 		var barRates: [String] = []
 		let stagesData: [ZCRMFunnelData] = self.segments.count > 0 ? self.stagesData : self.data
@@ -1165,35 +1102,21 @@ fileprivate extension ZCRMFunnel {
 			}
 		}
 		
+		self.standardConversionRateView.fromValueLabel.text = stagesData[0].label
+		self.standardConversionRateView.rateLabel.text = self.conversionRate.label
+		self.standardConversionRateView.toValueLabel.text = stagesData.last!.label
+		
 		self.barChart.rates = barRates
+		self.barChart.maxValue = stagesData.map({ (data) -> Int in
+			return data.value
+		}).max()!.toCGFloat()
 		self.barChart.data = barData
-		self.barChart.maxValue = self.getMaxRate().value.toCGFloat()
 		self.barChart.setNeedsLayout()
 	}
 	
-	private func getMinimumRate() -> ZCRMFunnelData {
+	private func setConversionRateText() {
 		
-		let rates: [ZCRMFunnelData] = self.segments.count > 0 ? self.stagesRate : self.rates
-		var minRate: ZCRMFunnelData = rates[0]
-		for rate in rates {
-			if rate.value < minRate.value {
-				minRate = rate
-			}
-		}
-		return minRate
-	}
-	
-	private func getMaxRate() -> ZCRMFunnelData {
-		
-		
-		let rates: [ZCRMFunnelData] = self.segments.count > 0 ? self.stagesRate : self.rates
-		var maxRate: ZCRMFunnelData = rates[0]
-		for rate in rates {
-			if rate.value > maxRate.value {
-				maxRate = rate
-			}
-		}
-		return maxRate
+		self.conversionRateView.text = self.type == .path ? "Overall Drop Rate : \(self.conversionRate.label)" : "Conversion Rate : \(self.conversionRate.label)"
 	}
 }
 
@@ -1203,11 +1126,23 @@ public extension ZCRMFunnelDataSource {
 		fatalError("funnel(_ stage: ZCRMFunnelStage, segment: ZCRMFunnelSegment) has not been implemented")
 	}
 	
+	func conversionRateFor(_ funnel: ZCRMFunnel) -> ZCRMFunnelData {
+		fatalError("conversionRateFor(_ funnel: ZCRMFunnel) has not been implemented")
+	}
+	
 	func conversionRateFor(_ funnel: ZCRMFunnel, _ segment: ZCRMFunnelSegment) -> ZCRMFunnelData {
 		fatalError("conversionRateFor(_ funnel: ZCRMFunnel, _ segment: ZCRMFunnelSegment) has not been implemented")
 	}
 	
-	func rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage, fromStageIndex: Int, toStageIndex: Int, segment: ZCRMFunnelSegment) -> ZCRMFunnelData {
+	func rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage) -> ZCRMFunnelData {
+		fatalError("rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage) has not been implemented")
+	}
+	
+	func rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage, segment: ZCRMFunnelSegment) -> ZCRMFunnelData {
 		fatalError("rateFor(_ fromStage: ZCRMFunnelStage, _ toStage: ZCRMFunnelStage, fromStageIndex: Int, toStageIndex: Int, segment: ZCRMFunnelSegment) has not been implemented")
+	}
+	
+	func overallDropRateFor(_ funnel: ZCRMFunnel) -> ZCRMFunnelData {
+		fatalError("overallDropRateFor(_ funnel: ZCRMFunnel) has not been implemented")
 	}
 }
