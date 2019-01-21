@@ -99,12 +99,16 @@ internal extension ZCRMLayoutConstraintDelegate {
 }
 
 internal extension UIView {
-	
+
 	internal struct tag {
 		static let bottom: Int = -1
 		static let top: Int = -2
 		static let right: Int = -3
 		static let left: Int = -4
+		static let bottomShadow = -5
+		static let topShadow = -6
+		static let rightShadow = -7
+		static let leftShadow = -8
 	}
 	
 	internal func getHeightOf(percent: CGFloat) -> CGFloat {
@@ -115,62 +119,148 @@ internal extension UIView {
 		return (self.frame.width / 100) * percent
 	}
 	
-	internal func invalidateConstraints() {
+	internal func addBorder(edge: UIRectEdge, color: UIColor, width: CGFloat) {
 		
-		var constraints: [NSLayoutConstraint] = self.constraints
-		for subView in self.subviews {
-			constraints += subView.constraints
-		}
-		if !constraints.isEmpty {
-			NSLayoutConstraint.deactivate(constraints)
-		}
+		self.removeBorder(forEdge: edge)
+		let borderView = UIView()
+		borderView.backgroundColor = color
+		borderView.autoresizingMask = self.getResizingMask(forEdge: edge)
+		borderView.frame = self.getFrame(forEdge: edge, thickNess: width)
+		borderView.tag = self.getBorderTag(forEdge: edge)
+		self.addSubview(borderView)
 	}
 	
-	internal func addBottomBorder(color: UIColor, width: CGFloat) {
-		
-		let border = UIView()
-		border.backgroundColor = color
-		border.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
-		border.frame = CGRect(x: 0, y: frame.size.height - width, width: frame.size.width, height: width)
-		self.addSubview(border)
+	private func removeBorder(forEdge: UIRectEdge) {
+		self.removeView(withTag: self.getBorderTag(forEdge: forEdge))
 	}
 	
-	internal func addRightBorder(color: UIColor, width: CGFloat) {
+	internal func addShadowBorder(edge: UIRectEdge, color: UIColor, width: CGFloat) {
 		
-		let border = UIView()
-		border.backgroundColor = color
-		border.autoresizingMask = [.flexibleHeight, .flexibleLeftMargin]
-		border.frame = CGRect(x: self.frame.size.width - width, y: 0, width: width, height: self.frame.size.height)
-		let gradientLayer:CAGradientLayer = CAGradientLayer()
-		gradientLayer.frame.size = border.frame.size
+		self.removeShadowBorder(forEdge: edge)
+		let shadowView = UIView()
+		shadowView.backgroundColor = color
+		shadowView.autoresizingMask = self.getResizingMask(forEdge: edge)
+		shadowView.frame = self.getFrame(forEdge: edge, thickNess: width)
+		shadowView.tag = self.getShadowTag(forEdge: edge)
+		let gradientLayer = CAGradientLayer()
 		gradientLayer.colors = [UIColor.white.cgColor, color.cgColor]
-		gradientLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
-		gradientLayer.endPoint = CGPoint(x: 1.0, y: 1.0)
-		border.layer.addSublayer(gradientLayer)
-		self.addSubview(border)
+		gradientLayer.frame.size = shadowView.frame.size
+		gradientLayer.startPoint = self.getGradientStartPointFor(edge: edge)
+		gradientLayer.endPoint = self.getGradientEndPointFor(edge: edge)
+		shadowView.layer.addSublayer(gradientLayer)
+		self.addSubview(shadowView)
 	}
 	
-	internal func addTopBorder(color: UIColor, width: CGFloat) {
+	private func removeShadowBorder(forEdge: UIRectEdge) {
+		self.removeView(withTag: self.getShadowTag(forEdge: forEdge))
+	}
+	
+	private func removeView(withTag tag: Int) {
 		
-		let border = UIView()
-		border.backgroundColor = color
-		border.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
-		border.frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: width)
-		let gradientLayer:CAGradientLayer = CAGradientLayer()
-		gradientLayer.frame.size = border.frame.size
-		gradientLayer.colors = [UIColor.white.cgColor, color.cgColor]
-		gradientLayer.startPoint = CGPoint(x: 1.0, y: 1.0)
-		gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.0)
-		border.layer.addSublayer(gradientLayer)
-		self.addSubview(border)
+		for view in self.subviews {
+			if view.tag == tag {
+				view.removeFromSuperview()
+				break
+			}
+		}
 	}
 	
-}
-
-internal extension String {
 	
-	internal func toCGFloat() -> CGFloat {
-		return CGFloat(truncating: NumberFormatter().number(from: self)!)
+	private func getBorderTag(forEdge: UIRectEdge) -> Int {
+		
+		var tag: Int!
+		switch forEdge {
+		case .top:
+			tag = UIView.tag.top
+		case .left:
+			tag = UIView.tag.left
+		case .bottom:
+			tag = UIView.tag.bottom
+		default:
+			tag = UIView.tag.right
+		}
+		return tag
+	}
+	
+	private func getShadowTag(forEdge: UIRectEdge) -> Int {
+		
+		var tag: Int!
+		switch forEdge {
+		case .top:
+			tag = UIView.tag.topShadow
+		case .left:
+			tag = UIView.tag.leftShadow
+		case .bottom:
+			tag = UIView.tag.bottomShadow
+		default:
+			tag = UIView.tag.rightShadow
+		}
+		return tag
+	}
+	
+	private func getGradientStartPointFor(edge: UIRectEdge) -> CGPoint {
+	
+		var point: CGPoint!
+		switch edge {
+		case .top :
+			point = CGPoint(x: 1.0, y: 1.0)
+		case .left:
+			point = CGPoint(x: 0.0, y: 1.0)
+		case .bottom:
+			point = CGPoint(x: 1.0, y: 0.0)
+		default: // right
+			point = CGPoint(x: 1.0, y: 1.0)
+		}
+		return point
+	}
+	
+	private func getGradientEndPointFor(edge: UIRectEdge) -> CGPoint {
+		
+		var point: CGPoint!
+		switch edge {
+		case .top :
+			point = CGPoint(x: 1.0, y: 0.0)
+		case .left:
+			point = CGPoint(x: 1.0, y: 1.0)
+		case .bottom:
+			point = CGPoint(x: 1.0, y: 1.0)
+		default: // right
+			point = CGPoint(x: 0.0, y: 1.0)
+		}
+		return point
+	}
+	
+	
+	private func getResizingMask(forEdge: UIRectEdge) -> UIViewAutoresizing {
+		
+		var edges: UIViewAutoresizing!
+		switch forEdge {
+		case .top :
+			edges = [.flexibleWidth, .flexibleBottomMargin]
+		case .left:
+			edges = [.flexibleHeight, .flexibleRightMargin]
+		case .bottom:
+			edges = [.flexibleWidth, .flexibleTopMargin]
+		default: // right
+			edges = [.flexibleHeight, .flexibleLeftMargin]
+		}
+		return edges
+	}
+	
+	private func getFrame(forEdge: UIRectEdge, thickNess: CGFloat) -> CGRect {
+		
+		var frame: CGRect!
+		switch forEdge {
+		case .top :
+			frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: thickNess)
+		case .left:
+			frame = CGRect(x: 0, y: 0, width: thickNess, height: self.frame.size.height)
+		case .bottom:
+			frame = CGRect(x: 0, y: self.frame.height - thickNess, width: self.frame.size.width, height: thickNess)
+		default: // right
+			frame = CGRect(x: self.frame.size.width - thickNess, y: 0, width: thickNess, height: self.frame.size.height)
+		}
+		return frame
 	}
 }
 
@@ -197,16 +287,6 @@ internal extension CGFloat {
 	internal func toRadians() -> CGFloat {
 		return self * CGFloat(Double.pi) / 180.0
 	}
-}
-
-internal func getScreenHeightOf(percent: CGFloat) -> CGFloat {
-	
-	return (UIScreen.main.bounds.height / 100) * percent
-}
-
-internal func getScreenWidthOf(percent: CGFloat) -> CGFloat {
-	
-	return (UIScreen.main.bounds.width / 100) * percent
 }
 
 internal extension Array where Element: Equatable {

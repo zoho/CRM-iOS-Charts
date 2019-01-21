@@ -213,7 +213,6 @@ internal final class ZCRMComparatorHeader: UIView, ZCRMLayoutConstraintDelegate 
 internal final class ZCRMComparatorChunkView: UIView, ZCRMLayoutConstraintDelegate {
 	
 	internal var options: ComparatorRenderOptions = ComparatorRenderOptions()
-	internal var addBottomBorder: Bool = false
 	internal let label: UILabel = UILabel()
 	internal var viewConstraints: [NSLayoutConstraint] = []
 	init() {
@@ -229,9 +228,6 @@ internal final class ZCRMComparatorChunkView: UIView, ZCRMLayoutConstraintDelega
 		
 		self.deactivateConstraints()
 		self.addConstraints()
-		if self.addBottomBorder {
-			self.addBottomBorder(color: .black, width: 1)
-		}
 	}
 	
 	private func render() {

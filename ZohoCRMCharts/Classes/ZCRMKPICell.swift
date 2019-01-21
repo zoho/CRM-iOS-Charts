@@ -8,7 +8,7 @@
 
 import UIKit
 
-internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
+internal final class ZCRMKPICell : UITableViewCell, KPIUtil, ZCRMLayoutConstraintDelegate {
 	
 	public var rowLabel: UILabel = UILabel() // for both scorecard and rankings
 	public var valueLabel: UILabel = UILabel() // for both scorecard and rankings
@@ -17,6 +17,7 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	private var rightContainer: UIView = UIView() // for both scorecard and rankings
 	
 	internal var type: ZCRMCharts.ZCRMKPIType
+	internal var viewConstraints: [NSLayoutConstraint] = []
 	private var data : ZCRMKPIRow
 	private var options: KPIRenderOptions
 	private var highRate: CGFloat!
@@ -45,13 +46,18 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	private func render() {
 		self.translatesAutoresizingMaskIntoConstraints = false
 		self.renderView()
+		if self.isScorecard {
+			self.renderData()
+		}
 	}
 	
 	override func layoutSubviews() {
 
-		self.invalidateConstraints()
+		self.deactivateConstraints()
 		self.addConstraints()
-		self.renderData()
+		if self.isRankings {
+			self.renderData()
+		}
 	}
 	
 	private func renderView() {
@@ -65,27 +71,34 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 		self.rightContainer.addSubview(self.valueLabel)
 		self.contentView.addSubview(self.rowLabel)
 		self.contentView.addSubview(self.rightContainer)
+		if self.isScorecard {
+			self.rightContainer.addSubview(self.rateLabel)
+		} else {
+			self.rightContainer.addSubview(self.rateBar)
+		}
 	}
 	
 	private func addConstraints() {
-		
-		//constraints
+
 		var constraints : [NSLayoutConstraint] = []
-		if self.isScorecard {
-			self.rightContainer.addSubview(self.rateLabel)
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-[value(>=rate@250)]-0-[rate(==\(self.getWidthOf(percent: 17)))]-0-|", options: [], metrics: nil, views: ["value" : self.valueLabel, "rate": self.rateLabel])
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[rate]-4-|", options: [], metrics: nil, views: ["rate": self.rateLabel])
-		} else {
-			self.rightContainer.addSubview(self.rateBar)
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[value(==\(self.getWidthOf(percent: 16.5)))]-[rate(==\(self.getRateBarLenght()))]", options: [], metrics: nil, views: ["value" : self.valueLabel, "rate": self.rateBar])
-			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-12-[rate]-12-|", options: [], metrics: nil, views: ["rate": self.rateBar])
-		}
+		
 		// common constraints
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[value]-0-|", options: [], metrics: nil, views: ["value": self.valueLabel])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[label(==container)]-0-[container(==label)]-|", options: [], metrics: nil, views: ["label": self.rowLabel, "container": self.rightContainer])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[label(==container)]-0-|", options: [], metrics: nil, views: ["label": self.rowLabel, "container": self.rightContainer])
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[container]-0-|", options: [], metrics: nil, views: ["container": self.rightContainer])
-		NSLayoutConstraint.activate(constraints)
+		self.activate(constraints: constraints)
+		constraints.removeAll()
+		self.rightContainer.layoutIfNeeded()
+		
+		if self.isScorecard {
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-[value(>=rate@250)]-0-[rate(==\(self.getWidthOf(percent: 17)))]-0-|", options: [], metrics: nil, views: ["value" : self.valueLabel, "rate": self.rateLabel])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[rate]-4-|", options: [], metrics: nil, views: ["rate": self.rateLabel])
+		} else {
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[value(valueWidth)]-\(self.rightContainer.frame.width * 0.02)-[rate(rateWidth)]", options: [], metrics: ["rateWidth": self.getRateBarLenght(), "valueWidth": self.rightContainer.frame.width * 0.4], views: ["value" : self.valueLabel, "rate": self.rateBar])
+			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-12-[rate]-12-|", options: [], metrics: nil, views: ["rate": self.rateBar])
+		}
+		self.activate(constraints: constraints)
 	}
 	
 	/**
@@ -137,7 +150,7 @@ internal final class ZCRMKPICell : UITableViewCell, KPIUtil {
 	*/
 	private func getRateBarLenght() -> CGFloat {
 		
-		let availaleSpace: CGFloat = self.getWidthOf(percent: 30)
+		let availaleSpace: CGFloat = self.rightContainer.frame.width * 0.58
 		let onePercentOfSpace: CGFloat = availaleSpace / 100
 		let percentOfDiff: CGFloat = (self.data.value.toCGFloat() * 100) / self.highRate
 		return (onePercentOfSpace * percentOfDiff)

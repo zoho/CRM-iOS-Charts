@@ -24,6 +24,7 @@
 		FE834D332189D38A00039101 /* ZCRMComparator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE834D312189D38000039101 /* ZCRMComparator.swift */; };
 		FE960F1521B5274C00DF9C01 /* ZCRMBarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE960F1421B5274C00DF9C01 /* ZCRMBarChart.swift */; };
 		FEDF0B7721B96B64007220AC /* ZCRMEquatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDF0B7621B96B64007220AC /* ZCRMEquatable.swift */; };
+		FEED8EF221F21EB600E49BC2 /* ZCRMView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEED8EF121F21EB600E49BC2 /* ZCRMView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 		FE834D312189D38000039101 /* ZCRMComparator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZCRMComparator.swift; path = ZohoCRMCharts/Classes/ZCRMComparator.swift; sourceTree = "<group>"; };
 		FE960F1421B5274C00DF9C01 /* ZCRMBarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZCRMBarChart.swift; path = ZohoCRMCharts/Classes/ZCRMBarChart.swift; sourceTree = "<group>"; };
 		FEDF0B7621B96B64007220AC /* ZCRMEquatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZCRMEquatable.swift; path = ZohoCRMCharts/Classes/ZCRMEquatable.swift; sourceTree = "<group>"; };
+		FEED8EF121F21EB600E49BC2 /* ZCRMView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZCRMView.swift; path = ZohoCRMCharts/Classes/ZCRMView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,6 +170,7 @@
 				FE110CB421709A1B000D0815 /* ZCRMKPI.swift */,
 				FE110CB521709A1B000D0815 /* ZCRMKPICell.swift */,
 				FE110CB621709A1B000D0815 /* ZCRMUIUtil.swift */,
+				FEED8EF121F21EB600E49BC2 /* ZCRMView.swift */,
 				FE110CB721709A1B000D0815 /* ZCRMWrapper.swift */,
 				FA88FDDAFCBAFCCF5C5811791B0ABD70 /* Pod */,
 				F91F9720D4FFB51B16301731B1DB1D40 /* Support Files */,
@@ -312,6 +315,7 @@
 				FE110CBE21709A2B000D0815 /* ZCRMUIUtil.swift in Sources */,
 				FE960F1521B5274C00DF9C01 /* ZCRMBarChart.swift in Sources */,
 				FE834D332189D38A00039101 /* ZCRMComparator.swift in Sources */,
+				FEED8EF221F21EB600E49BC2 /* ZCRMView.swift in Sources */,
 				FE110CBF21709A34000D0815 /* ZCRMWrapper.swift in Sources */,
 				FE24E1C921A525650043CBBB /* ZCRMComparatorCell.swift in Sources */,
 				FE11253C21AD79F90016E75F /* ZCRMFunnel.swift in Sources */,

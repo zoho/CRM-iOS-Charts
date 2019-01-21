@@ -229,10 +229,6 @@ public final class ZCRMKPI: UIView, KPIUtil {
 		}
 	}
 	
-	public override var intrinsicContentSize: CGSize {
-		return CGSize(width: getScreenWidthOf(percent: 92), height: self.getCalculatedHeight())
-	}
-	
 	public override var backgroundColor: UIColor? {
 		didSet {
 			super.backgroundColor = backgroundColor
@@ -408,7 +404,6 @@ fileprivate extension ZCRMKPI {
 	
 	fileprivate func addConstraints() {
 		
-		self.invalidateIntrinsicContentSize()
 		if self.isRankings || self.isScorecard {
 			self.addKpiConstraints()
 		} else {
@@ -499,7 +494,6 @@ fileprivate extension ZCRMKPI {
 	*/
 	private func addKpiConstraints() {
 		
-		self.tableView.layoutIfNeeded()
 		self.tableView.rowHeight = self.cellHeight
 		var constraints: [NSLayoutConstraint] = []
 		if self.isScorecard {
@@ -576,7 +570,10 @@ extension ZCRMKPI : UITableViewDataSource, UITableViewDelegate {
 		
 		var cell: ZCRMKPICell!
 		if self.isRankings {
-			cell = ZCRMKPICell(data:  self.data[indexPath.row], type: self.type, highRate: self.data[0].value.toCGFloat(), options : self.renderOptions)
+			let highRate = self.data.map { (kpiRow) -> Int in
+				return kpiRow.value
+			}.max()!.toCGFloat()
+			cell = ZCRMKPICell(data:  self.data[indexPath.row], type: self.type, highRate: highRate, options : self.renderOptions)
 		} else {
 			cell = ZCRMKPICell(data: self.data[indexPath.row], type: self.type, options: self.renderOptions)
 		}

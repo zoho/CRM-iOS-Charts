@@ -14,7 +14,7 @@ internal struct ZCRMFunnelCellData {
 	internal let value: String
 }
 
-internal final class ZCRMPathFunnelCell: UIView, ZCRMLayoutConstraintDelegate {
+internal final class ZCRMPathFunnelCell: ZCRMView {
 	
 	internal var data: ZCRMFunnelData! {
 		didSet {
@@ -24,7 +24,6 @@ internal final class ZCRMPathFunnelCell: UIView, ZCRMLayoutConstraintDelegate {
 		}
 	}
 	internal var options: FunnelRenderOptions = FunnelRenderOptions()
-	internal var viewConstraints: [NSLayoutConstraint] = []
 	private let isStart: Bool
 	private let bgColor: UIColor
 	private let cellLabel: UILabel = UILabel()
@@ -34,38 +33,34 @@ internal final class ZCRMPathFunnelCell: UIView, ZCRMLayoutConstraintDelegate {
 		self.isStart = isStart
 		self.bgColor = bgColor
 		super.init(frame: .zero)
-		self.render()
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
-	override func layoutSubviews() {
-		self.deactivateConstraints()
-		self.setNeedsDisplay()
-		self.addConstraints()
-	}
-	
-	private func render() {
-
+	internal override func addSubviews() {
+		
 		self.cellLabel.translatesAutoresizingMaskIntoConstraints = false
 		self.cellLabel.textAlignment = .center
 		self.addSubview(cellLabel)
 		
 		self.valueLabel.translatesAutoresizingMaskIntoConstraints = false
-		self.valueLabel.textAlignment = .center
+		self.valueLabel.textAlignment = .left
 		self.addSubview(valueLabel)
-		
 		self.setUIOptions()
 	}
 	
-	private func addConstraints() {
+	internal override func willAddConstraints() {
+		self.setNeedsDisplay()
+	}
+	
+	internal override func addConstraints() {
 		
 		var constraints: [NSLayoutConstraint] = []
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[cellLabel]-0-|", options: [], metrics: nil, views: ["cellLabel": self.cellLabel])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[valueLabel]-0-|", options: [], metrics: nil, views: ["valueLabel": self.valueLabel])
-		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-\(self.frame.height / 3 + 1)-[cellLabel]-2-[valueLabel]-10-|", options: [], metrics: ["cellLabelWidth": self.getWidthOf(percent: 65)], views: ["cellLabel": self.cellLabel, "valueLabel": self.valueLabel])
+		constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-[cellLabel(cellLableHeight)]-2-[valueLabel]-|", options: [], metrics: ["cellLableHeight": self.frame.height * 0.4], views: ["cellLabel": self.cellLabel, "valueLabel": self.valueLabel])
+		constraints.append(NSLayoutConstraint(item: self.cellLabel, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
+		constraints.append(NSLayoutConstraint(item: self.valueLabel, attribute: .leading, relatedBy: .equal, toItem: self.cellLabel, attribute: .leading, multiplier: 1, constant: 0))
 		self.activate(constraints: constraints)
 	}
 	
@@ -74,16 +69,11 @@ internal final class ZCRMPathFunnelCell: UIView, ZCRMLayoutConstraintDelegate {
 		self.layer.mask = nil
 		let bezeirPath = UIBezierPath()
 		let traingleH = self.frame.height / 3
-		let radius = self.frame.height / 2
-		if self.isStart {
-			bezeirPath.move(to: CGPoint(x: radius, y: 0))
-			let arcCenter = CGPoint(x: traingleH + (radius / 2), y: radius)
-			bezeirPath.addArc(withCenter: arcCenter, radius: radius, startAngle: CGFloat(270).toRadians(), endAngle: CGFloat(90).toRadians(), clockwise: false)
-		} else {
-			bezeirPath.move(to: CGPoint(x: 0, y: 0))
+		bezeirPath.move(to: CGPoint(x: 0, y: 0))
+		if !self.isStart {
 			bezeirPath.addLine(to: CGPoint(x: traingleH, y: self.frame.height / 2))
-			bezeirPath.addLine(to: CGPoint(x: 0, y: self.frame.height))
 		}
+		bezeirPath.addLine(to: CGPoint(x: 0, y: self.frame.height))
 		bezeirPath.addLine(to: CGPoint(x: self.frame.width - traingleH, y: self.frame.height))
 		bezeirPath.addLine(to: CGPoint(x: self.frame.width, y: self.frame.height / 2))
 		bezeirPath.addLine(to: CGPoint(x: self.frame.width - traingleH, y: 0))
@@ -113,7 +103,7 @@ internal final class ZCRMPathFunnelCell: UIView, ZCRMLayoutConstraintDelegate {
 	}
 }
 
-internal final class ZCRMCompactFunnelCell: UIView, ZCRMLayoutConstraintDelegate {
+internal final class ZCRMCompactFunnelCell: ZCRMView {
 	
 	internal var data: ZCRMFunnelCellData! {
 		didSet {
@@ -126,25 +116,17 @@ internal final class ZCRMCompactFunnelCell: UIView, ZCRMLayoutConstraintDelegate
 	private let isRateView: Bool
 	private let cellLabel: UILabel = UILabel()
 	private let stageLabel: UILabel = UILabel()
-	internal var viewConstraints: [NSLayoutConstraint] = []
 	
 	init(isRateView: Bool) {
 		self.isRateView = isRateView
 		super.init(frame: .zero)
-		self.render()
-	}
-	
-	override func layoutSubviews() {
-		self.deactivateConstraints()
-		self.setNeedsDisplay()
-		self.addConstraints()
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
 
-	private func render() {
+	internal override func addSubviews() {
 		
 		self.cellLabel.translatesAutoresizingMaskIntoConstraints = false
 		self.cellLabel.textAlignment = .center
@@ -159,15 +141,17 @@ internal final class ZCRMCompactFunnelCell: UIView, ZCRMLayoutConstraintDelegate
 		self.setUIOptions()
 	}
 	
-	private func addConstraints() {
+	internal override func willAddConstraints() {
+		self.setNeedsDisplay()
+	}
+	
+	internal override func addConstraints() {
 		
 		var constraints: [NSLayoutConstraint] = []
-		
 		if self.isRateView {
 			
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[cellLabel]-0-|", options: [], metrics: nil, views: ["cellLabel": self.cellLabel])
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-[cellLabel(cellWidth)]", options: [], metrics: ["cellWidth": self.frame.width * 0.7], views: ["cellLabel": self.cellLabel])
-
 		} else {
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-[cellLabel]-|", options: [], metrics: nil, views: ["cellLabel": self.cellLabel])
 			constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-[valueLabel]-|", options: [], metrics: nil, views: ["valueLabel": self.stageLabel])
@@ -207,7 +191,6 @@ internal final class ZCRMCompactFunnelCell: UIView, ZCRMLayoutConstraintDelegate
 	
 	private func setData() {
 		
-		
 		if self.isRateView {
 			self.cellLabel.text = self.data.label
 		} else {
@@ -219,7 +202,6 @@ internal final class ZCRMCompactFunnelCell: UIView, ZCRMLayoutConstraintDelegate
 	internal func setUIOptions() {
 		
 		if self.isRateView {
-			
 			self.cellLabel.font = self.options.rateFont
 			self.cellLabel.textColor = self.options.rateFontColor
 		} else {
@@ -232,7 +214,7 @@ internal final class ZCRMCompactFunnelCell: UIView, ZCRMLayoutConstraintDelegate
 	}
 }
 
-internal final class ZCRMClassicFunnelFooter: UICollectionViewCell, ZCRMLayoutConstraintDelegate {
+internal final class ZCRMClassicFunnelFooter: ZCRMCollectionViewCell {
 
 	internal var text: String! {
 		didSet {
@@ -250,17 +232,11 @@ internal final class ZCRMClassicFunnelFooter: UICollectionViewCell, ZCRMLayoutCo
 		}
 	}
 	
-	internal var viewConstraints: [NSLayoutConstraint] = []
 	internal var options: FunnelRenderOptions = FunnelRenderOptions()
 	private let label: UILabel = UILabel()
 	private let roundedView: UIView = UIView()
-	
-	override func layoutSubviews() {
-		self.deactivateConstraints()
-		self.addConstraints()
-	}
-	
-	internal func render() {
+		
+	internal override func addSubviews() {
 		
 		self.label.translatesAutoresizingMaskIntoConstraints = false
 		self.label.textAlignment = .center
@@ -272,7 +248,7 @@ internal final class ZCRMClassicFunnelFooter: UICollectionViewCell, ZCRMLayoutCo
 		self.addSubview(self.roundedView)
 	}
 	
-	private func addConstraints() {
+	internal override func addConstraints() {
 		
 		var constraints: [NSLayoutConstraint] = []
 		self.roundedView.layer.cornerRadius = self.getHeightOf(percent: 60) / 2
@@ -284,8 +260,7 @@ internal final class ZCRMClassicFunnelFooter: UICollectionViewCell, ZCRMLayoutCo
 	}
 }
 
-
-internal final class ZCRMSegmentFunnelCell: UICollectionViewCell, ZCRMLayoutConstraintDelegate {
+internal final class ZCRMSegmentFunnelCell: ZCRMCollectionViewCell {
 	
 	internal var text: String! {
 		didSet {
@@ -311,14 +286,9 @@ internal final class ZCRMSegmentFunnelCell: UICollectionViewCell, ZCRMLayoutCons
 		}
 	}
 	
-	internal var viewConstraints: [NSLayoutConstraint] = []
 	private let label: UILabel = UILabel()
 	
-	override func layoutSubviews() {
-		self.deactivateConstraints()
-		self.addConstraints()
-	}
-	internal func render() {
+	internal override func addSubviews() {
 		
 		self.label.translatesAutoresizingMaskIntoConstraints = false
 		self.label.textAlignment = .center
@@ -326,7 +296,7 @@ internal final class ZCRMSegmentFunnelCell: UICollectionViewCell, ZCRMLayoutCons
 		self.addSubview(self.label)
 	}
 	
-	private func addConstraints() {
+	internal override func addConstraints() {
 		
 		var constraints: [NSLayoutConstraint] = []
 		constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|[label]|", options: [], metrics: nil, views: ["label": self.label])
@@ -335,7 +305,7 @@ internal final class ZCRMSegmentFunnelCell: UICollectionViewCell, ZCRMLayoutCons
 	}
 }
 
-internal final class ZCRMStandardFunnelConversionRateView: UIView, ZCRMLayoutConstraintDelegate {
+internal final class ZCRMStandardFunnelConversionRateView: ZCRMView {
 	
 	internal let fromValueLabel: UILabel = UILabel()
 	internal let toValueLabel: UILabel = UILabel()
@@ -343,49 +313,48 @@ internal final class ZCRMStandardFunnelConversionRateView: UIView, ZCRMLayoutCon
 	internal var font: UIFont = UIFont.systemFont(ofSize: 14)
 	internal var fontColor: UIColor = .black
 	private let conversionRateView: UILabel = UILabel()
-	internal var viewConstraints: [NSLayoutConstraint] = []
 	
 	internal init() {
 		super.init(frame: .zero)
-		self.render()
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
-	override func layoutSubviews() {
-		
-		self.deactivateConstraints()
-		self.addConstraints()
-		self.drawLines()
-	}
-	
-	private func render() {
+	internal override func willAddSubviews() {
 		
 		self.fromValueLabel.translatesAutoresizingMaskIntoConstraints = false
 		self.fromValueLabel.textAlignment = .center
-		self.addSubview(self.fromValueLabel)
 		
 		self.toValueLabel.translatesAutoresizingMaskIntoConstraints = false
 		self.toValueLabel.textAlignment = .center
-		self.addSubview(self.toValueLabel)
-
+		
 		self.rateLabel.translatesAutoresizingMaskIntoConstraints = false
 		self.rateLabel.numberOfLines = 2
 		self.rateLabel.textAlignment = .center
-		self.addSubview(self.rateLabel)
-
+		
 		self.conversionRateView.translatesAutoresizingMaskIntoConstraints = false
 		self.conversionRateView.numberOfLines = 2
 		self.conversionRateView.textAlignment = .center
 		self.conversionRateView.text = "Conversion Rate"
 		self.conversionRateView.adjustsFontSizeToFitWidth = true
 		self.conversionRateView.minimumScaleFactor = 0.75
+	}
+	
+	internal override func addSubviews() {
+		
+		self.addSubview(self.fromValueLabel)
+		self.addSubview(self.toValueLabel)
+		self.addSubview(self.rateLabel)
 		self.addSubview(self.conversionRateView)
 	}
 	
-	private func addConstraints() {
+	internal override func didAddConstraints() {
+		self.drawLines()
+	}
+	
+	internal override func addConstraints() {
 		
 		if self.frame.height == 0 {
 			return
@@ -415,13 +384,13 @@ internal final class ZCRMStandardFunnelConversionRateView: UIView, ZCRMLayoutCon
 		let xPos: CGFloat  = self.frame.width / 2
 		let labelHeight: CGFloat = self.frame.height * 0.125
 		let lineHeight = self.frame.height * 0.225
-		let linesInfo: [[String: CGFloat]] = [["y1":  labelHeight  , "y2":  labelHeight  + lineHeight], ["y1": self.frame.height - ( labelHeight
-			+ lineHeight) , "y2": self.frame.height - ( labelHeight) ]]
+		let linesInfo = [ (y1: labelHeight, y2: labelHeight + lineHeight),
+						  (y1: self.frame.height - ( labelHeight + lineHeight), y2: self.frame.height - labelHeight)]
+		
 		for line in linesInfo {
-			
 			let path = UIBezierPath()
-			path.move(to: CGPoint(x: xPos, y: line["y1"]!))
-			path.addLine(to: CGPoint(x: xPos, y: line["y2"]!))
+			path.move(to: CGPoint(x: xPos, y: line.y1))
+			path.addLine(to: CGPoint(x: xPos, y: line.y2))
 			let layer = CAShapeLayer()
 			layer.path = path.cgPath
 			layer.lineWidth = 2.0

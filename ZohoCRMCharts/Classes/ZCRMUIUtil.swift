@@ -49,11 +49,11 @@ internal struct ComparatorRenderOptions {
 	var chunkFontColor: UIColor = Colors.fontColor
 	var groupFont: UIFont = UIFont.systemFont(ofSize: 13)
 	var groupFontColor: UIColor = Colors.fontColor
-	var elegantDiffColor: UIColor = UIColor(red: 207 / 255, green: 223 / 255, blue: 249 / 255, alpha: 1)
 	var classicHeaderRowColor: UIColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
 	var positiveColor: UIColor = Colors.positiveColor
 	var negativeColor: UIColor = Colors.negativeColor
 	var neutralColor: UIColor = Colors.neutralColor
+	var borderColor: UIColor = UIColor(red: 210/255, green: 210/255, blue: 210/255, alpha: 0.8)
 }
 
 internal struct FunnelRenderOptions {
@@ -71,7 +71,12 @@ internal struct FunnelRenderOptions {
 	var conversionRateFont: UIFont = UIFont.systemFont(ofSize: 15)
 	var conversionRateFontColor: UIColor = Colors.fontColor
 	var barColor: UIColor = UIColor.blue
-	
+	var positiveColor: UIColor = Colors.positiveColor
+	var negativeColor: UIColor = Colors.negativeColor
+	var neutralColor: UIColor = Colors.neutralColor
+	var borderColor: UIColor = UIColor(red: 210/255, green: 210/255, blue: 210/255, alpha: 0.8)
+	var arrowPointerColor: UIColor = .lightGray
+	var segmentHeaderRowColor: UIColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
 }
 
 internal struct ZCRMUIUtil {
@@ -88,6 +93,9 @@ internal struct ZCRMUIUtil {
 		return NSAttributedString(string: " = ", attributes: [ NSFontAttributeName: UIFont.systemFont(ofSize: ofSize), NSForegroundColorAttributeName: color, NSBaselineOffsetAttributeName: baselineOffset])
 	}
 	
+	static func getDownArrow(ofSize: CGFloat, color: UIColor) -> NSAttributedString {
+		return NSAttributedString(string: " ↓ ", attributes: [ NSFontAttributeName: UIFont.systemFont(ofSize: ofSize), NSForegroundColorAttributeName: color])
+	}
 }
 
 internal struct ZCRMKPIUIUtil {
@@ -149,5 +157,17 @@ internal struct ZCRMComparatorUIUtil {
 			outputString.append(NSAttributedString(string: chunkData.rate, attributes: [ NSFontAttributeName: options.chunkDataFont, NSForegroundColorAttributeName : rateColor] ))
 		}
 		return outputString
+	}
+}
+
+internal struct ZCRMFunnelUIUtil {
+	
+	static func getPathFunnelText(_ data: ZCRMFunnelData, options: FunnelRenderOptions) -> NSMutableAttributedString {
+		
+		let outputStr = NSMutableAttributedString(string: "")
+		outputStr.append(ZCRMUIUtil.getDownArrow(ofSize: options.rateFont.pointSize, color: .red))
+		outputStr.append(NSAttributedString(string: String(data.value), attributes: [ NSFontAttributeName: options.rateFont, NSForegroundColorAttributeName: options.negativeColor]))
+		outputStr.append(NSAttributedString(string: " \(data.label)", attributes: [NSFontAttributeName: options.rateFont]))
+		return outputStr
 	}
 }
