@@ -1,0 +1,6 @@
+use_frameworks!
+target 'ZohoCRMCharts_Tests' do
+  pod 'ZohoCRMCharts', :path => '../'
+  
+  
+end

@@ -1,0 +1,16 @@
+PODS:
+  - ZohoCRMCharts (0.1.0)
+
+DEPENDENCIES:
+  - ZohoCRMCharts (from `../`)
+
+EXTERNAL SOURCES:
+  ZohoCRMCharts:
+    :path: ../
+
+SPEC CHECKSUMS:
+  ZohoCRMCharts: 46c43127e38ff420c7178b740bbe1a1ef8bcb526
+
+PODFILE CHECKSUM: 1c6c9871399a2c75cb4ae34f10448a2d747492dc
+
+COCOAPODS: 1.4.0
